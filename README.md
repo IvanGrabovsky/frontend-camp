@@ -2,7 +2,7 @@
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000)
 ![Статус: Roadmap](https://img.shields.io/badge/Roadmap-5_блоків-7c6af7)
-![Ліцензія: MIT](https://img.shields.io/badge/Ліцензія-MIT-4ecdc4)
+![Тільки для некомерційного використання](https://img.shields.io/badge/Ліцензія-Некомерційна-ff69b4)
 
 > Повний навчальний шлях: **HTML → CSS → JavaScript → Next.js → фінальний проект**.
 > Зараз доступний блок **JavaScript масиви** (21 урок без змін); решта — roadmap-заглушки.
@@ -69,4 +69,4 @@ public/courses/js-arrays/   21 урок + assets (контент без змін
 
 ## Про автора
 
-**[Іван Грабовський](https://github.com/IvanGrabovsky)** — frontend розробник · 2026 · MIT
+**[Іван Грабовський](https://github.com/IvanGrabovsky)** — frontend розробник · 2026 · Тільки для некомерційного використання

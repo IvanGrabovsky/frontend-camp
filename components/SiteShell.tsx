@@ -43,7 +43,7 @@ export function SiteFooter() {
       <p>
         Проект підготував{' '}
         <a href="https://github.com/IvanGrabovsky">GitHub</a> ·{' '}
-        <strong>Іван Грабовський</strong> · 2026 · Ліцензія MIT
+        <strong>Іван Грабовський</strong> · 2026 · Тільки для некомерційного використання
       </p>
     </footer>
   );
