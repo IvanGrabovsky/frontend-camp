@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 14 — sort() · JS Масиви</title>
+  <meta name="description" content="Метод sort() — сортування масивів, compareFn для чисел та обʼєктів, лексикографічна пастка." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">14 · sort</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../13-forEach/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../15-reverse/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="14" data-total="21">
+        <span class="progress__label">Урок 14 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">14</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>sort() — сортування масивів</h1>
+      <div class="method-tags">
+        <span class="method-tag">sort()</span>
+        <span class="method-tag">toSorted()</span>
+        <span class="method-tag">compareFn</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>sort()</code> <strong>сортує елементи масиву на місці</strong> (мутує оригінал) і повертає посилання на той самий масив. Без функції порівняння сортування <strong>лексикографічне</strong> — як у словнику, символ за символом.</p>
+      <p>Callback <code>compareFn(a, b)</code> порівнює два елементи і повертає число: &lt; 0 — <code>a</code> раніше, &gt; 0 — <code>b</code> раніше, 0 — порядок не важливий.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📚</span> Аналогія з життя</div>
+      <p>Це як <strong>сортування карток у бібліотеці</strong> — за алфавітом або за роком видання. Ти розкладаєш картки в потрібному порядку прямо на полиці, змінюючи їх розташування.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.sort()                    <span class="cmt">// лексикографічне (не для чисел!)</span>
+<span class="ln">array.sort((a, b) => a - b)     <span class="cmt">// числа за зростанням</span>
+<span class="ln">array.sort((a, b) => b - a)     <span class="cmt">// числа за спаданням</span>
+<span class="ln">array.toSorted((a, b) => a - b) <span class="cmt">// новий масив, без мутації (ES2023)</span>
+<span class="ln">array.sort((a, b) => a.localeCompare(b, 'uk')) <span class="cmt">// рядки українською</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри sort()</h4>
+        <p class="syntax-params__note">* <code>compareFn(a, b)</code> — callback порівняння: отримує два елементи масиву й повертає число (&lt; 0, 0 або &gt; 0), а не <code>boolean</code>.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>compareFn(a, b)</code></td><td><span class="param-recommended">рекомендований</span></td><td>Синтаксично необовʼязковий, але для чисел і обʼєктів без нього результат буде неправильним</td></tr>
+            <tr><td><code>a</code>, <code>b</code></td><td><span class="param-required">обовʼязкові</span></td><td>Два елементи для порівняння; повертає число &lt; 0, 0 або &gt; 0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/sort" target="_blank" rel="noopener noreferrer">Array.prototype.sort() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/toSorted" target="_blank" rel="noopener noreferrer">Array.prototype.toSorted() — MDN (ES2023)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>compareFn(a, b)</code> повертає відʼємне число, якщо <code>a</code> має бути раніше за <code>b</code>.</li>
+        <li>Повертає додатне — якщо <code>b</code> має бути раніше.</li>
+        <li>Повертає <code>0</code> — якщо порядок не важливий.</li>
+        <li>Для чисел найпростіше: <code>(a, b) => a - b</code> (зростання).</li>
+      </ol>
+
+      <h3>Стабільне сортування</h3>
+      <p>У сучасному JavaScript (ES2019+) <code>sort</code> є <strong>стабільним</strong>: елементи з однаковим ключем зберігають свій відносний порядок.</p>
+
+      <h3>toSorted() — без мутації (ES2023)</h3>
+      <p><code>toSorted(compareFn)</code> приймає той самий callback, що й <code>sort</code>, але повертає <strong>новий</strong> відсортований масив. Оригінал не змінюється — зручно для ДЗ «не мутуй масив» і для ланцюжків методів.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: ПАСТКА — sort без compareFn для чисел</span>
+<span class="ln">console.log([10, 9, 2, 1, 100].sort());</span>
+<span class="ln cmt">// [1, 10, 100, 2, 9] ← НЕПРАВИЛЬНО!</span>
+<span class="ln"></span>
+<span class="ln cmt">// ПРАВИЛЬНО:</span>
+<span class="ln">console.log([10, 9, 2, 1, 100].sort((a, b) => a - b));</span>
+<span class="ln cmt">// [1, 2, 9, 10, 100]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: рядки за алфавітом (українською)</span>
+<span class="ln">const names = ['Борис', 'Аня', 'Галя'];</span>
+<span class="ln">names.sort((a, b) => a.localeCompare(b, 'uk'));</span>
+<span class="ln">console.log(names); // ['Аня', 'Борис', 'Галя']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: сортування обʼєктів за полем</span>
+<span class="ln">const users = [</span>
+<span class="ln">  { name: 'Вася', age: 25 },</span>
+<span class="ln">  { name: 'Аня', age: 20 },</span>
+<span class="ln">  { name: 'Борис', age: 30 },</span>
+<span class="ln">];</span>
+<span class="ln">users.sort((a, b) => a.age - b.age);</span>
+<span class="ln">console.log(users.map(u => u.name)); // ['Аня', 'Вася', 'Борис']</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>compareFn</code> синтаксично необовʼязковий: для <strong>рядків</strong> часто достатньо <code>sort()</code> без аргументів, але для <strong>чисел</strong> і <strong>обʼєктів</strong> без нього результат буде некоректним.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Без compareFn — рядки сортуються нормально</span>
+<span class="ln">const fruits = ['банан', 'апельсин', 'яблуко'];</span>
+<span class="ln">console.log([...fruits].sort()); // ['апельсин', 'банан', 'яблуко']</span>
+<span class="ln"></span>
+<span class="ln cmt">// Без compareFn — числа сортуються як рядки!</span>
+<span class="ln">console.log([10, 2, 30].sort()); // [10, 2, 30] — не за зростанням</span>
+<span class="ln"></span>
+<span class="ln cmt">// З compareFn — правильно</span>
+<span class="ln">console.log([10, 2, 30].sort((a, b) => a - b)); // [2, 10, 30]</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Сортувати числа без <code>compareFn</code> — результат буде лексикографічним, не числовим.</li>
+        <li>Забути, що <code>sort</code> <strong>мутує</strong> оригінал. Для копії: <code>[...arr].sort(...)</code>.</li>
+        <li>Сортувати рядки без <code>localeCompare</code> — може бути некоректно для українських літер.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=14">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Числа <code>[10, 9, 2, 1, 100]</code> — спочатку <code>sort()</code> без <code>compareFn</code>, потім <code>sort((a,b) =&gt; a - b)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Ціни <code>[450, 120, 890, 35, 1200]</code> — відсортуй за спаданням (від найдорожчого). <span class="crystal-reward">💎 10</span></li>
+        <li>Книги <code>[{title:'JS', rating:4.5}, {title:'HTML', rating:4.8}, {title:'CSS', rating:4.2}]</code> — за <code>rating</code> від найвищого. <span class="crystal-reward">💎 10</span></li>
+        <li>Імена <code>['богдан', 'алена', 'віктор']</code> — відсортуй українською через <code>localeCompare(b, 'uk')</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Сортуємо ціни та обʼєкти з рейтингом.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const prices = [450, 120, 890, 35, 1200];
+const asc = [...prices].sort((a, b) => a - b);
+const desc = [...prices].sort((a, b) => b - a);
+console.log('Зростання:', asc);
+console.log('Спадання:', desc);
+
+const items = [
+  { name: 'Кава', rating: 4.8 },
+  { name: 'Чай', rating: 4.2 },
+  { name: 'Сік', rating: 4.5 },
+];
+items.sort((a, b) => b.rating - a.rating);
+console.log('За рейтингом:', items);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив цін <code>[250, 99, 1500, 45]</code> — відсортуй за спаданням (від найдорожчого до найдешевшого). <span class="crystal-reward">💎 15</span></li>
+        <li>Масив <code>{name, rating}</code> — відсортуй за рейтингом від найвищого до найнижчого. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив рядків з різним регістром — відсортуй алфавітно без урахування регістру (<code>localeCompare</code>). <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — ціни за спаданням</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Забувають callback: <code>sort()</code> без функції сортує як рядки → <code>99</code> може опинитися після <code>1500</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>prices.sort((a, b) => b - a)</code> — для чисел від більшого до меншого.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — рейтинг обʼєктів</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Порівнюють обʼєкти напряму: <code>sort((a,b) => a - b)</code> — NaN і хаос.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>items.sort((a, b) => b.rating - a.rating)</code> — порівнюй конкретне поле.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — localeCompare</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Сортуєть <code>toLowerCase()</code> копії, але мутуєте оригінал некоректно, або ігноруєте українські літери.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.sort((a, b) => a.localeCompare(b, 'uk', { sensitivity: 'base' }))</code> — без зайвих toLowerCase.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>sort</code> мутує масив — для ДЗ «не змінюючи оригінал» використовуй <code>toSorted()</code> або <code>[...arr].sort(...)</code>.</li>
+        <li>Для чисел: <code>a - b</code> (зростання), <code>b - a</code> (спадання).</li>
+        <li>Стабільність sort у сучасному JS — однакові елементи зберігають відносний порядок.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../13-forEach/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">13 · forEach</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../15-reverse/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">15 · reverse</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

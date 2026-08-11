@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 03 — push() та pop() · JS Масиви</title>
+  <meta name="description" content="Методи push() і pop() — додавання та видалення елементів з кінця масиву." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">03 · push / pop</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../02-create-access/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../04-shift-unshift/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="3" data-total="21">
+        <span class="progress__label">Урок 3 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">03</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>push() та pop() — робота з кінцем масиву</h1>
+      <div class="method-tags">
+        <span class="method-tag">push()</span>
+        <span class="method-tag">pop()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>push()</code> додає один або кілька елементів у <strong>кінець</strong> масиву й повертає нову довжину. <code>pop()</code> видаляє <strong>останній</strong> елемент і повертає його значення.</p>
+      <p>Обидва методи <strong>змінюють оригінальний масив</strong> (кажуть — вони «мутують» масив).</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🍽️</span> Аналогія з життя</div>
+      <p>Уяви <strong>стос тарілок</strong>. <code>push</code> — ти кладеш чисту тарілку зверху. <code>pop</code> — береш верхню тарілку, щоб покласти на неї їжу. Ти завжди працюєш лише з <em>верхом</em> стосу, тобто з кінцем масиву.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.push(item)               <span class="cmt">// додати в кінець → нова довжина</span></span>
+<span class="ln">array.push(item1, item2)       <span class="cmt">// можна кілька одразу</span></span>
+<span class="ln">const last = array.pop()       <span class="cmt">// видалити останній → його значення</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>push(...items)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Хоча б один елемент для додавання в кінець (виклик без аргументів нічого не додасть)</td></tr>
+            <tr><td><code>pop()</code></td><td>—</td><td>Без параметрів — видаляє останній елемент</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/push" target="_blank" rel="noopener noreferrer">Array.prototype.push() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/pop" target="_blank" rel="noopener noreferrer">Array.prototype.pop() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>push</code> ставить новий елемент після поточного останнього.</li>
+        <li>Повертає <strong>нову довжину</strong> масиву (число), а не сам масив.</li>
+        <li><code>pop</code> прибирає останній елемент і <strong>повертає його</strong>, зменшуючи довжину на 1.</li>
+        <li>Якщо масив порожній, <code>pop</code> повертає <code>undefined</code>.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: кошик покупок</span>
+<span class="ln">const cart = ['молоко', 'хліб'];</span>
+<span class="ln">cart.push('яйця');            // додали товар</span>
+<span class="ln">const removed = cart.pop();   // прибрали останній</span>
+<span class="ln">console.log(cart);            // ['молоко', 'хліб']</span>
+<span class="ln">console.log(removed);         // 'яйця'</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: push повертає нову довжину</span>
+<span class="ln">const nums = [1, 2, 3];</span>
+<span class="ln">const newLength = nums.push(4, 5);  // додали два одразу</span>
+<span class="ln">console.log(newLength);             // 5</span>
+<span class="ln">console.log(nums);                  // [1, 2, 3, 4, 5]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: стос як стек «Undo»</span>
+<span class="ln">const actions = [];</span>
+<span class="ln">actions.push('надрукував текст');</span>
+<span class="ln">actions.push('вставив картинку');</span>
+<span class="ln">const undo = actions.pop();  // скасували останню дію</span>
+<span class="ln">console.log('Скасовано:', undo);</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Думати, що <code>push</code> повертає масив. Насправді він повертає <strong>число</strong> (нову довжину).</li>
+        <li>Забути, що методи мутують оригінал. Якщо потрібна копія — спершу скопіюй масив (розглянемо <code>slice</code> в уроці 06).</li>
+        <li>Викликати <code>pop</code> на порожньому масиві та очікувати помилку — буде <code>undefined</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=03">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Почни з <code>stack = []</code>, додай числа <code>10</code>, <code>20</code>, <code>30</code> через <code>push</code> — виведи масив. <span class="crystal-reward">💎 10</span></li>
+        <li>З <code>stack = [10, 20, 30, 40]</code> зніми останній елемент через <code>pop</code> і виведи те, що повернув метод. <span class="crystal-reward">💎 10</span></li>
+        <li>До <code>stack = [1, 2]</code> додай <code>3</code> і <code>4</code> одним викликом <code>push(3, 4)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>З <code>stack = ['a', 'b', 'c']</code> викликай <code>pop</code> у циклі, поки масив не стане порожнім — виводь кожен результат. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Симулятор черги в магазині — додаємо покупців у кінець і обслуговуємо.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const queue = ['Аліна'];
+queue.push('Богдан');
+queue.push('Віктор', 'Галина');
+console.log('Черга:', queue);
+console.log('Довжина черги:', queue.length);
+
+const last = queue.pop();
+console.log('Пішов останній:', last);
+console.log('Черга тепер:', queue);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Симулюй історію браузера: додай 5 «сторінок» через <code>push</code> у масив <code>history</code> і виведи його. <span class="crystal-reward">💎 15</span></li>
+        <li>Реалізуй «Назад»: <code>pop</code> знімає останню відвідану сторінку — виведи, що лишилось у <code>history</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Одним викликом <code>push</code> додай 3 нові елементи в кінець — перевір, що <code>length</code> зросла на 3. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — історія браузера</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Створюють масив заново на кожному кроці замість одного <code>history</code>, який змінюється.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const history = []; history.push('google.com'); ...</code> — один масив, після пʼяти push у ньому 5 елементів.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — «Назад» через pop</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Використовують <code>shift</code> (знімає з початку) або не зберігають результат <code>pop()</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const last = history.pop(); console.log('Зняли:', last, history);</code> — <code>pop</code> змінює масив і повертає видалений елемент.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — push трьох елементів</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Три окремі <code>push</code> замість одного виклику або очікують, що <code>push</code> поверне новий масив.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>history.push('a', 'b', 'c');</code> — повертає нову <code>length</code>, масив змінюється на місці.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>push</code> / <code>pop</code> — пара для «стеку» (LIFO): останній зайшов — перший вийшов.</li>
+        <li>Можна передати кілька аргументів у <code>push</code> — це швидше і читабельніше, ніж три виклики.</li>
+        <li>Після <code>pop()</code> з порожнього масиву отримаєш <code>undefined</code>, помилки не буде.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../02-create-access/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">02 · Створення та доступ</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../04-shift-unshift/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">04 · shift / unshift</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

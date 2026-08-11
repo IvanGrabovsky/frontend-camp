@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 06 — slice() · JS Масиви</title>
+  <meta name="description" content="Метод slice() — копіювання частини масиву без мутації оригіналу, відʼємні індекси." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">06 · slice</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../05-splice/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../07-concat/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="6" data-total="21">
+        <span class="progress__label">Урок 6 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">06</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>slice() — копіювання частини масиву</h1>
+      <div class="method-tags">
+        <span class="method-tag">slice()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>slice()</code> повертає <strong>новий масив</strong> — копію частини оригіналу від індексу <code>start</code> до <code>end</code> (кінець <em>не включається</em>). Оригінал <strong>не змінюється</strong>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🥪</span> Аналогія з життя</div>
+      <p>Уяви, що ти <strong>відрізаєш шматочок від батона</strong>. Ти береш собі скибку, а сам батон залишається цілим на столі. Так само <code>slice</code> дає тобі копію частини масиву, не чіпаючи оригінал.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.slice(start, end)  <span class="cmt">// end НЕ включається</span>
+<span class="ln">array.slice(2)           <span class="cmt">// від індексу 2 до кінця</span>
+<span class="ln">array.slice(-2)          <span class="cmt">// останні 2 елементи</span>
+<span class="ln">array.slice()            <span class="cmt">// копія всього масиву</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри slice()</h4>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>start</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс початку (за замовчуванням 0)</td></tr>
+            <tr><td><code>end</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс кінця, <strong>не включається</strong> (за замовчуванням — до кінця)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/slice" target="_blank" rel="noopener noreferrer">Array.prototype.slice() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>start</code> — індекс, з якого починається копія (включно).</li>
+        <li><code>end</code> — індекс, <strong>перед</strong> яким копія завершується (не включається).</li>
+        <li>Відʼємні індекси відлічуються від кінця: <code>-1</code> — останній елемент.</li>
+        <li>Виклик без аргументів робить повну копію (поверхневу).</li>
+      </ol>
+
+      <h3>slice vs splice — у чому різниця?</h3>
+      <div class="compare-table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th><code>slice</code></th><th><code>splice</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Мутує оригінал?</td><td>Ні</td><td>Так</td></tr>
+            <tr><td>Що повертає</td><td>Копію частини</td><td>Видалені елементи</td></tr>
+            <tr><td>Призначення</td><td>Читання/копіювання</td><td>Зміна вмісту</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: перші три</span>
+<span class="ln">const students = ['Аня', 'Борис', 'Вася', 'Галя', 'Діма'];</span>
+<span class="ln">const firstThree = students.slice(0, 3);</span>
+<span class="ln">console.log(firstThree); // ['Аня', 'Борис', 'Вася']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: останні два (відʼємний індекс)</span>
+<span class="ln">const students = ['Аня', 'Борис', 'Вася', 'Галя', 'Діма'];</span>
+<span class="ln">const lastTwo = students.slice(-2);</span>
+<span class="ln">console.log(lastTwo); // ['Галя', 'Діма']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: копія не впливає на оригінал</span>
+<span class="ln">const original = [1, 2, 3];</span>
+<span class="ln">const copy = original.slice();</span>
+<span class="ln">copy.push(99);</span>
+<span class="ln">console.log(original); // [1, 2, 3] — не змінився</span>
+<span class="ln">console.log(copy);     // [1, 2, 3, 99]</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>start</code> і <code>end</code> необовʼязкові: без них — копія всього масиву; без <code>end</code> — від <code>start</code> до кінця.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// slice() — без аргументів: повна копія</span>
+<span class="ln">const data = [10, 20, 30, 40, 50];</span>
+<span class="ln">console.log(data.slice());    // [10, 20, 30, 40, 50]</span>
+<span class="ln"></span>
+<span class="ln cmt">// slice(2) — без end: від індексу 2 до кінця</span>
+<span class="ln">console.log(data.slice(2));   // [30, 40, 50]</span>
+<span class="ln"></span>
+<span class="ln cmt">// slice(-2) — без end: останні 2 елементи</span>
+<span class="ln">console.log(data.slice(-2));  // [40, 50]</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Очікувати, що <code>end</code> включається. <code>slice(0, 3)</code> дає елементи 0, 1, 2 — <strong>без</strong> 3-го.</li>
+        <li>Плутати зі <code>splice</code>: <code>slice</code> <em>не</em> змінює оригінал.</li>
+        <li>Пам’ятай: копія поверхнева. Вкладені масиви/обʼєкти залишаються спільними (детальніше в уроці 20).</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=06">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>З <code>nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code> отримай елементи з індексу 2 до 7 через <code>slice(2, 7)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>З <code>nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code> отримай останні 3 елементи через <code>slice(-3)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>З <code>original = ['a', 'b', 'c']</code> зроби копію через <code>slice()</code>, додай <code>'d'</code> у копію — переконайся, що <code>original</code> не змінився. <span class="crystal-reward">💎 10</span></li>
+        <li>Порівняй <code>[1, 2, 3].slice()</code> і <code>[...([1, 2, 3])]</code> — однаковий результат? Виведи обидва. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Порізка масиву чисел на частини.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+console.log('З 3-го по 7-й:', nums.slice(2, 7));
+console.log('Останні 3:', nums.slice(-3));
+
+const copy = nums.slice();
+copy[0] = 999;
+console.log('Копія:', copy);
+console.log('Оригінал не змінився:', nums);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>З <code>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code> отримай підмасив від 3-го до 7-го елемента через <code>slice</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Отримай останні 3 елементи довільного масиву через відʼємний <code>start</code>, не обчислюючи <code>length</code> вручну. <span class="crystal-reward">💎 15</span></li>
+        <li>Зроби копію масиву через <code>slice()</code>, зміни копію — переконайся, що оригінал не змінився. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — елементи з 3-го по 7-й</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають включність кінця: <code>slice(2, 7)</code> дає індекси 2–6 (7-й <strong>не</strong> входить).</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> «З 3-го по 7-й» → <code>slice(2, 7)</code> — start включно, end виключно. Перевір довжину результату: 5.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — останні 3 елементи</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть <code>slice(length - 3, length)</code> замість короткого <code>slice(-3)</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.slice(-3)</code> — відʼємний start рахується від кінця, end можна не вказувати.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — копія через slice</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Змінюють «копію», але насправді присвоїли той самий масив: <code>const copy = arr</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const copy = arr.slice(); copy.push(999);</code> — оригінал без <code>999</code>, якщо копія справжня.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>slice</code> ніколи не змінює вихідний масив — безпечний спосіб «взяти шматок».</li>
+        <li>Другий аргument <code>slice</code> — це індекс, <strong>до</strong> якого різати (не включно).</li>
+        <li>Shallow copy: вкладені обʼєкти в копії все одно спільні — про глибоку копію пізніше в курсі.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../05-splice/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">05 · splice</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../07-concat/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">07 · concat</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 16 — flat() та flatMap() · JS Масиви</title>
+  <meta name="description" content="Методи flat() і flatMap() — розгортання вкладених масивів та map+flat в одному кроці." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">16 · flat / flatMap</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../15-reverse/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../17-every-some/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="16" data-total="21">
+        <span class="progress__label">Урок 16 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">16</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>flat() та flatMap()</h1>
+      <div class="method-tags">
+        <span class="method-tag">flat()</span>
+        <span class="method-tag">flatMap()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>flat(depth)</code> «розгортає» вкладені масиви на вказану глибину (за замовчуванням <code>1</code>). <code>flatMap(callback)</code> — це <code>map</code> + <code>flat(1)</code> в одному кроці: для кожного елемента викликає callback і одразу розгортає його результат на один рівень.</p>
+      <p>Callback у <code>flatMap</code>: <code>(element, index, array) => …</code>. Зазвичай повертає <strong>масив</strong> — тоді його елементи «вливаються» в результат (наприклад, <code>s.split(' ')</code> дає масив слів). Якщо поверне одне значення (число, рядок), воно потрапить у результат як один елемент, без розгортання.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🪆</span> Аналогія з життя</div>
+      <p>Це як <strong>матрьошка</strong>. <code>flat(1)</code> — розкрив одну матрьошку. <code>flat(2)</code> — ще одну всередині. <code>flat(Infinity)</code> — розкрив усі, поки не залишиться плоский список.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.flat(depth)              <span class="cmt">// depth за замовчуванням = 1</span>
+<span class="ln">array.flat(Infinity)           <span class="cmt">// будь-яка глибина</span>
+<span class="ln">array.flatMap((element, index, array) => [ ... ])  <span class="cmt">// callback → масив, flat(1)</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <p class="syntax-params__note">* У <code>flatMap</code> аргументи <code>element</code>, <code>index</code>, <code>array</code> — це параметри <em>callback</em>, а не самого методу. Callback зазвичай повертає <strong>масив</strong>; результат кожного виклику розгортається на 1 рівень і зливається в один масив.</p>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>flat(depth)</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Глибина розгортання (за замовчуванням 1); <code>Infinity</code> — усі рівні</td></tr>
+            <tr><td><code>flatMap(callback)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Функція: <code>(element, index, array) => array | value</code> — трансформує елемент; масив розгортається, одне значення лишається як є</td></tr>
+            <tr><td><code>index</code>, <code>array</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Індекс і посилання на масив — аргументи callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/flat" target="_blank" rel="noopener noreferrer">Array.prototype.flat() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap" target="_blank" rel="noopener noreferrer">Array.prototype.flatMap() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>flat</code> проходить масив і «витягує» вкладені масиви на один рівень (або більше, якщо вказано <code>depth</code>). Callback не потрібен.</li>
+        <li><code>flatMap</code> для кожного елемента викликає callback з аргументами <code>(element, index, array)</code>.</li>
+        <li>Callback має повернути масив — його елементи додаються в результат і розгортаються на 1 рівень (як <code>flat(1)</code>).</li>
+        <li>Якщо callback поверне не масив, а одне значення — воно потрапить у результат як один елемент (як у <code>map</code>).</li>
+        <li><code>flatMap</code> ефективніший за <code>map().flat()</code>, бо робить обидві операції за один прохід. Оригінальний масив не змінюється.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: різна глибина flat</span>
+<span class="ln">const nested = [1, [2, 3], [4, [5, 6]]];</span>
+<span class="ln">console.log(nested.flat());       // [1, 2, 3, 4, [5, 6]]</span>
+<span class="ln">console.log(nested.flat(2));      // [1, 2, 3, 4, 5, 6]</span>
+<span class="ln">console.log(nested.flat(Infinity)); // [1, 2, 3, 4, 5, 6]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: flatMap — розбити речення на слова</span>
+<span class="ln">const sentences = ['Привіт світ', 'Добрий день'];</span>
+<span class="ln">const words = sentences.flatMap(s => s.split(' '));</span>
+<span class="ln">console.log(words); // ['Привіт', 'світ', 'Добрий', 'день']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: категорії товарів → один плоский список</span>
+<span class="ln">const categories = [</span>
+<span class="ln">  ['молоко', 'сир'],</span>
+<span class="ln">  ['хліб', 'булка'],</span>
+<span class="ln">  ['яблуко', 'банан'],</span>
+<span class="ln">];</span>
+<span class="ln">console.log(categories.flat());</span>
+<span class="ln cmt">// ['молоко', 'сир', 'хліб', 'булка', 'яблуко', 'банан']</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>depth</code> у <code>flat</code> необовʼязковий (за замовчуванням 1). Збільшуй глибину, коли масив вкладений на кілька рівнів.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const nested = [1, [2, [3, [4]]]];</span>
+<span class="ln">console.log(nested.flat());         // [1, 2, [3, [4]]] — depth 1</span>
+<span class="ln">console.log(nested.flat(2));        // [1, 2, 3, [4]]   — depth 2</span>
+<span class="ln">console.log(nested.flat(Infinity)); // [1, 2, 3, 4]     — усе</span>
+<span class="ln"></span>
+<span class="ln cmt">// flatMap: index — додати номер до кожного рядка</span>
+<span class="ln">const lines = ['перший', 'другий'];</span>
+<span class="ln">console.log(lines.flatMap((line, index) => [`${index + 1}.`, line]));</span>
+<span class="ln cmt">// ['1.', 'перший', '2.', 'другий']</span></span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Очікувати, що <code>flat(1)</code> розгорне глибоко вкладені масиви — потрібна більша глибина або <code>Infinity</code>.</li>
+        <li>Плутати <code>flatMap</code> з <code>map</code>: якщо callback не повертає масив, результат такий самий як у <code>map</code>.</li>
+        <li>Використовувати <code>flat().map()</code> замість <code>flatMap</code>, коли достатньо одного рівня — це зайве.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=16">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Вкладений масив <code>[1, [2, [3, 4]]]</code> — розгорни через <code>flat()</code> і <code>flat(2)</code>, виведи обидва результати. <span class="crystal-reward">💎 10</span></li>
+        <li>Категорії <code>[['ноутбук', 'мишка'], ['клавіатура'], ['монітор', 'навушники']]</code> — обʼєднай у один масив через <code>flat</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Речення <code>'JavaScript масиви дуже корисні'</code> — розбий на слова через <code>flatMap</code> (кожне слово — окремий елемент). <span class="crystal-reward">💎 10</span></li>
+        <li>Масив <code>[[1, 2], [3, 4]]</code> — порівняй <code>map(x =&gt; x).flat()</code> і <code>flatMap(x =&gt; x)</code>, виведи обидва. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Розгортаємо категорії та збираємо унікальні слова.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const categories = [
+  ['ноутбук', 'мишка'],
+  ['клавіатура', 'монітор'],
+  ['навушники'],
+];
+const allProducts = categories.flat();
+console.log('Усі товари:', allProducts);
+
+const sentences = ['JS масиви', 'JS функції', 'JS обʼєкти'];
+const words = sentences.flatMap(s => s.split(' '));
+const unique = [...new Set(words)];
+console.log('Унікальні слова:', unique);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив категорій <code>[['яблуко', 'груша'], ['морква']]</code> — отримай один плоский список усіх товарів. <span class="crystal-reward">💎 15</span></li>
+        <li>Речення як рядок — розбий на слова і залиш лише унікальні (через <code>flatMap</code> + <code>Set</code> або <code>filter</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>На одному прикладі порівняй у консолі <code>arr.flat().map(fn)</code> і <code>arr.flatMap(fn)</code> — результат однаковий? <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — плоский список товарів</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Використовують один <code>flat()</code> на масиві з глибшою вкладеністю або роблять подвійний map без flat.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>categories.flat()</code> для <code>[['яблуко', 'груша'], ['морква']]</code> → один плоский список.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — унікальні слова</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> flatMap повертає не масиви/елементи для «розгортання» — наприклад, один рядок замість масиву слів.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> split → filter унікальні через Set: <code>[...new Set(sentence.split(/\s+/))]</code> — flatMap опційно для split+trim.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — flat+map vs flatMap</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть «завжди однаково» — не перевірили на прикладі, де callback повертає масив.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Коли callback повертає масив, <code>flatMap</code> = <code>map</code> + flat(1). Покажи обидва результати в console.log.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>flat(Infinity)</code> — «розплющити» будь-яку глибину (обережно на великих даних).</li>
+        <li>flatMap ідеальний для «map, де кожен елемент дає 0 або кілька результатів».</li>
+        <li>Порожній елемент у flatMap (повернув []) — просто нічого не додає до результату.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../15-reverse/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">15 · reverse</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../17-every-some/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">17 · every / some</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

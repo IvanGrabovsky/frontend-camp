@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💎 Система кристалів — JavaScript Масиви</title>
+  <meta name="description" content="Як заробляти кристали на курсі JavaScript Масиви: практика, домашні завдання, мотивація та максимум за урок." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">💎 Кристали</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-content">
+    <section class="crystals-hero">
+      <div class="crystals-hero__icon" aria-hidden="true">💎</div>
+      <h1>Система кристалів</h1>
+      <p>Кристали — внутрішня «валюта» курсу. Заробляй їх за практику на занятті та домашні завдання. Чим більше зібрав — тим видніший твій прогрес.</p>
+    </section>
+
+    <div class="crystals-grid">
+      <article class="crystal-card">
+        <div class="crystal-card__amount">💎 10</div>
+        <h3>Практика на занятті</h3>
+        <p>Одне завдання з блоку «Практика» = 10 кристалів. На уроці даємо <strong>по одному</strong> завданню — не всі чотири одразу. У кожному уроці до 4 завдань → до <strong>💎 40</strong> за практику.</p>
+      </article>
+      <article class="crystal-card">
+        <div class="crystal-card__amount">💎 40</div>
+        <h3>Домашнє завдання</h3>
+        <p>Три завдання: <strong>15 + 15 + 10</strong> кристалів. Роби всі три — отримуєш повний пакет за урок.</p>
+      </article>
+      <article class="crystal-card">
+        <div class="crystal-card__amount">💎 80</div>
+        <h3>Максимум за урок</h3>
+        <p>Практика (до 40) + ДЗ (40) = <strong>до 80 кристалів</strong> за одну тему. У курсі 21 урок → теоретичний максимум <strong>💎 1680</strong>.</p>
+      </article>
+    </div>
+
+    <section class="motivation-block">
+      <h2>Навіщо це потрібно</h2>
+      <ul>
+        <li><strong>Видимий прогрес</strong> — одразу бачиш, скільки вже «закрив» за тему.</li>
+        <li><strong>Мотивація не здаватися</strong> — навіть одне завдання на 💎 10 краще за нуль; маленькі кроки складаються.</li>
+        <li><strong>Чесна оцінка зусиль</strong> — практика і ДЗ оцінюються окремо: можна добре попрацювати на уроці, а домашку зробити пізніше.</li>
+        <li><strong>Складність ≠ більше кристалів</strong> — за складний урок не дають «подвійну» нагороду; індикатор складності підказує, скільки часу закласти, а кристали однакові за структурою.</li>
+      </ul>
+    </section>
+
+    <section class="motivation-block">
+      <h2>Як заробляти ефективно</h2>
+      <ul>
+        <li><strong>На занятті</strong> — роби практику в пісочниці, здавай по черзі. Не пропускай «легкі» завдання 1–2: вони дають ті самі 💎 10.</li>
+        <li><strong>Вдома</strong> — почни з завдання на 💎 15, потім друге на 💎 15; третє на 💎 10 часто коротше — залиш на фініш.</li>
+        <li><strong>Своєчасність</strong> — здавай ДЗ до наступного заняття, поки тема свіжа. Після блоку «Розбір ДЗ» на сторінці уроку легше перевірити себе.</li>
+        <li><strong>Не гонись за 1680</strong> — головне стабільність: 💎 40 за ДЗ кожного уроку вже чудовий результат (💎 840 за курс).</li>
+      </ul>
+    </section>
+
+    <h2 class="section-title" style="margin-top: 36px;">Складність уроків</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">Смужки на картках тем показують навантаження, а не додаткові кристали.</p>
+
+    <div class="crystals-table-wrap">
+      <table class="crystals-table">
+        <thead>
+          <tr>
+            <th>Рівень</th>
+            <th>Уроки</th>
+            <th>Що означає</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="difficulty-indicator difficulty-indicator--easy difficulty-indicator--compact" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span></td>
+            <td>01 – 06</td>
+            <td>Базові методи, мало callback-ів</td>
+          </tr>
+          <tr>
+            <td><span class="difficulty-indicator difficulty-indicator--medium difficulty-indicator--compact" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span></td>
+            <td>07 – 15</td>
+            <td>Пошук, перебір, перші методи з функціями</td>
+          </tr>
+          <tr>
+            <td><span class="difficulty-indicator difficulty-indicator--hard difficulty-indicator--compact" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span></td>
+            <td>16 – 21</td>
+            <td>flat, reduce, sort, проєкт</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-title">Приклад за один урок (урок 11 — map)</h2>
+    <div class="crystals-table-wrap">
+      <table class="crystals-table">
+        <thead>
+          <tr>
+            <th>Джерело</th>
+            <th>Завдання</th>
+            <th>Кристали</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Практика</td>
+            <td>Завдання 1 на занятті</td>
+            <td>💎 10</td>
+          </tr>
+          <tr>
+            <td>Практика</td>
+            <td>Завдання 2 (на наступному занятті або якщо встиг)</td>
+            <td>💎 10</td>
+          </tr>
+          <tr>
+            <td>ДЗ</td>
+            <td>Три домашні завдання</td>
+            <td>💎 15 + 💎 15 + 💎 10</td>
+          </tr>
+          <tr class="crystals-total-row">
+            <td colspan="2">Разом за урок (якщо все зроблено)</td>
+            <td>💎 до 80</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="crystals-cta">
+      <a href="../../../blocks/js-arrays/" class="btn btn--run">Повернутися до тем курсу</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026 · Ліцензія MIT</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

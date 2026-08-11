@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 11 — map() · JS Масиви</title>
+  <meta name="description" content="Метод map() — трансформація кожного елемента у новий масив тієї ж довжини." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">11 · map</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../10-filter/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../12-reduce/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="11" data-total="21">
+        <span class="progress__label">Урок 11 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">11</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>map() — трансформація елементів</h1>
+      <div class="method-tags">
+        <span class="method-tag">map()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>map()</code> створює <strong>новий масив тієї ж довжини</strong>, де кожен елемент — результат перетворення відповідного елемента оригіналу. Оригінал не змінюється.</p>
+      <p>Callback: <code>(element, index, array) => newValue</code> — повернуте значення стає елементом нового масиву на тій самій позиції.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🏭</span> Аналогія з життя</div>
+      <p>Уяви <strong>конвеєр на заводі</strong>: кожна деталь проходить через одну й ту саму операцію та виходить перетвореною. Кількість деталей на виході така сама, як і на вході — просто кожна змінилась.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const result = array.map((element, index, array) => новеЗначення)</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри map()</h4>
+        <p class="syntax-params__note">* <code>element</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>element</code> завжди передається; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td>Функція трансформації: <code>(element, index, array) => newValue</code></td></tr>
+                        <tr><td><code>index</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс поточного елемента</td></tr>
+            <tr><td><code>array</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Посилання на весь масив</td></tr>
+            <tr><td><code>thisArg</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення <code>this</code> всередині callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/map" target="_blank" rel="noopener noreferrer">Array.prototype.map() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Метод перебирає кожен елемент і викликає callback.</li>
+        <li>Те, що <strong>повертає</strong> callback, стає новим елементом.</li>
+        <li>Довжина результату <strong>завжди дорівнює</strong> довжині оригіналу.</li>
+        <li>Порядок елементів зберігається.</li>
+      </ol>
+
+      <h3>map vs forEach</h3>
+      <p>Головна різниця: <code>map</code> <strong>повертає новий масив</strong>, а <code>forEach</code> (урок 13) нічого не повертає й потрібен лише для побічних дій. Якщо тобі потрібен результат-масив — це <code>map</code>.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: додати податок до цін</span>
+<span class="ln">const prices = [100, 200, 300];</span>
+<span class="ln">const withTax = prices.map(p => p * 1.2);</span>
+<span class="ln">console.log(withTax); // [120, 240, 360]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: витягти одне поле з обʼєктів</span>
+<span class="ln">const users = [{ name: 'Аня' }, { name: 'Борис' }];</span>
+<span class="ln">const names = users.map(u => u.name);</span>
+<span class="ln">console.log(names); // ['Аня', 'Борис']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: згенерувати HTML-розмітку</span>
+<span class="ln">const users = [{ name: 'Аня' }, { name: 'Борис' }];</span>
+<span class="ln">const cards = users.map(u =&gt; `&lt;div&gt;${u.name}&lt;/div&gt;`);</span>
+<span class="ln">console.log(cards.join(''));</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У callback необовʼязковий <code>index</code> — часто використовують для нумерації, чергування стилів або формування ключів.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const tasks = ['Купити молоко', 'Зробити ДЗ', 'Повторити map'];</span>
+<span class="ln">const numbered = tasks.map((task, index) => `${index + 1}. ${task}`);</span>
+<span class="ln">console.log(numbered);</span>
+<span class="ln cmt">// ['1. Купити молоко', '2. Зробити ДЗ', '3. Повторити map']</span>
+<span class="ln"></span>
+<span class="ln cmt">// Чергування класів для UI</span>
+<span class="ln">const cssClasses = tasks.map((_, index) =></span>
+<span class="ln">  index % 2 === 0 ? 'row-even' : 'row-odd'</span>
+<span class="ln">);</span>
+<span class="ln">console.log(cssClasses); // ['row-even', 'row-odd', 'row-even']</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Використовувати <code>map</code>, коли результат не потрібен — тоді краще <code>forEach</code>.</li>
+        <li>Забути <code>return</code> у callback із фігурними дужками → масив із <code>undefined</code>.</li>
+        <li>Очікувати іншу довжину: <code>map</code> завжди повертає стільки ж елементів. Для відсіву використовуй <code>filter</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=11">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Температури <code>celsius = [0, 25, 37, 100]</code> — через <code>map</code> отримай Фаренгейти (<code>c * 9/5 + 32</code>). <span class="crystal-reward">💎 10</span></li>
+        <li>Імена <code>['аня', 'борис', 'вася']</code> — перетвори кожне на вигляд з великої літери. <span class="crystal-reward">💎 10</span></li>
+        <li>Користувачі <code>[{name:'Аня'}, {name:'Борис'}, {name:'Вася'}]</code> — витягни лише поле <code>name</code> через <code>map</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Для <code>[1, 2, 3, 4, 5]</code> перевір: <code>arr.map(x =&gt; x * 2).length === arr.length</code> — виведи <code>true</code> або <code>false</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Перетворюємо масиви різними способами.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const celsius = [0, 25, 37, 100];
+const fahrenheit = celsius.map(c => c * 9 / 5 + 32);
+console.log('У Фаренгейтах:', fahrenheit);
+
+const names = ['аня', 'борис', 'вася'];
+const capitalized = names.map(n => n[0].toUpperCase() + n.slice(1));
+console.log('З великої літери:', capitalized);
+
+// Ланцюжок filter + map
+const nums = [1, 2, 3, 4, 5, 6];
+const result = nums.filter(n => n % 2 === 0).map(n => n * 10);
+console.log('Парні × 10:', result);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив температур у Цельсії <code>[0, 25, 37, 100]</code> — через <code>map</code> отримай значення у Фаренгейтах (<code>c * 9/5 + 32</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>Масив імен <code>['аня', 'борис', 'вася']</code> — перетвори кожне на вигляд з великої літери (<code>'Аня'</code>, …). <span class="crystal-reward">💎 15</span></li>
+        <li>Масив обʼєктів <code>{firstName, lastName}</code> — через <code>map</code> збери рядки «Прізвище Імʼя» (напр. <code>'Грабовський Іван'</code>). <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — Цельсій → Фаренгейт</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Забувають дужки в формулі: <code>c * 9/5 + 32</code> ок, але іноді пишуть <code>c * 9/5 + 32</code> з цілим діленням помилково або мутують <code>celsius</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>celsius.map(c => c * 9 / 5 + 32)</code> — новий масив, вихідний без змін.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — велика літера</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Роблять тільки <code>toUpperCase()</code> для всього рядка → <code>'АНЯ'</code> замість <code>'Аня'</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>n[0].toUpperCase() + n.slice(1)</code> або перевір, що перша літера велика, решта — малі.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — «Прізвище Імʼя»</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають порядок полів: <code>firstName + lastName</code> без пробілу або навпаки.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>people.map(p => `${p.lastName} ${p.firstName}`)</code> — шаблонний рядок з пробілом.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>map</code> завжди повертає масив тієї ж довжини, що й вихідний (на відміну від <code>filter</code>).</li>
+        <li>Якщо callback нічого не повертає — отримаєш масив з <code>undefined</code>; не забудь <code>return</code> (або стрілку без {} ).</li>
+        <li>Ланцюжок <code>filter().map()</code> — типовий патерн «відібрати → перетворити».</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../10-filter/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">10 · filter</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../12-reduce/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">12 · reduce</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

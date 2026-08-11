@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 08 — indexOf, lastIndexOf, includes · JS Масиви</title>
+  <meta name="description" content="Пошук значень у масиві: indexOf(), lastIndexOf(), includes() та особливість з NaN." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">08 · indexOf / includes</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../07-concat/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../09-find-findIndex/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="8" data-total="21">
+        <span class="progress__label">Урок 8 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">08</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>indexOf(), lastIndexOf(), includes()</h1>
+      <div class="method-tags">
+        <span class="method-tag">indexOf()</span>
+        <span class="method-tag">lastIndexOf()</span>
+        <span class="method-tag">includes()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Ці методи відповідають на питання «де» і «чи є». <code>indexOf</code> повертає індекс першого входження значення (або <code>-1</code>). <code>lastIndexOf</code> — індекс останнього входження. <code>includes</code> повертає <code>true</code>/<code>false</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📖</span> Аналогія з життя</div>
+      <p>Ти шукаєш слово в книзі. <code>indexOf</code> — «на якій сторінці воно <strong>вперше</strong> зустрічається?». <code>lastIndexOf</code> — «а де <strong>востаннє</strong>?». <code>includes</code> — «а воно <strong>взагалі</strong> є в книзі?».</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.indexOf(value, fromIndex)  <span class="cmt">// перший індекс або -1</span>
+<span class="ln">array.lastIndexOf(value)         <span class="cmt">// останній індекс або -1</span>
+<span class="ln">array.includes(value)            <span class="cmt">// true / false</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>indexOf(searchElement)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Значення для пошуку першого входження</td></tr>
+            <tr><td><code>fromIndex</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс, з якого почати пошук</td></tr>
+            <tr><td><code>lastIndexOf(searchElement)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Значення для пошуку останнього входження</td></tr>
+            <tr><td><code>includes(searchElement)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Перевірка наявності (повертає boolean)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf" target="_blank" rel="noopener noreferrer">Array.prototype.indexOf() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf" target="_blank" rel="noopener noreferrer">Array.prototype.lastIndexOf() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/includes" target="_blank" rel="noopener noreferrer">Array.prototype.includes() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>indexOf</code> шукає зліва направо й повертає перший знайдений індекс.</li>
+        <li>Необовʼязковий <code>fromIndex</code> — з якої позиції почати пошук.</li>
+        <li><code>lastIndexOf</code> шукає справа наліво.</li>
+        <li>Порівняння відбувається строго (<code>===</code>), тому <code>'2'</code> і <code>2</code> — різні.</li>
+      </ol>
+
+      <h3>Особливість з NaN</h3>
+      <p><code>indexOf</code> <strong>не знаходить</strong> <code>NaN</code> (бо <code>NaN === NaN</code> завжди <code>false</code>), а <code>includes</code> — <strong>знаходить</strong>. Це головна практична відмінність між ними.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: пошук фрукта</span>
+<span class="ln">const fruits = ['яблуко', 'банан', 'апельсин', 'банан'];</span>
+<span class="ln">console.log(fruits.indexOf('банан'));     // 1</span>
+<span class="ln">console.log(fruits.lastIndexOf('банан')); // 3</span>
+<span class="ln">console.log(fruits.includes('кавун'));    // false</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: перевірка наявності перед дією</span>
+<span class="ln">const cart = ['молоко', 'хліб'];</span>
+<span class="ln">if (!cart.includes('яйця')) {</span>
+<span class="ln">  cart.push('яйця');</span>
+<span class="ln">}</span>
+<span class="ln">console.log(cart); // ['молоко', 'хліб', 'яйця']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: різниця з NaN</span>
+<span class="ln">const nums = [1, NaN, 3];</span>
+<span class="ln">console.log(nums.indexOf(NaN));   // -1 (не знайшов!)</span>
+<span class="ln">console.log(nums.includes(NaN));  // true (знайшов)</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>fromIndex</code> необовʼязковий — з ним пошук починається не з нуля, а з указаної позиції. Корисно для дублікатів і «наступного входження».</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const tags = ['js', 'css', 'js', 'html', 'js'];</span>
+<span class="ln">console.log(tags.indexOf('js'));     // 0 — перше</span>
+<span class="ln">console.log(tags.indexOf('js', 1));  // 2 — друге (після індексу 0)</span>
+<span class="ln">console.log(tags.indexOf('js', 3));  // 4 — третє</span>
+<span class="ln"></span>
+<span class="ln cmt">// includes теж приймає fromIndex</span>
+<span class="ln">console.log(tags.includes('js', 2)); // true — є після індексу 2</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Забути, що <code>indexOf</code> повертає <code>-1</code>, а не <code>false</code>, коли нічого не знайдено.</li>
+        <li>Шукати обʼєкти: <code>[{}].indexOf({})</code> → <code>-1</code>, бо це різні посилання. Для обʼєктів використовуй <code>find</code> (урок 09).</li>
+        <li>Плутати перевірку: <code>if (arr.indexOf(x))</code> хибне, коли <code>x</code> на індексі 0. Краще <code>includes</code> або <code>!== -1</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=08">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Кошик <code>cart = ['молоко', 'хліб', 'сир', 'хліб']</code> — перевір через <code>includes</code>, чи є <code>'сир'</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>У <code>cart</code> знайди перший індекс <code>'хліб'</code> через <code>indexOf</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>У тому ж <code>cart</code> знайди останній індекс <code>'хліб'</code> через <code>lastIndexOf</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Для <code>cart = ['молоко', 'хліб', 'сир']</code> напиши <code>isInStock(cart, 'кава')</code> — має повернути <code>false</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Перевіряємо наявність товарів у кошику.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const cart = ['молоко', 'хліб', 'сир', 'хліб'];
+
+console.log('Чи є сир?', cart.includes('сир'));
+console.log('Перший хліб на індексі:', cart.indexOf('хліб'));
+console.log('Останній хліб на індексі:', cart.lastIndexOf('хліб'));
+
+// Функція перевірки наявності
+function isInStock(arr, item) {
+  return arr.includes(item);
+}
+console.log('Кава в наявності?', isInStock(cart, 'кава'));</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив товарів у кошику — перевір через <code>includes</code>, чи є конкретний товар; виведи лише <code>true</code> або <code>false</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>У масиві з дублікатами знайди всі індекси одного значення — цикл і <code>indexOf</code> з <code>fromIndex</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Напиши функцію <code>isInStock(cart, item)</code>: приймає масив і назву товару, повертає boolean. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — товар у кошику</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Перевіряють <code>indexOf !== 0</code> — якщо товар на першій позиції, умова дасть хибний результат.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>cart.includes('Молоко')</code> → <code>true</code> / <code>false</code>. Або <code>indexOf !== -1</code>.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — усі індекси дубліката</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Знову шукають з індексу 0 і потрапляють у нескінченний цикл або пропускають повтори.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Цикл: <code>let i = arr.indexOf(val); while (i !== -1) { ...; i = arr.indexOf(val, i + 1); }</code></p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — функція isInStock</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Повертають рядок <code>'yes'</code> / <code>'no'</code> замість boolean або забувають <code>return</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>return cart.includes(item);</code> — чистий boolean для умов у коді.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>includes</code> коректно знаходить <code>NaN</code>, на відміну від <code>indexOf</code>.</li>
+        <li>Для обʼєктів <code>includes</code> порівнює посилання — <code>{a:1}</code> не знайде «такий самий» обʼєкт.</li>
+        <li>Регістр має значення: <code>'JS'</code> і <code>'js'</code> — різні рядки для пошуку.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../07-concat/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">07 · concat</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../09-find-findIndex/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">09 · find / findIndex</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 18 — fill() та Array.from() · JS Масиви</title>
+  <meta name="description" content="Метод fill(), Array.from() та Array.isArray() — заповнення та генерація масивів." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">18 · fill / Array.from</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../17-every-some/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../19-join-split/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="18" data-total="21">
+        <span class="progress__label">Урок 18 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">18</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>fill() та Array.from()</h1>
+      <div class="method-tags">
+        <span class="method-tag">fill()</span>
+        <span class="method-tag">Array.from()</span>
+        <span class="method-tag">Array.isArray()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>fill(value, start, end)</code> заповнює елементи масиву одним значенням (мутує). <code>Array.from(arrayLike, mapFn)</code> створює масив з «схожого на масив» обʼєкта: рядка, Set, NodeList або навіть обʼєкта з <code>length</code>.</p>
+      <p>Callback <code>mapFn</code> у <code>Array.from</code>: <code>(element, index) => value</code> — необовʼязковий; перетворює кожен елемент під час створення масиву (як <code>map</code> одразу після генерації).</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🧱</span> Аналогія з життя</div>
+      <p><code>fill</code> — це як <strong>залити форму бетоном</strong> від однієї позиції до іншої. <code>Array.from</code> — як <strong>зліпити масив</strong> з чогось, що «схоже на масив»: рядка, набору унікальних значень або просто числа «скільки елементів потрібно».</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.fill(value, start, end)     <span class="cmt">// заповнити діапазон</span>
+<span class="ln">Array.from(arrayLike, mapFn)      <span class="cmt">// створити з array-like</span>
+<span class="ln">Array.from({ length: N }, (_, i) => i) <span class="cmt">// генерація послідовності</span>
+<span class="ln">Array.isArray(value)              <span class="cmt">// чи це масив?</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>fill(value)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Значення для заповнення</td></tr>
+            <tr><td><code>start</code>, <code>end</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Діапазон заповнення (як у slice)</td></tr>
+            <tr><td><code>Array.from(arrayLike)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Обʼєкт, схожий на масив (рядок, Set, {length})</td></tr>
+            <tr><td><code>mapFn</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Callback: <code>(element, index) => value</code> — трансформує елемент при створенні (як <code>map</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/fill" target="_blank" rel="noopener noreferrer">Array.prototype.fill() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/from" target="_blank" rel="noopener noreferrer">Array.from() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray" target="_blank" rel="noopener noreferrer">Array.isArray() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Error/isError" target="_blank" rel="noopener noreferrer">Error.isError() — MDN (ES2025)</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/fromAsync" target="_blank" rel="noopener noreferrer">Array.fromAsync() — MDN (ES2024)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>fill</code> замінює елементи в діапазоні <code>[start, end)</code> одним значенням.</li>
+        <li><code>Array.from('abc')</code> дає <code>['a', 'b', 'c']</code>.</li>
+        <li>Необовʼязковий <code>mapFn(element, index)</code> одразу перетворює кожен створений елемент — як <code>map</code> під час генерації.</li>
+        <li><code>Array.from({ length: 5 }, (_, i) => i + 1)</code> → <code>[1, 2, 3, 4, 5]</code>.</li>
+        <li><code>Array.isArray</code> — надійний спосіб перевірити, чи значення є масивом.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: fill — заповнити масив</span>
+<span class="ln">console.log(new Array(5).fill(0));     // [0, 0, 0, 0, 0]</span>
+<span class="ln">console.log([1,2,3,4,5].fill(0, 2, 4)); // [1, 2, 0, 0, 5]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: Array.from — різні джерела</span>
+<span class="ln">console.log(Array.from('JavaScript'));</span>
+<span class="ln">console.log(Array.from({ length: 5 }, (_, i) => i + 1));</span>
+<span class="ln">console.log(Array.from(new Set([1, 2, 2, 3]))); // [1, 2, 3]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: парні числа від 2 до 20</span>
+<span class="ln">const evens = Array.from({ length: 10 }, (_, i) => (i + 1) * 2);</span>
+<span class="ln">console.log(evens); // [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>start</code> і <code>end</code> необовʼязкові: без них <code>fill</code> замінює <strong>весь</strong> масив. У <code>Array.from</code> необовʼязковий <code>mapFn</code> — без нього просто копіює значення з джерела.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// fill(value) — без start/end: увесь масив</span>
+<span class="ln">const board = [1, 2, 3, 4];</span>
+<span class="ln">board.fill(0);</span>
+<span class="ln">console.log(board); // [0, 0, 0, 0]</span>
+<span class="ln"></span>
+<span class="ln cmt">// fill(value, start, end) — лише діапазон</span>
+<span class="ln">const cells = [1, 2, 3, 4, 5];</span>
+<span class="ln">cells.fill('X', 1, 4); // індекси 1, 2, 3</span>
+<span class="ln">console.log(cells); // [1, 'X', 'X', 'X', 5]</span>
+<span class="ln"></span>
+<span class="ln cmt">// Array.from без mapFn vs з mapFn</span>
+<span class="ln">console.log(Array.from({ length: 4 }));              // [undefined × 4]</span>
+<span class="ln">console.log(Array.from({ length: 4 }, (_, i) => i)); // [0, 1, 2, 3]</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Array.isArray() — надійна перевірка типу</h3>
+      <p><code>typeof []</code> повертає <code>'object'</code>, тому для масивів використовуй <strong>статичний</strong> метод <code>Array.isArray(value)</code>. Це «брендована» перевірка: працює навіть через iframe та для обʼєктів з <code>Symbol.toStringTag</code>.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">console.log(Array.isArray([]));        // true</span>
+<span class="ln">console.log(Array.isArray({}));        // false</span>
+<span class="ln">console.log(Array.isArray('abc'));     // false</span>
+<span class="ln">console.log(Array.isArray(null));      // false</span></code></pre>
+      </div>
+
+      <h3>Error.isError() — аналогічна перевірка для помилок (ES2025)</h3>
+      <p>Не масивний метод, але той самий підхід: замість <code>err instanceof Error</code> (ламається між realm/iframe) використовуй <code>Error.isError(value)</code> — надійно розпізнає справжні обʼєкти <code>Error</code>, включно з підкласами.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">try {</span>
+<span class="ln">  throw new TypeError('не масив');</span>
+<span class="ln">} catch (err) {</span>
+<span class="ln">  console.log(Error.isError(err));     // true</span>
+<span class="ln">  console.log(Array.isArray(err));     // false</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h3>Array.fromAsync() — для async-ітераторів (ES2024, опційно)</h3>
+      <p>Якщо джерело даних асинхронне (наприклад, <code>fetch</code> + stream), <code>Array.fromAsync(asyncIterable)</code> повертає <strong>Promise</strong> масиву. У звичайних уроках достатньо <code>Array.from</code>; знай з ним на майбутнє.</p>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><code>new Array(5)</code> створює масив з 5 «порожніми» слотами — <code>map</code> на ньому не спрацює. Використовуй <code>Array.from</code> або <code>fill</code>.</li>
+        <li><code>fill</code> мутує масив — для копії спочатку зроби <code>slice()</code>.</li>
+        <li><code>typeof []</code> дає <code>'object'</code> — для масивів краще <code>Array.isArray</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=18">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Через <code>Array.from({ length: 10 }, (_, i) =&gt; i + 1)</code> згенеруй <code>[1..10]</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Через <code>Array.from</code> згенеруй парні числа <code>[2, 4, 6, …, 20]</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Масив <code>[1, 2, 3, 4, 5, 6, 7]</code> — заміни елементи з індексів 2–4 на <code>0</code> через <code>fill(0, 2, 5)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Перевір <code>Array.isArray([])</code> і <code>Array.isArray({})</code> — виведи обидва результати. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Генеруємо послідовності та рахуємо голосні.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const evens = Array.from({ length: 10 }, (_, i) => (i + 1) * 2);
+console.log('Парні 2–20:', evens);
+
+const word = 'JavaScript';
+const vowels = Array.from(word).filter(ch =>
+  'aeiouAEIOUаеиоуяюіїєAEIOUАЕИОУЯЮІЇЄ'.includes(ch)
+);
+console.log('Голосні в', word + ':', vowels.length);
+
+const arr = [1, 2, 3, 4, 5];
+arr.fill(0, 2, 5);
+console.log('Після fill(0, 2, 5):', arr);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Через <code>Array.from</code> створи масив парних чисел від 2 до 20 включно. <span class="crystal-reward">💎 15</span></li>
+        <li>Рядок <code>'JavaScript'</code> — перетвори на масив символів і порахуй, скільки з них голосні (a, e, i, o, u). <span class="crystal-reward">💎 15</span></li>
+        <li>Масив <code>[1, 2, 3, 4, 5, 6, 7]</code> — заміни елементи з індексів 2–4 на <code>0</code> через <code>fill(0, 2, 5)</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — парні 2..20</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> fill(2) заповнює всі однаковим числом 2, а не генерує послідовність.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>Array.from({ length: 10 }, (_, i) => (i + 1) * 2)</code> — або цикл push.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — голосні в JavaScript</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Рахують усі літери a — включно з приголосними в «Java»; не переводять у lowerCase.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> split → filter з набором <code>aeiou</code> і <code>char.toLowerCase()</code> — порахуй .length фільтра.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — fill(0, 2, 5)</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають end index: <code>fill(0, 2, 4)</code> замінить лише індекси 2 і 3, не 4.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.fill(0, 2, 5)</code> — індекси 2, 3, 4 стають 0; 5-й не включається (як slice).</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>Array.isArray</code> — єдиний надійний спосіб відрізнити масив від іншого object; не плутай з <code>typeof</code>.</li>
+        <li><code>Error.isError</code> — той самий патерн для помилок; корисно в <code>catch</code>, коли не знаєш тип виключення.</li>
+        <li><code>Array.fromAsync</code> — async-версія <code>Array.from</code> для потоків і async generators (повертає Promise).</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../17-every-some/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">17 · every / some</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../19-join-split/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">19 · join / split</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

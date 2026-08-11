@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 13 — forEach() · JS Масиви</title>
+  <meta name="description" content="Метод forEach() — перебір елементів для побічних дій, різниця з map та for...of." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">13 · forEach</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../12-reduce/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../14-sort/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="13" data-total="21">
+        <span class="progress__label">Урок 13 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">13</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>forEach() — перебір елементів</h1>
+      <div class="method-tags">
+        <span class="method-tag">forEach()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>forEach()</code> виконує вказану дію для <strong>кожного</strong> елемента масиву. Він <strong>нічого не повертає</strong> (<code>undefined</code>) і призначений для <em>побічних ефектів</em>: вивести в консоль, оновити DOM, накопичити щось у зовнішній змінній.</p>
+      <p>Callback: <code>(element, index, array) => void</code> — виконує дію для поточного елемента; повернене значення ігнорується.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">✅</span> Аналогія з життя</div>
+      <p>Це як <strong>пройтися по списку справ</strong> і виконати кожну по черзі. Ти не створюєш новий список — просто робиш дію для кожного пункту й ставиш галочку.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.forEach((element, index, array) => {</span>
+<span class="ln">  <span class="cmt">// дія для кожного елемента</span>
+<span class="ln">});</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри forEach()</h4>
+        <p class="syntax-params__note">* <code>element</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>element</code> завжди передається; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td>Функція дії: <code>(element, index, array) => void</code> — нічого не повертає</td></tr>
+                        <tr><td><code>index</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс поточного елемента</td></tr>
+            <tr><td><code>array</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Посилання на весь масив</td></tr>
+            <tr><td><code>thisArg</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення <code>this</code> всередині callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" target="_blank" rel="noopener noreferrer">Array.prototype.forEach() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Метод по черзі викликає callback для кожного елемента.</li>
+        <li>Повертає <code>undefined</code> — тому його не можна присвоїти для отримання результату.</li>
+        <li>Його <strong>не можна зупинити</strong> через <code>break</code>. Щоб вийти раніше — використай <code>some</code>/<code>every</code> (урок 17) або <code>for...of</code> з <code>break</code>.</li>
+        <li>Ідеальний, коли потрібна дія, а не новий масив.</li>
+      </ol>
+
+      <h3>Порівняння способів перебору</h3>
+      <div class="compare-table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th><code>forEach</code></th><th><code>for...of</code></th><th><code>for</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Доступ до індексу</td><td>Так (2-й аргумент)</td><td>Ні (без entries)</td><td>Так</td></tr>
+            <tr><td>Можна break</td><td>Ні</td><td>Так</td><td>Так</td></tr>
+            <tr><td>Повертає значення</td><td>Ні</td><td>Ні</td><td>Ні</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>forEach чи map?</h3>
+      <p>Якщо потрібен <strong>новий масив</strong> — бери <code>map</code>. Якщо потрібна лише <strong>дія</strong> (без результату) — бери <code>forEach</code>.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: пронумерований список задач</span>
+<span class="ln">const tasks = ['Зробити ДЗ', 'Почитати книгу', 'Тренування'];</span>
+<span class="ln">tasks.forEach((task, i) => {</span>
+<span class="ln">  console.log(`${i + 1}. ${task}`);</span>
+<span class="ln">});</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: накопичення суми в зовнішній змінній</span>
+<span class="ln">const prices = [100, 250, 50];</span>
+<span class="ln">let total = 0;</span>
+<span class="ln">prices.forEach(p => { total += p; });</span>
+<span class="ln">console.log('Разом:', total); // 400</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: побічний ефект — оновлення DOM</span>
+<span class="ln">const tasks = ['A', 'B'];</span>
+<span class="ln">tasks.forEach(task => {</span>
+<span class="ln">  const li = document.createElement('li');</span>
+<span class="ln">  li.textContent = task;</span>
+<span class="ln">  list.appendChild(li); <span class="cmt">// list — елемент &lt;ul&gt; на сторінці</span>
+<span class="ln">});</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У callback необовʼязкові <code>index</code> і <code>array</code>. <code>index</code> — для нумерації; <code>array</code> — коли в циклі потрібен доступ до всього масиву (рідше).</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const menu = ['Головна', 'Курси', 'Контакти'];</span>
+<span class="ln">menu.forEach((item, index) => {</span>
+<span class="ln">  console.log(`${index + 1}) ${item}`);</span>
+<span class="ln">});</span>
+<span class="ln"></span>
+<span class="ln cmt">// array — порівняти з сусідом (останній без наступного)</span>
+<span class="ln">const temps = [18, 22, 19, 25];</span>
+<span class="ln">temps.forEach((t, i, arr) => {</span>
+<span class="ln">  const next = arr[i + 1];</span>
+<span class="ln">  if (next !== undefined && next > t) console.log(`↑ з ${t} до ${next}`);</span>
+<span class="ln">});</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Намагатися отримати результат: <code>const r = arr.forEach(...)</code> завжди дає <code>undefined</code>.</li>
+        <li>Пробувати <code>break</code>/<code>continue</code> усередині — вони не працюють у <code>forEach</code>.</li>
+        <li>Використовувати <code>forEach</code> для трансформації замість <code>map</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=13">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Завдання <code>['Зробити ДЗ', 'Почитати книгу', 'Тренування']</code> — виведи нумерований список через <code>forEach</code> (<code>1. …</code>). <span class="crystal-reward">💎 10</span></li>
+        <li>Числа <code>[5, 10, 15, 20]</code> — порахуй суму через <code>forEach</code> (змінна ззовні callback). <span class="crystal-reward">💎 10</span></li>
+        <li>Перевір: <code>const r = [1, 2, 3].forEach(x =&gt; x)</code> — виведи <code>r</code> і поясни в коментарі. <span class="crystal-reward">💎 10</span></li>
+        <li>Для <code>['a', 'b', 'c']</code> порівняй: коли потрібен <code>forEach</code>, а коли <code>map</code> — один рядок висновку в консоль. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Перебираємо список і рахуємо суму без reduce.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const tasks = ['Зробити ДЗ', 'Почитати книгу', 'Тренування'];
+tasks.forEach((task, i) => {
+  console.log(`${i + 1}. ${task}`);
+});
+
+let sum = 0;
+[10, 20, 30, 40].forEach(n => { sum += n; });
+console.log('Сума:', sum);
+
+// Чому map тут повертає undefined?
+const result = tasks.forEach(t => t.toUpperCase());
+console.log('forEach повертає:', result);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Число N (наприклад, 7) — через <code>forEach</code> виведи таблицю множення: <code>7 × 1 = 7</code>, …, <code>7 × 10 = 70</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив чисел — порахуй їхню суму через <code>forEach</code> (змінна-накопичувач оголоси ззовні callback). <span class="crystal-reward">💎 15</span></li>
+        <li>Поясни в коментарі, чому <code>const r = [1,2,3].forEach(...)</code> дає <code>undefined</code> — і коли краще <code>map</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — таблиця множення</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Створюють масив 1..10 через зайвий код замість <code>Array.from({length: 10}, (_, i) => i + 1)</code> або простого циклу for.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>[1,2,...,10].forEach(i => console.log(`${n} × ${i} = ${n * i}`))</code> — 10 рядків у консолі.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — сума через forEach</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Оголошують <code>sum</code> всередині callback — на кожній ітерації скидається в нуль.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>let sum = 0; nums.forEach(n => { sum += n; });</code> — накопичувач ззовні.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — forEach повертає undefined</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть «forEach нічого не повертає» без пояснення, коли потрібен саме <code>map</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> forEach — лише побічні ефекти (console.log, sum+=). map — коли потрібен новий масив результатів.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>У forEach не можна «перервати» цикл через break — для цього є for/of або some/every.</li>
+        <li>Другий аргument forEach — <code>thisArg</code>, рідко потрібен на старті.</li>
+        <li>Порожній масив — forEach просто нічого не викличе, помилки не буде.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../12-reduce/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">12 · reduce</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../14-sort/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">14 · sort</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

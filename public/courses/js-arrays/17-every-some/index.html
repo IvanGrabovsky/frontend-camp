@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 17 — every() та some() · JS Масиви</title>
+  <meta name="description" content="Методи every() і some() — перевірка умов для всіх або хоча б одного елемента масиву." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">17 · every / some</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../16-flat-flatMap/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../18-fill/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="17" data-total="21">
+        <span class="progress__label">Урок 17 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">17</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>every() та some()</h1>
+      <div class="method-tags">
+        <span class="method-tag">every()</span>
+        <span class="method-tag">some()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>every(callback)</code> повертає <code>true</code>, якщо <strong>всі</strong> елементи проходять тест. <code>some(callback)</code> — якщо <strong>хоча б один</strong> проходить. Обидва зупиняються раніше (коротке замикання), коли результат уже відомий.</p>
+      <p>Callback: <code>(element, index, array) => boolean</code> — <code>every</code> очікує <code>true</code> від кожного; <code>some</code> — хоча б одного <code>true</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎓</span> Аналогія з життя</div>
+      <p><code>every</code> — «<strong>УСІ</strong> студенти склали іспит?». <code>some</code> — «<strong>ХОЧА Б ОДИН</strong> студент склав?». Перше вимагає 100% успіху, друге — достатньо одного позитивного результату.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.every((element, index, array) => умова)  <span class="cmt">// всі true?</span>
+<span class="ln">array.some((element, index, array) => умова)   <span class="cmt">// хоча б один true?</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри callback</h4>
+        <p class="syntax-params__note">* <code>element</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>element</code> завжди передається; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td><code>(element, index, array) => boolean</code> — <code>every</code>: усі <code>true</code>; <code>some</code>: хоча б один <code>true</code></td></tr>
+                        <tr><td><code>index</code>, <code>array</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Індекс і посилання на масив</td></tr>
+            <tr><td><code>thisArg</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення <code>this</code> всередині callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/every" target="_blank" rel="noopener noreferrer">Array.prototype.every() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/some" target="_blank" rel="noopener noreferrer">Array.prototype.some() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>every</code> перебирає елементи; якщо хоч один callback поверне <code>false</code> — одразу <code>false</code>.</li>
+        <li><code>some</code> перебирає елементи; якщо хоч один callback поверне <code>true</code> — одразу <code>true</code>.</li>
+        <li>На <strong>порожньому масиві</strong>: <code>every</code> → <code>true</code> (вакuous truth), <code>some</code> → <code>false</code>.</li>
+        <li>Ідеально для валідації форм і перевірки умов у колекціях.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: оцінки студентів</span>
+<span class="ln">const grades = [75, 82, 91, 68, 88];</span>
+<span class="ln">const allPassed = grades.every(g => g >= 60);   // true</span>
+<span class="ln">const anyExcellent = grades.some(g => g >= 90); // true</span>
+<span class="ln">console.log(allPassed, anyExcellent);</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: перевірка кошика</span>
+<span class="ln">const cart = [{ inStock: true }, { inStock: false }];</span>
+<span class="ln">console.log(cart.every(i => i.inStock));  // false</span>
+<span class="ln">console.log(cart.some(i => !i.inStock));  // true</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: валідація паролів</span>
+<span class="ln">const passwords = ['abc12345', 'short', 'securePass99'];</span>
+<span class="ln">const allValid = passwords.every(p => p.length > 8);</span>
+<span class="ln">console.log('Усі паролі довші за 8?', allValid); // false</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У callback необовʼязковий <code>index</code> — зручно, коли перший елемент особливий (пробний тест, заголовок таблиці тощо).</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const scores = [50, 85, 90, 78]; // 50 — пробний тест, не рахуємо</span>
+<span class="ln"></span>
+<span class="ln cmt">// every з index — пропустити перший елемент</span>
+<span class="ln">const allRealPassed = scores.every((score, index) =></span>
+<span class="ln">  index === 0 || score >= 60</span>
+<span class="ln">);</span>
+<span class="ln">console.log(allRealPassed); // true</span>
+<span class="ln"></span>
+<span class="ln cmt">// some — чи є хоч одна відмінна оцінка після першої?</span>
+<span class="ln">const hasExcellent = scores.some((s, i) => i > 0 && s >= 90);</span>
+<span class="ln">console.log(hasExcellent); // true</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Плутати <code>every</code> і <code>some</code> — логіка протилежна.</li>
+        <li>На порожньому масиві <code>every</code> дає <code>true</code> — це може здивувати, але логічно («немає контрприкладу»).</li>
+        <li>Використовувати <code>filter</code>, коли достатньо булевої відповіді — <code>every</code>/<code>some</code> ефективніші.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=17">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Оцінки <code>[75, 82, 91, 68, 88]</code> — перевір через <code>every</code>, чи всі ≥ 60. <span class="crystal-reward">💎 10</span></li>
+        <li>Числа <code>[5, 12, 8, 20, -3]</code> — через <code>some</code> перевір, чи є відʼємне. <span class="crystal-reward">💎 10</span></li>
+        <li>Паролі <code>['12345678', 'password123', 'qwerty', 'abc12345']</code> — чи всі довші за 8 символів (<code>every</code>)? <span class="crystal-reward">💎 10</span></li>
+        <li>Порожній масив <code>[]</code> — що поверне <code>every(x =&gt; x &gt; 0)</code> і <code>some(x =&gt; x &gt; 0)</code>? Виведи обидва. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Перевіряємо умови для масивів чисел і паролів.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const nums = [5, 12, 8, 20, -3];
+console.log('Усі додатні?', nums.every(n => n > 0));
+console.log('Є відʼємне?', nums.some(n => n < 0));
+
+const passwords = ['abc12345', 'longpassword', 'secure99'];
+console.log('Усі > 8 символів?', passwords.every(p => p.length > 8));</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив паролів — перевір через <code>every</code>, чи всі довші за 8 символів; виведи boolean. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив чисел — через <code>some</code> перевір, чи є хоч одне відʼємне значення. <span class="crystal-reward">💎 15</span></li>
+        <li>Реалізуй <code>myEvery(arr, callback)</code> через <code>reduce</code> — поведінка як у вбудованого <code>every</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — паролі довші за 8</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Перевіряють <code>length >= 8</code> у filter і порівнюють довжину результату — працює, але не every.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>passwords.every(p => p.length > 8)</code> — один boolean на весь масив.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — хоч одне відʼємне</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Використовують <code>find</code> і не перетворюють на boolean, або every з неправильною умовою.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>nums.some(n => n < 0)</code> — true, якщо знайшлось хоч одне.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — myEvery через reduce</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Reduce повертає останній елемент замість boolean або не зупиняє логіку на першому false.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.reduce((ok, el) => ok && callback(el), true)</code> — коротко; для early exit краще звичайний цикл.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>На порожньому масиві <code>every</code> → true, <code>some</code> → false (важливі edge cases).</li>
+        <li>every/some не перетворюють масив — тільки true/false для перевірок і валідації.</li>
+        <li>Для «чи всі студенти склали» — every; для «чи хтось провалив» — some з протилежною умовою.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../16-flat-flatMap/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">16 · flat / flatMap</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../18-fill/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">18 · fill / Array.from</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

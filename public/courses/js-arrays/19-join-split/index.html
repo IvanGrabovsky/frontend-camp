@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 19 — join() та split() · JS Масиви</title>
+  <meta name="description" content="Метод join() та String.split() — перетворення між масивом і рядком, CSV та slug." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">19 · join / split</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../18-fill/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../20-spread-destructuring/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="19" data-total="21">
+        <span class="progress__label">Урок 19 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">19</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>join() та String.split()</h1>
+      <div class="method-tags">
+        <span class="method-tag">join()</span>
+        <span class="method-tag">split()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>array.join(separator)</code> зʼєднує елементи масиву в один рядок. <code>string.split(separator, limit)</code> розбиває рядок на масив. Це <strong>зворотні операції</strong> — як дві сторони однієї медалі.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📿</span> Аналогія з життя</div>
+      <p><code>join</code> — <strong>нанизати намистини на нитку</strong> між ними. <code>split</code> — <strong>розрізати нитку</strong> в місцях розділювача і отримати окремі намистини назад.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.join(separator)           <span class="cmt">// масив → рядок</span>
+<span class="ln">string.split(separator, limit)  <span class="cmt">// рядок → масив</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>join(separator)</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Розділювач між елементами (за замовчуванням <code>','</code>)</td></tr>
+            <tr><td><code>split(separator)</code></td><td><span class="param-required">обовʼязковий*</span></td><td>Рядок або regex для розбиття (*можна передати <code>''</code> для символів)</td></tr>
+            <tr><td><code>limit</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Максимальна кількість частин у результаті</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/join" target="_blank" rel="noopener noreferrer">Array.prototype.join() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/String/split" target="_blank" rel="noopener noreferrer">String.prototype.split() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>join</code> вставляє <code>separator</code> між кожною парою елементів (за замовчуванням — кома).</li>
+        <li><code>split</code> шукає розділювач і «різе» рядок; порожні частини теж потрапляють у масив.</li>
+        <li>Разом вони будують CSV, HTML, SQL-запити та URL-slug.</li>
+        <li><code>split('')</code> розбиває рядок на окремі символи — зручно для роботи з текстом.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: join — зʼєднати міста та дату</span>
+<span class="ln">console.log(['Київ', 'Львів', 'Одеса'].join(', '));</span>
+<span class="ln cmt">// 'Київ, Львів, Одеса'</span>
+<span class="ln">console.log(['2024', '01', '15'].join('-')); // '2024-01-15'</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: split — розбити рядок</span>
+<span class="ln">console.log('Привіт, Світ!'.split(', ')); // ['Привіт', 'Світ!']</span>
+<span class="ln">console.log('a,b,,c'.split(','));       // ['a', 'b', '', 'c']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: slug з заголовка</span>
+<span class="ln">const title = 'Hello World';</span>
+<span class="ln">const slug = title.toLowerCase().split(' ').join('-');</span>
+<span class="ln">console.log(slug); // 'hello-world'</span>
+<span class="ln cmt">// HTML-навігація</span>
+<span class="ln">const nav = ['Home', 'About'].map(i => `&lt;a&gt;${i}&lt;/a&gt;`).join(' | ');</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>separator</code> у <code>join</code> і <code>limit</code> у <code>split</code> необовʼязкові: без розділювача join зʼєднує комами; limit обрізає кількість частин.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// join() — separator за замовчуванням ','</span>
+<span class="ln">console.log(['2026', '08', '08'].join());   // '2026,08,08'</span>
+<span class="ln">console.log(['2026', '08', '08'].join('-')); // '2026-08-08'</span>
+<span class="ln"></span>
+<span class="ln cmt">// split(separator, limit) — limit = макс. частин</span>
+<span class="ln">const path = 'users/ivan/posts/1/comments';</span>
+<span class="ln">console.log(path.split('/'));      // усі 5 частин</span>
+<span class="ln">console.log(path.split('/', 3));   // ['users', 'ivan', 'posts']</span>
+<span class="ln"></span>
+<span class="ln cmt">// Корисно: взяти лише домен і імʼя, без решти</span></span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><code>split</code> з порожнім рядком-розділювачем дає масив символів — це очікувано, але іноді дивує.</li>
+        <li>Забути, що <code>join</code> перетворює елементи в рядки: <code>[1,2,3].join('')</code> → <code>'123'</code>.</li>
+        <li>CSV з комами всередині полів потребує лапок — простий <code>split(',')</code> не завжди достатньо.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=19">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>CSV <code>'Аня,85,Група А'</code> — розбий на поля через <code>split(',')</code> і виведи масив. <span class="crystal-reward">💎 10</span></li>
+        <li>Дата <code>['2026', '08', '08']</code> — збери рядок <code>'2026-08-08'</code> через <code>join('-')</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Заголовок <code>'Hello World'</code> — зроби slug <code>'hello-world'</code> (toLowerCase → split → join). <span class="crystal-reward">💎 10</span></li>
+        <li>Рядок <code>'a,b,c'</code> — розбий і знову зʼєднай через <code>','</code>; перевір, що рядок відновився. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Розбираємо CSV і будуємо slug.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const csv = 'Аня,85,Група А\nБорис,72,Група Б';
+const rows = csv.split('\n');
+rows.forEach(row => {
+  const [name, score, group] = row.split(',');
+  console.log(`${name}: ${score} (${group})`);
+});
+
+const title = 'Hello World';
+const slug = title.toLowerCase().split(' ').join('-');
+console.log('Slug:', slug);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>CSV-рядок <code>'Аня,85,Група А'</code> — розбий на масив полів через <code>split(',')</code> і виведи кожне окремо. <span class="crystal-reward">💎 15</span></li>
+        <li>Заголовок <code>'Hello World'</code> — зроби slug <code>'hello-world'</code> (toLowerCase → split → join через <code>-</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>Функція <code>capitalize(str)</code>: <code>'hello world'</code> → <code>'Hello World'</code> — кожне слово з великої через <code>split</code> і <code>join</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — CSV split</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> split без аргумента або з пробілом <code>', '</code>, коли в даних пробілів немає — зайві символи в полях.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>'Аня,85,Група А'.split(',')</code> — три елементи; виведи кожен окремим log.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — slug hello-world</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Забувають toLowerCase перед join — залишається <code>Hello-World</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>'Hello World'.toLowerCase().split(' ').join('-')</code> → <code>hello-world</code>.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — capitalize</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Роблять toUpperCase на всьому слові або split по порожньому рядку дає зайві елементи.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> split по пробілу → map перша літера + slice(1) → join(' '). Перевір <code>'hello world'</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>split('') розбиває рядок на символи — корисно для palindrome і підрахунку літер.</li>
+        <li>join без аргумента склеює через кому (як toString масиву).</li>
+        <li>Для CSV з лапками потрібен складніший парсер — для ДЗ достатньо простого split(',').</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../18-fill/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">18 · fill / Array.from</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../20-spread-destructuring/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">20 · spread / деструктуризація</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

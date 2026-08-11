@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 12 — reduce() · JS Масиви</title>
+  <meta name="description" content="Метод reduce() — агрегація масиву в одне значення: сума, максимум, групування, підрахунок." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">12 · reduce</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../11-map/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../13-forEach/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="12" data-total="21">
+        <span class="progress__label">Урок 12 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">12</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>reduce() — найпотужніший метод</h1>
+      <div class="method-tags">
+        <span class="method-tag">reduce()</span>
+        <span class="method-tag">reduceRight()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>reduce()</code> «згортає» весь масив в <strong>одне значення</strong>: число, рядок, обʼєкт чи навіть новий масив. Це найгнучкіший метод — через нього можна виразити майже всі інші.</p>
+      <p>Callback: <code>(acc, cur, index, array) => newAcc</code> — на кожному кроці повертає оновлений акумулятор; останнє повернене значення — результат усього <code>reduce</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">❄️</span> Аналогія з життя</div>
+      <p><strong>Снігова куля</strong>, що котиться з гори. Вона збирає весь сніг, який зустрічає, і стає дедалі більшою. <em>Акумулятор</em> — це сама куля, а кожен елемент масиву — новий сніг, що до неї налипає.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.reduce((acc, cur, idx, arr) => новийAcc, initialValue)</span>
+<span class="ln cmt">// acc          — накопичене значення (куля)</span>
+<span class="ln cmt">// cur          — поточний елемент (новий сніг)</span>
+<span class="ln cmt">// initialValue — початкове значення акумулятора</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри reduce()</h4>
+        <p class="syntax-params__note">* <code>acc</code>, <code>cur</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>acc</code> і <code>cur</code> завжди передаються; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td><code>(acc, cur, index, array) => newAcc</code> — повертає оновлений акумулятор</td></tr>
+            <tr><td><code>index</code>, <code>array</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Індекс і посилання на масив — аргументи callback</td></tr>
+            <tr><td><code>initialValue</code></td><td><span class="param-recommended">рекомендований</span></td><td>Синтаксично необовʼязковий, але без нього на порожньому масиві буде помилка — завжди вказуй</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce" target="_blank" rel="noopener noreferrer">Array.prototype.reduce() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight" target="_blank" rel="noopener noreferrer">Array.prototype.reduceRight() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Акумулятор починається зі значення <code>initialValue</code>.</li>
+        <li>Для кожного елемента callback повертає <strong>нове значення акумулятора</strong>.</li>
+        <li>Це значення передається в наступну ітерацію.</li>
+        <li>Останнє значення акумулятора — результат усього <code>reduce</code>.</li>
+      </ol>
+
+      <h3>Важливість initialValue</h3>
+      <p>Завжди задавай <code>initialValue</code>. Без нього перший елемент стає початковим акумулятором, а виклик на порожньому масиві <strong>кине помилку</strong>. Є ще <code>reduceRight</code> — те саме, але справа наліво.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: сума чисел</span>
+<span class="ln">const numbers = [1, 2, 3, 4, 5];</span>
+<span class="ln">const sum = numbers.reduce((acc, n) => acc + n, 0);</span>
+<span class="ln">console.log(sum); // 15</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: підрахунок частоти слів</span>
+<span class="ln">const words = ['кіт', 'пес', 'кіт', 'кіт', 'пес'];</span>
+<span class="ln">const freq = words.reduce((acc, w) => {</span>
+<span class="ln">  acc[w] = (acc[w] || 0) + 1;</span>
+<span class="ln">  return acc;</span>
+<span class="ln">}, {});</span>
+<span class="ln">console.log(freq); // { кіт: 3, пес: 2 }</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: групування за віком</span>
+<span class="ln">const users = [{ age: 20 }, { age: 15 }, { age: 30 }];</span>
+<span class="ln">const byAge = users.reduce((acc, u) => {</span>
+<span class="ln">  const key = u.age >= 18 ? 'adults' : 'minors';</span>
+<span class="ln">  acc[key].push(u);</span>
+<span class="ln">  return acc;</span>
+<span class="ln">}, { adults: [], minors: [] });</span>
+<span class="ln">console.log(byAge.adults.length); // 2</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>initialValue</code> синтаксично необовʼязковий, але без нього перший елемент стає початковим акумулятором, а на порожньому масиві буде <strong>помилка</strong>.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Без initialValue — перший елемент = acc</span>
+<span class="ln">console.log([1, 2, 3, 4].reduce((acc, n) => acc + n)); // 10</span>
+<span class="ln"></span>
+<span class="ln cmt">// З initialValue — безпечніше і зрозуміліше</span>
+<span class="ln">console.log([1, 2, 3, 4].reduce((acc, n) => acc + n, 0)); // 10</span>
+<span class="ln">console.log([].reduce((acc, n) => acc + n, 0));           // 0 — порожній OK</span>
+<span class="ln"></span>
+<span class="ln cmt">// index у callback — наприклад, сума з вагою позиції</span>
+<span class="ln">const weighted = [10, 20, 30].reduce((sum, n, index) => sum + n * (index + 1), 0);</span>
+<span class="ln">console.log(weighted); // 10*1 + 20*2 + 30*3 = 140</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Забути повернути акумулятор з callback → <code>acc</code> стане <code>undefined</code>.</li>
+        <li>Не задати <code>initialValue</code> → несподівана поведінка або помилка на порожньому масиві.</li>
+        <li>Мутувати <code>initialValue</code>-обʼєкт ззовні, використовуючи його повторно між викликами.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=12">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Числа <code>[10, 20, 30, 40]</code> — порахуй суму через <code>reduce</code> з <code>initialValue = 0</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Числа <code>[3, 87, 12, 45, 6]</code> — знайди максимум через <code>reduce</code> (без <code>Math.max</code>). <span class="crystal-reward">💎 10</span></li>
+        <li>Слова <code>['js', 'js', 'html', 'css', 'js']</code> — підрахуй частоту кожного слова в обʼєкті. <span class="crystal-reward">💎 10</span></li>
+        <li>Спробуй <code>[].reduce((a, b) =&gt; a + b)</code> без <code>initialValue</code> — зафіксуй помилку; потім порахуй суму <code>[]</code> з <code>, 0</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Рахуємо суму замовлення та шукаємо максимум.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const order = [
+  { name: 'Кава', price: 45, qty: 2 },
+  { name: 'Тістечко', price: 60, qty: 1 },
+  { name: 'Сік', price: 30, qty: 3 },
+];
+
+const total = order.reduce((acc, item) => acc + item.price * item.qty, 0);
+console.log('Разом до сплати:', total, 'грн');
+
+const nums = [7, 2, 9, 4, 11, 3];
+const max = nums.reduce((acc, n) => (n > acc ? n : acc), nums[0]);
+console.log('Максимум:', max);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив замовлень <code>{name, price, qty}</code> — порахуй загальну суму всіх позицій через <code>reduce</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив чисел — знайди максимальне значення через <code>reduce</code> (без <code>Math.max</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>Масив рядків <code>['js', 'html', 'css']</code> — зібери обʼєкт <code>{слово: довжина}</code>, напр. <code>{js: 2, html: 4}</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — сума замовлень</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Додають лише <code>price</code>, забуваючи про <code>qty</code>, або не повертають <code>acc</code> з callback.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>orders.reduce((sum, o) => sum + o.price * o.qty, 0)</code> — стартове значення <code>0</code> обовʼязкове для суми.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — max через reduce</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Починають з <code>0</code> — для масиву лише з відʼємними max буде неправильним.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>nums.reduce((max, n) => n > max ? n : max, nums[0])</code> або перший елемент як initial.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — обʼєкт {слово: довжина}</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Повертають масив пар замість обʼєкта або мутують змінну поза reduce без аккумулятора-обʼєкта.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>words.reduce((obj, w) => { obj[w] = w.length; return obj; }, {})</code> — завжди <code>return acc</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Без initial value reduce бере перший елемент — на порожньому масиві буде помилка.</li>
+        <li>Reduce може повернути що завгодно: число, рядок, обʼєкт, навіть інший масив.</li>
+        <li>Складну логіку в callback краще винести в окрему функцію — легше дебажити ДЗ.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../11-map/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">11 · map</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../13-forEach/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">13 · forEach</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

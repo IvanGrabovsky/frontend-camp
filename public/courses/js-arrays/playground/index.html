@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пісочниця · JavaScript Масиви</title>
+  <meta name="description" content="Вільна JavaScript-пісочниця з прикладами коду з усіх 21 уроків курсу — експериментуй і запускай код у браузері." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">Пісочниця</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" data-playground>
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">🧪</span>
+        <span class="crystal-badge">💎 вільна практика</span>
+      </div>
+      <h1>Жива пісочниця</h1>
+      <p class="playground-hint">
+        Пиши та запускай JavaScript прямо в браузері. Обери приклад зліва — код підставиться одним кліком.
+        Подвійний клік по темі одразу запустить приклад. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> — запуск.
+      </p>
+    </header>
+
+    <div class="playground-layout">
+      <aside class="playground-sidebar" aria-label="Приклади з уроків">
+        <h2>Приклади з курсу</h2>
+        <div class="playground-topics" role="list"></div>
+      </aside>
+
+      <div class="playground-main">
+        <section class="sandbox" data-sandbox aria-label="Редактор коду">
+          <div class="sandbox__title">
+            <span>⌨️</span>
+            <span class="playground-active-label">Вільний режим</span>
+            <a class="playground-lesson-link btn btn--ghost" href="#" hidden style="margin-left:auto;font-size:0.82rem;padding:4px 12px;">
+              Відкрити урок →
+            </a>
+          </div>
+          <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду"></textarea>
+          <div class="sandbox__toolbar">
+            <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+            <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+            <button class="btn btn--ghost playground__clear" type="button">🗑 Очистити</button>
+          </div>
+          <pre class="sandbox__output" aria-live="polite"></pre>
+        </section>
+      </div>
+    </div>
+
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/playground-examples.js"></script>
+  <script src="../assets/js/playground.js"></script>
+</body>
+</html>

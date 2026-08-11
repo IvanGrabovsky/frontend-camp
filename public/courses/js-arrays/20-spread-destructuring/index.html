@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 20 — Spread та деструктуризація · JS Масиви</title>
+  <meta name="description" content="Spread-оператор та деструктуризація масивів — копіювання, обʼєднання, swap та rest." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">20 · spread / деструктуризація</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../19-join-split/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../21-review-project/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="20" data-total="21">
+        <span class="progress__label">Урок 20 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">20</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>Spread оператор та деструктуризація масивів</h1>
+      <div class="method-tags">
+        <span class="method-tag">...</span>
+        <span class="method-tag">[a, b]</span>
+        <span class="method-tag">...rest</span>
+        <span class="method-tag">with()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Spread</strong> (<code>...</code>) «розпаковує» масив — для копіювання, обʼєднання або передачі елементів у функцію. <strong>Деструктуризація</strong> робить навпаки: «розкладає» масив у окремі змінні за одним рядком.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🧺</span> Аналогія з життя</div>
+      <p><strong>Spread</strong> — висипати вміст кошика на стіл. <strong>Деструктуризація</strong> — взяти перший предмет в одну руку, другий — в іншу, а решту покласти в окремий пакет (<code>...rest</code>).</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const copy = [...original]           <span class="cmt">// копія</span>
+<span class="ln">const merged = [...arr1, ...arr2]    <span class="cmt">// обʼєднання</span>
+<span class="ln">const [first, second, ...rest] = arr <span class="cmt">// деструктуризація</span>
+<span class="ln">const [a, , c] = arr                 <span class="cmt">// пропуск елемента</span>
+<span class="ln">[x, y] = [y, x]                      <span class="cmt">// swap без temp</span>
+<span class="ln">array.with(index, value)             <span class="cmt">// новий масив, один елемент змінено (ES2023)</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Елементи синтаксису</h4>
+        <table class="params-table">
+          <thead><tr><th>Конструкція</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>...array</code> (spread)</td><td><span class="param-required">обовʼязковий</span></td><td>Операнд після <code>...</code> — масив або ітероване значення</td></tr>
+            <tr><td><code>[a, b, ...rest]</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Змінні ліворуч — скільки потрібно; <code>...rest</code> має бути останнім</td></tr>
+            <tr><td><code>= defaultValue</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення за замовчуванням, якщо елемент <code>undefined</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Operators/Spread_syntax" target="_blank" rel="noopener noreferrer">Spread syntax (...) — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" target="_blank" rel="noopener noreferrer">Destructuring assignment — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/with" target="_blank" rel="noopener noreferrer">Array.prototype.with() — MDN (ES2023)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>[...arr]</code> створює поверхневу копію — вкладені масиви/обʼєкти залишаються спільними.</li>
+        <li>Деструктуризація присвоює елементи зліва направо змінним.</li>
+        <li><code>...rest</code> збирає «залишок» масиву в новий масив (rest має бути останнім).</li>
+        <li>Можна задавати значення за замовчуванням: <code>const [a = 0] = []</code>.</li>
+        <li><code>with(index, value)</code> — замість <code>arr[i] = x</code> на копії: повертає новий масив з одним зміненим елементом (ES2023).</li>
+      </ol>
+
+      <h3>with() — оновлення без мутації</h3>
+      <p>Коли потрібно замінити один елемент, не чіпаючи оригінал:</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const scores = [10, 20, 30];</span>
+<span class="ln">const updated = scores.with(1, 99);</span>
+<span class="ln">console.log(scores);  // [10, 20, 30] — без змін</span>
+<span class="ln">console.log(updated); // [10, 99, 30]</span>
+<span class="ln">console.log(scores.with(-1, 100)); // [10, 20, 100] — підтримує відʼємні індекси</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: spread — копія та обʼєднання</span>
+<span class="ln">const original = [1, 2, 3];</span>
+<span class="ln">const copy = [...original];</span>
+<span class="ln">const merged = [...original, 99, ...[4, 5]];</span>
+<span class="ln">console.log(copy, merged);</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: деструктуризація з rest</span>
+<span class="ln">const [first, second, ...rest] = [10, 20, 30, 40, 50];</span>
+<span class="ln">console.log(first);  // 10</span>
+<span class="ln">console.log(second); // 20</span>
+<span class="ln">console.log(rest);   // [30, 40, 50]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: swap та результат функції</span>
+<span class="ln">let x = 1, y = 2;</span>
+<span class="ln">[x, y] = [y, x];</span>
+<span class="ln">console.log(x, y); // 2 1</span>
+<span class="ln"></span>
+<span class="ln">function getMinMax(nums) {</span>
+<span class="ln">  return [Math.min(...nums), Math.max(...nums)];</span>
+<span class="ln">}</span>
+<span class="ln">const [min, max] = getMinMax([5, 2, 9, 1]);</span>
+<span class="ln">console.log(min, max); // 1 9</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У деструктуризації необовʼязкові змінні та <code>= defaultValue</code> — якщо елемента немає або він <code>undefined</code>, підставляється значення за замовчуванням.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const [first = 'Гість', second = 'Анонім'] = ['Аня'];</span>
+<span class="ln">console.log(first, second); // 'Аня', 'Анонім'</span>
+<span class="ln"></span>
+<span class="ln">const [head, ...rest] = [1, 2, 3, 4];</span>
+<span class="ln">console.log(head, rest); // 1, [2, 3, 4]</span>
+<span class="ln"></span>
+<span class="ln cmt">// defaults для обʼєкта з масиву</span>
+<span class="ln">const users = [{ name: 'Борис' }];</span>
+<span class="ln">const [{ name = 'Невідомий', role = 'студент' }] = users;</span>
+<span class="ln">console.log(name, role); // 'Борис', 'студент'</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Spread робить лише <strong>поверхневу</strong> копію. Для вкладених масивів потрібен <code>structuredClone</code> або <code>JSON.parse(JSON.stringify(...))</code>.</li>
+        <li><code>...rest</code> має бути останнім у деструктуризації — інакше синтаксична помилка.</li>
+        <li>Плутати spread у масивах <code>[...a]</code> і в обʼєктах <code>{...o}</code> — це різні контексти.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=20">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Масив <code>original = [1, 2, 3]</code> — скопіюй через <code>[...original]</code>, додай <code>4</code> у копію, переконайся що <code>original</code> не змінився. <span class="crystal-reward">💎 10</span></li>
+        <li>Обʼєднай <code>a = [1, 2]</code>, <code>b = [3, 4]</code>, <code>c = [5]</code> в один масив через spread. <span class="crystal-reward">💎 10</span></li>
+        <li>Масив <code>[10, 20, 30, 40, 50]</code> — деструктуризуй <code>const [first, ...rest] = …</code> і виведи обидва. <span class="crystal-reward">💎 10</span></li>
+        <li>Змінні <code>let x = 1, y = 99</code> — поміняй місцями через <code>[x, y] = [y, x]</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Копіюємо, деструктуруємо та міняємо значення місцями.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const nested = [[1, 2], [3, 4]];
+const shallow = [...nested];
+shallow[0][0] = 99;
+console.log('Оригінал теж змінився (поверхнева копія):', nested);
+
+const menu = ['Головна', 'Про нас', 'Контакти', 'Блог', 'FAQ'];
+const [title, ...items] = menu;
+console.log('Заголовок:', title);
+console.log('Пункти меню:', items);
+
+let a = 'перший', b = 'другий';
+[a, b] = [b, a];
+console.log('Після swap:', a, b);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>На прикладі покажи: чому <code>[...[1, [2, 3]]]</code> не робить глибоку копію — зміни вкладений масив у копії і перевір оригінал. <span class="crystal-reward">💎 15</span></li>
+        <li>Функція <code>getMinMax(arr)</code> повертає <code>[min, max]</code> — розпакуй результат: <code>const [min, max] = getMinMax(arr)</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив <code>['Заголовок', 'пункт 1', 'пункт 2']</code> — перший елемент окремо, решта в масив <code>items</code> через деструктуризацію. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — shallow copy</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть «скопіював», але змінюють лише верхній рівень — не чіпають вкладений масив для демонстрації.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Після <code>const copy = [...original]</code> зміни <code>copy[1][0]</code> — побачиш зміну і в <code>original[1]</code>.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — getMinMax + деструктуризація</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Функція повертає обʼєкт, а розпаковують як масив, або min/max переплутані місцями.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>return [Math.min(...arr), Math.max(...arr)];</code> потім <code>const [min, max] = getMinMax(arr);</code></p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — rest у деструктуризації</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Без rest: <code>const [title, ...items] = arr</code> пишуть окремі змінні для кожного пункту.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const [title, ...items] = ['Заголовок', 'пункт 1', 'пункт 2'];</code> — items = два рядки.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Spread у масиві — один рівень; для глибокої копії structuredClone або JSON (обережно з функціями).</li>
+        <li><code>with(i, val)</code> — зручна альтернатива spread + присвоєння, коли змінюєш один індекс.</li>
+        <li>Swap двох змінних: <code>[a, b] = [b, a]</code> — класична фішка деструктуризації.</li>
+        <li>Rest збирає «хвіст» масиву в новий масив — зручно для заголовка + списку.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../19-join-split/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">19 · join / split</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../21-review-project/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">21 · Підсумковий проект</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

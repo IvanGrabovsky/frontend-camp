@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 15 — reverse() · JS Масиви</title>
+  <meta name="description" content="Методи reverse() та toReversed() — розворот масиву, перевернути рядок через split/reverse/join." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">15 · reverse</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../14-sort/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../16-flat-flatMap/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="15" data-total="21">
+        <span class="progress__label">Урок 15 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">15</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>reverse() та toReversed()</h1>
+      <div class="method-tags">
+        <span class="method-tag">reverse()</span>
+        <span class="method-tag">toReversed()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>reverse()</code> розвертає масив <strong>на місці</strong> — перший стає останнім, останній — першим. Мутує оригінал. Сучасний <code>toReversed()</code> (ES2023) повертає <strong>новий</strong> розвернутий масив, не чіпаючи оригінал.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🃏</span> Аналогія з життя</div>
+      <p>Це як <strong>перегорнути стос карток догори дном</strong>. Верхня картка опиняється внизу, а нижня — зверху. У <code>reverse</code> ти перевертаєш сам стос; у <code>toReversed</code> — робиш копію перевернутого стосу, а оригінал лишається як був.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.reverse()              <span class="cmt">// мутує оригінал</span></span>
+<span class="ln">array.toReversed()           <span class="cmt">// новий масив (ES2023)</span></span>
+<span class="ln">const copy = [...array].reverse() <span class="cmt">// безпечна альтернатива</span></span>
+<span class="ln">'привіт'.split('').reverse().join('') <span class="cmt">// перевернути рядок</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>reverse()</code></td><td>—</td><td>Без параметрів — мутує масив, розвертає порядок</td></tr>
+            <tr><td><code>toReversed()</code></td><td>—</td><td>Без параметрів — повертає новий розвернутий масив (ES2023)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse" target="_blank" rel="noopener noreferrer">Array.prototype.reverse() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/toReversed" target="_blank" rel="noopener noreferrer">Array.prototype.toReversed() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>reverse</code> змінює порядок елементів у тому самому масиві.</li>
+        <li>Повертає посилання на той самий (вже змінений) масив.</li>
+        <li><code>toReversed</code> або копія через spread — коли оригінал має залишитися незмінним.</li>
+        <li>Для рядків: <code>split('')</code> → <code>reverse()</code> → <code>join('')</code>.</li>
+      </ol>
+
+      <h3>Сімейство «change by copy» (ES2023)</h3>
+      <p>Разом із <code>toReversed</code> у сучасному JS є «немутуючі» аналоги інших методів:</p>
+      <table class="params-table">
+        <thead><tr><th>Мутує оригінал</th><th>Новий масив (ES2023)</th></tr></thead>
+        <tbody>
+          <tr><td><code>sort()</code></td><td><code>toSorted()</code> — урок 14</td></tr>
+          <tr><td><code>reverse()</code></td><td><code>toReversed()</code></td></tr>
+          <tr><td><code>splice()</code></td><td><code>toSpliced()</code> — урок 05</td></tr>
+          <tr><td><code>arr[i] = x</code></td><td><code>with(i, x)</code> — урок 20</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: reverse мутує масив</span>
+<span class="ln">const arr = [1, 2, 3, 4, 5];</span>
+<span class="ln">arr.reverse();</span>
+<span class="ln">console.log(arr); // [5, 4, 3, 2, 1] — оригінал змінився!</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: безпечний варіант без мутації</span>
+<span class="ln">const original = [1, 2, 3];</span>
+<span class="ln">const reversed = [...original].reverse();</span>
+<span class="ln">console.log(original); // [1, 2, 3] — не змінився</span>
+<span class="ln">console.log(reversed); // [3, 2, 1]</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: перевернути рядок (перевірка паліндрому)</span>
+<span class="ln">const word = 'радар';</span>
+<span class="ln">const reversed = word.split('').reverse().join('');</span>
+<span class="ln">console.log(word === reversed); // true — паліндром</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Викликати <code>reverse</code>, коли потрібен оригінальний порядок — він зникне назавжди (якщо не збережена копія).</li>
+        <li>Думати, що <code>reverse</code> повертає новий масив — він повертає той самий, але змінений.</li>
+        <li>Перевернути рядок через <code>reverse</code> без <code>split</code> — у рядків немає методу <code>reverse</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=15">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Масив <code>nums = [10, 20, 30, 40]</code> — розверни через <code>[...nums].reverse()</code>, оригінал не змінюй. <span class="crystal-reward">💎 10</span></li>
+        <li>Рядок <code>'радар'</code> — перевір, чи паліндром (<code>split → reverse → join</code> і порівняння). <span class="crystal-reward">💎 10</span></li>
+        <li>Рядок <code>'JavaScript'</code> — переверни через <code>split('') → reverse → join('')</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>На <code>arr = [1, 2, 3]</code> порівняй: <code>arr.reverse()</code> (мутує) vs <code>[...arr].reverse()</code> на копії. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Розворот масиву та перевірка паліндрому.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const nums = [10, 20, 30, 40];
+const reversed = [...nums].reverse();
+console.log('Оригінал:', nums);
+console.log('Розвернутий:', reversed);
+
+function isPalindrome(str) {
+  const clean = str.toLowerCase().replace(/\s/g, '');
+  return clean === clean.split('').reverse().join('');
+}
+console.log('радар — паліндром?', isPalindrome('радар'));
+console.log('привіт — паліндром?', isPalindrome('привіт'));</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив <code>[1, 2, 3, 4, 5]</code> — отримай зворотний порядок, <strong>не змінюючи</strong> оригінал (<code>[...arr].reverse()</code> або <code>toReversed()</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>Функція <code>isPalindrome(str)</code>: перевір, чи рядок читається однаково в обидва боки (можна <code>split</code> + <code>reverse</code> + <code>join</code>). <span class="crystal-reward">💎 15</span></li>
+        <li>Збери зворотний масив через <code>reduceRight</code> — порівняй результат із <code>reverse</code> на одному прикладі. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — reverse без мутації</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Викликають <code>arr.reverse()</code> на оригіналі — він змінюється на місці.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const reversed = [...arr].reverse()</code> або <code>arr.toReversed()</code> (ES2023).</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — isPalindrome</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Не прибирають пробіли/регістр — <code>'A man a plan'</code> дає false; або порівнюють масив з рядком.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const clean = str.toLowerCase().replace(/\s/g, ''); return clean === clean.split('').reverse().join('');</code></p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — reduceRight</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають напрямок reduceRight і отримують той самий порядок, що й reduce.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.reduceRight((acc, x) => [...acc, x], [])</code> або порівняй з <code>[...arr].reverse()</code> на <code>[1,2,3]</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>reverse</code> мутує масив — як sort, спочатку копія, якщо оригінал потрібен.</li>
+        <li>Для рядка-palindrome зручний ланцюжок split → reverse → join.</li>
+        <li><code>toReversed()</code>, <code>toSorted()</code>, <code>toSpliced()</code>, <code>with()</code> — сімейство «change by copy» (ES2023); не мутують оригінал.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../14-sort/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">14 · sort</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../16-flat-flatMap/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">16 · flat / flatMap</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

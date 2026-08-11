@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 07 — concat() · JS Масиви</title>
+  <meta name="description" content="Метод concat() — обʼєднання масивів без мутації, порівняння зі spread-оператором." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">07 · concat</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../06-slice/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../08-indexOf-includes/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="7" data-total="21">
+        <span class="progress__label">Урок 7 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">07</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>concat() — обʼєднання масивів</h1>
+      <div class="method-tags">
+        <span class="method-tag">concat()</span>
+        <span class="method-tag">spread ...</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>concat()</code> зʼєднує два або більше масивів у <strong>новий масив</strong>. Оригінали не змінюються. Можна передавати як масиви, так і окремі значення.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🧾</span> Аналогія з життя</div>
+      <p>Уяви, що ти та твій сусід склали окремі <strong>списки покупок</strong>. Перед походом у магазин ви <strong>зшиваєте їх в один</strong> великий список — це і є <code>concat</code>.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array1.concat(array2)              <span class="cmt">// два масиви</span>
+<span class="ln">array1.concat(array2, array3)      <span class="cmt">// кілька масивів</span>
+<span class="ln">array1.concat('окремий елемент')   <span class="cmt">// і навіть значення</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри concat()</h4>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>...items</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Без аргументів поверне копію масиву; зазвичай передають хоча б один масив або значення</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/concat" target="_blank" rel="noopener noreferrer">Array.prototype.concat() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Operators/Spread_syntax" target="_blank" rel="noopener noreferrer">Spread syntax (...) — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Створюється новий масив, куди по черзі копіюються елементи всіх аргументів.</li>
+        <li>Якщо аргумент — масив, його елементи «розпаковуються» на один рівень.</li>
+        <li>Якщо аргумент — окреме значення, воно додається як є.</li>
+        <li>Оригінальні масиви залишаються незмінними.</li>
+      </ol>
+
+      <h3>Альтернатива: spread-оператор</h3>
+      <p>Сучасний і дуже читабельний спосіб — spread <code>[...arr1, ...arr2]</code> (детально в уроці 20). Результат такий самий, тому обирай, що подобається.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: обʼєднання двох груп</span>
+<span class="ln">const juniors = ['Аня', 'Борис'];</span>
+<span class="ln">const seniors = ['Вася', 'Галя'];</span>
+<span class="ln">const all = juniors.concat(seniors);</span>
+<span class="ln">console.log(all); // ['Аня', 'Борис', 'Вася', 'Галя']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: те саме через spread</span>
+<span class="ln">const juniors = ['Аня', 'Борис'];</span>
+<span class="ln">const seniors = ['Вася', 'Галя'];</span>
+<span class="ln">const all = [...juniors, ...seniors, 'Куратор'];</span>
+<span class="ln">console.log(all);</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: concat НЕ розгортає вкладені масиви глибоко</span>
+<span class="ln">const a = [1, 2];</span>
+<span class="ln">const b = [[3, 4]];</span>
+<span class="ln">console.log(a.concat(b)); // [1, 2, [3, 4]] — вкладений лишився</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note"><code>...items</code> необовʼязковий: виклик <code>concat()</code> без аргументів повертає <strong>копію</strong> масиву — зручно перед змінами.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const original = [1, 2, 3];</span>
+<span class="ln">const copy = original.concat(); // без ...items</span>
+<span class="ln">copy.push(4);</span>
+<span class="ln">console.log(original); // [1, 2, 3] — не змінився</span>
+<span class="ln">console.log(copy);     // [1, 2, 3, 4]</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><code>concat</code> розпаковує масиви лише на <strong>один рівень</strong>. Для глибокого розгортання є <code>flat</code> (урок 16).</li>
+        <li>Думати, що <code>concat</code> змінює перший масив — ні, він повертає новий.</li>
+        <li>Не присвоїти результат: <code>a.concat(b);</code> без збереження — результат втрачається.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=07">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Обʼєднай <code>groupA = ['Аня', 'Борис']</code> і <code>groupB = ['Вася', 'Галя']</code> через <code>concat</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Ті самі <code>groupA</code> і <code>groupB</code> обʼєднай через spread — порівняй довжину результатів. <span class="crystal-reward">💎 10</span></li>
+        <li>До <code>nums = [1, 2, 3]</code> додай окремі значення <code>4</code> і <code>5</code> через <code>concat(4, 5)</code> (не масивом). <span class="crystal-reward">💎 10</span></li>
+        <li>Після <code>concat</code> переконайся, що <code>groupA</code> і <code>groupB</code> не змінились — виведи їх знову. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Обʼєднуємо кілька масивів різними способами.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const week1 = ['пн', 'вт'];
+const week2 = ['ср', 'чт'];
+const week3 = ['пт'];
+
+const all = week1.concat(week2, week3);
+console.log('concat:', all);
+
+const spread = [...week1, ...week2, ...week3, 'сб', 'нд'];
+console.log('spread:', spread);
+
+console.log('Оригінал week1 не змінився:', week1);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Обʼєднай три масиви (наприклад, три групи учнів) в один новий масив через <code>concat</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>До масиву чисел додай окремі значення через <code>concat(99, 100)</code> — не вкладеним масивом. <span class="crystal-reward">💎 15</span></li>
+        <li>Порівняй <code>concat</code> і spread на масиві з вкладеним масивом — чи розгортається вкладений? Виведи обидва результати. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — три групи учнів</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Мутують перший масив через <code>push</code> замість нового результату від <code>concat</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const all = groupA.concat(groupB, groupC);</code> — <code>groupA</code> лишається незмінним.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — concat(99, 100)</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть <code>concat([99, 100])</code> — отримаєш один вкладений масив, а не два числа.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>nums.concat(99, 100)</code> — окремі аргументи додаються як елементи.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — concat vs spread з вкладеним масивом</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Очікують, що <code>concat</code> «розгорне» вкладений масив на один рівень глибше автоматично.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Ні <code>concat</code>, ні <code>[...arr]</code> не роблять deep flat — вкладений масив лишається елементом.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Сучасна альтернатива: <code>[...a, ...b, ...c]</code> — той самий ефект, що concat кількох масивів.</li>
+        <li><code>concat</code> не змінює оригінали — зручно для «склеювання» без побічних ефектів.</li>
+        <li>Для плоского обʼєднання вкладених масивів потрібен <code>flat</code> (урок 16).</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../06-slice/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">06 · slice</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../08-indexOf-includes/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">08 · indexOf / includes</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

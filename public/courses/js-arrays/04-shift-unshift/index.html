@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 04 — shift() та unshift() · JS Масиви</title>
+  <meta name="description" content="Методи shift() і unshift() — робота з початком масиву та порівняння продуктивності з push/pop." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">04 · shift / unshift</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../03-push-pop/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../05-splice/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="4" data-total="21">
+        <span class="progress__label">Урок 4 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">04</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>shift() та unshift() — робота з початком масиву</h1>
+      <div class="method-tags">
+        <span class="method-tag">shift()</span>
+        <span class="method-tag">unshift()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>unshift()</code> додає елементи на <strong>початок</strong> масиву й повертає нову довжину. <code>shift()</code> видаляє <strong>перший</strong> елемент і повертає його.</p>
+      <p>Це «дзеркальні» методи до <code>push</code>/<code>pop</code>, але працюють з іншого кінця. Обидва мутують масив.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎫</span> Аналогія з життя</div>
+      <p>Уяви <strong>чергу в касу</strong>. <code>unshift</code> — хтось із терміновою справою залазить на самий початок. <code>shift</code> — перша людина обслужилась і пішла, а вся черга посунулась уперед.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.unshift(item)        <span class="cmt">// додати на початок → нова довжина</span></span>
+<span class="ln">const first = array.shift() <span class="cmt">// видалити перший → його значення</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри методів</h4>
+        <table class="params-table">
+          <thead><tr><th>Метод / параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>unshift(...items)</code></td><td><span class="param-required">обовʼязковий</span></td><td>Хоча б один елемент для вставки на початок (виклик без аргументів нічого не додасть)</td></tr>
+            <tr><td><code>shift()</code></td><td>—</td><td>Без параметрів — видаляє перший елемент</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift" target="_blank" rel="noopener noreferrer">Array.prototype.unshift() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/shift" target="_blank" rel="noopener noreferrer">Array.prototype.shift() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li><code>unshift</code> вставляє елемент(и) перед поточним першим.</li>
+        <li>Усі інші елементи «зсуваються» на одну позицію праворуч (їхні індекси зростають).</li>
+        <li><code>shift</code> прибирає перший елемент, а решта зсувається ліворуч.</li>
+        <li>Саме через це зсування <code>shift</code>/<code>unshift</code> повільніші за <code>push</code>/<code>pop</code>.</li>
+      </ol>
+
+      <h3>Порівняння з push / pop (продуктивність)</h3>
+      <div class="compare-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Метод</th><th>Кінець масиву?</th><th>Складність</th><th>Чому</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>push</code> / <code>pop</code></td><td>Так</td><td>O(1)</td><td>Нічого не зсувається</td></tr>
+            <tr><td><code>unshift</code> / <code>shift</code></td><td>Ні (початок)</td><td>O(n)</td><td>Треба перенумерувати всі елементи</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: черга підтримки</span>
+<span class="ln">const queue = ['Аліна', 'Богдан'];</span>
+<span class="ln">queue.unshift('Термінове питання'); // VIP попереду</span>
+<span class="ln">const served = queue.shift();       // обслужили першого</span>
+<span class="ln">console.log(served);  // 'Термінове питання'</span>
+<span class="ln">console.log(queue);   // ['Аліна', 'Богдан']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: unshift повертає нову довжину</span>
+<span class="ln">const days = ['вт', 'ср'];</span>
+<span class="ln">const len = days.unshift('пн');</span>
+<span class="ln">console.log(len);   // 3</span>
+<span class="ln">console.log(days);  // ['пн', 'вт', 'ср']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: shift у циклі обробки задач</span>
+<span class="ln">const tasks = ['A', 'B', 'C'];</span>
+<span class="ln">while (tasks.length > 0) {</span>
+<span class="ln">  const current = tasks.shift();</span>
+<span class="ln">  console.log('Виконую:', current);</span>
+<span class="ln">}</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Використовувати <code>shift</code>/<code>unshift</code> у великих масивах у циклі — це повільно (O(n) на кожен виклик).</li>
+        <li>Плутати напрямок: <code>shift</code> — з <strong>початку</strong>, <code>pop</code> — з <strong>кінця</strong>.</li>
+        <li>Очікувати, що <code>unshift</code> поверне масив — він повертає число.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=04">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Черга <code>queue = []</code>: додай <code>'Аня'</code>, <code>'Борис'</code>, <code>'Вася'</code> через <code>push</code>, потім обслужи першого через <code>shift</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>До <code>queue = ['Борис', 'Вася', 'Галя']</code> додай VIP <code>'Іван'</code> на початок через <code>unshift</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Для <code>queue = ['a', 'b', 'c', 'd']</code> виведи <code>queue.length</code> до і після одного <code>shift()</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>На масиві <code>[1, 2, 3]</code> окремо покажи: що повертає <code>shift()</code> і що повертає <code>pop()</code> (два нові масиви). <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Система черги: додаємо людей і обслуговуємо першого.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const queue = [];
+queue.push('Аліна');
+queue.push('Богдан');
+queue.push('Віктор');
+console.log('Черга:', queue);
+
+const served = queue.shift();
+console.log('Обслужили:', served);
+console.log('Залишились:', queue);
+
+// VIP на початок
+queue.unshift('Директор');
+console.log('Після VIP:', queue);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Черга клієнтів: додай 3 імені через <code>push</code>, обслужи першого через <code>shift</code> — виведи чергу до і після. <span class="crystal-reward">💎 15</span></li>
+        <li>Додай новий елемент на початок масиву без <code>unshift</code> — через <code>splice(0, 0, …)</code> або spread. <span class="crystal-reward">💎 15</span></li>
+        <li>На одному масиві порівняй <code>shift()</code> і <code>pop()</code>: що кожен видаляє і що повертає — коротко в консолі. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — черга клієнтів</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Обслужити першого» через <code>pop()</code> — це останній у списку, не перший.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Додавання в кінець: <code>push</code>. Обслуга першого: <code>shift()</code>. Покажи масив до і після.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — вставка на початок без unshift</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають аргументи <code>splice</code>: забувають <code>deleteCount = 0</code> і випадково видаляють елементи.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>arr.splice(0, 0, 'новий')</code> або <code>arr = ['новий', ...arr]</code> — обидва варіанти зараховуються.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — shift vs pop</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Пишуть, що обидва «видаляють елемент», не вказуючи <strong>з якого</strong> кінця.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>shift</code> — перший (індекс 0), <code>pop</code> — останній. Обидва повертають видалене значення.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>unshift</code> і <code>shift</code> повільніші на великих масивах — перенумеровують усі індекси.</li>
+        <li>Черга (FIFO): <code>push</code> + <code>shift</code>. Стек: <code>push</code> + <code>pop</code>.</li>
+        <li>На маленьких масивах різниця не помітна — для навчання використовуй що зручніше.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../03-push-pop/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">03 · push / pop</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../05-splice/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">05 · splice</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

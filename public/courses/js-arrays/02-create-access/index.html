@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 02 — Створення масивів та доступ · JS Масиви</title>
+  <meta name="description" content="Доступ до елементів за індексом, зміна елементів та вкладені масиви (матриці)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">02 · Створення та доступ</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../01-intro/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../03-push-pop/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="2" data-total="21">
+        <span class="progress__label">Урок 2 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">02</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>Створення масивів та доступ до елементів</h1>
+      <div class="method-tags">
+        <span class="method-tag">arr[i]</span>
+        <span class="method-tag">arr[i] = x</span>
+        <span class="method-tag">at()</span>
+        <span class="method-tag">matrix[i][j]</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Створити масив — це лише половина справи. Найчастіше нам потрібно <strong>звертатися до окремих елементів</strong>, <strong>змінювати</strong> їх, а іноді працювати з <strong>масивами масивів</strong> (матрицями).</p>
+      <p>Доступ відбувається за індексом у квадратних дужках: <code>array[0]</code>. Той самий синтаксис використовується і для читання, і для запису.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🏢</span> Аналогія з життя</div>
+      <p>Уяви багатоповерховий будинок. Квартира <code>[0]</code> — на першому доступному поверсі, квартира <code>[1]</code> — вище, і так далі. Щоб потрапити в конкретну квартиру, ти називаєш її номер. У масиві «номер квартири» — це індекс.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array[0]                   <span class="cmt">// перший елемент</span></span>
+<span class="ln">array[array.length - 1]    <span class="cmt">// останній елемент</span></span>
+<span class="ln">array[array.length - 2]    <span class="cmt">// передостанній елемент</span></span>
+<span class="ln">array.at(-1)               <span class="cmt">// останній (ES2022)</span></span>
+<span class="ln">array.at(-2)               <span class="cmt">// передостанній</span></span>
+<span class="ln">array[1] = 'нове значення'  <span class="cmt">// зміна елемента</span></span>
+<span class="ln">matrix[0][1]               <span class="cmt">// елемент вкладеного масиву</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри доступу</h4>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>index</code></td><td><span class="param-required">обовʼязковий</span></td><td>Числовий індекс елемента: <code>array[0]</code>, <code>matrix[1][2]</code></td></tr>
+            <tr><td><code>value</code> (при записі)</td><td><span class="param-required">обовʼязковий</span></td><td>Нове значення: <code>array[1] = 'нове'</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank" rel="noopener noreferrer">Array — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/at" target="_blank" rel="noopener noreferrer">Array.prototype.at() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Пишеш назву масиву й у квадратних дужках вказуєш індекс.</li>
+        <li>Щоб отримати останній елемент, не знаючи довжини — використовуй <code>array[array.length - 1]</code>.</li>
+        <li>Присвоєння <code>array[i] = ...</code> замінює елемент на місці.</li>
+        <li>У матриці <code>matrix[i][j]</code>: перший індекс — рядок, другий — стовпець.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: доступ до елементів</span>
+<span class="ln">const group = ['Аня', 'Борис', 'Вася', 'Галя'];</span>
+<span class="ln">console.log(group[0]);                 // 'Аня'</span>
+<span class="ln">console.log(group[group.length - 1]);  // 'Галя' — останній</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: зміна елемента на місці</span>
+<span class="ln">const group = ['Аня', 'Борис', 'Вася'];</span>
+<span class="ln">group[1] = 'Богдан';       // замінили другий елемент</span>
+<span class="ln">console.log(group);        // ['Аня', 'Богдан', 'Вася']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: матриця 3×3</span>
+<span class="ln">const matrix = [</span>
+<span class="ln">  [1, 2, 3],</span>
+<span class="ln">  [4, 5, 6],</span>
+<span class="ln">  [7, 8, 9],</span>
+<span class="ln">];</span>
+<span class="ln">console.log(matrix[1][2]); // 6 — 2-й рядок, 3-й стовпець</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Плутанина індексу й порядкового номера: <code>group[2]</code> — це <strong>третій</strong> елемент.</li>
+        <li>Спроба звернутися до <code>matrix[0][5]</code>, коли у рядку лише 3 елементи → <code>undefined</code>.</li>
+        <li>Забути <code>- 1</code> у <code>length</code>: <code>array[array.length]</code> завжди <code>undefined</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=02">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Масив <code>team = ['Аня', 'Борис', 'Вася', 'Галя', 'Діма']</code> — виведи 2-й (<code>team[1]</code>) і 4-й (<code>team[3]</code>) елементи. <span class="crystal-reward">💎 10</span></li>
+        <li>У <code>team</code> заміни 3-й елемент (<code>team[2]</code>) на своє імʼя і виведи оновлений масив. <span class="crystal-reward">💎 10</span></li>
+        <li>Для <code>team</code> виведи останній елемент через <code>team[team.length - 1]</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Матриця <code>grid = [[1, 2], [3, 4]]</code> — виведи елемент <code>grid[1][0]</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Змінюй код і запускай (<kbd>Ctrl</kbd>+<kbd>Enter</kbd>).</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const group = ['Аня', 'Борис', 'Вася', 'Галя', 'Діма'];
+console.log('Перший студент:', group[0]);
+console.log('Останній студент:', group[group.length - 1]);
+
+// Змінимо третього студента
+group[2] = 'Валентин';
+console.log('Оновлений список:', group);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Візьми масив фільмів з ДЗ уроку 01 — заміни 3-й елемент на інший фільм і виведи оновлений масив. <span class="crystal-reward">💎 15</span></li>
+        <li>Виведи передостанній елемент масиву через індекс (<code>length - 2</code>), не рахуючи елементи вручну. <span class="crystal-reward">💎 15</span></li>
+        <li>Створи матрицю 3×3 (масив масивів) і виведи значення в рядку 1, стовпці 2 — <code>matrix[1][2]</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — заміна 3-го елемента</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Замінюють «3-й» через індекс <code>3</code> — це вже <strong>четвертий</strong> елемент (індекси з нуля).</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>films[2] = 'Новий фільм'; console.log(films);</code> — індекс 2 = третій елемент.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — передостанній елемент</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Беруть <code>films[films.length - 1]</code> (це останній) або рахують елементи вручну.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>films[films.length - 2]</code> — працює для будь-якої довжини ≥ 2.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — матриця 3×3</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Плутають порядок індексів: <code>matrix[2][1]</code> замість <code>matrix[1][2]</code> (рядок, потім стовпець).</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const matrix = [[1,2,3],[4,5,6],[7,8,9]]; console.log(matrix[1][2]);</code> → <code>6</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Звернення <code>arr[i]</code> за межами масиву не кидає помилку — поверне <code>undefined</code>.</li>
+        <li>Матрицю зручно читати як «рядок → стовпець», як координати на шахівниці.</li>
+        <li>Можна створити масив одразу з потрібними значеннями — не обовʼязково спочатку порожній, потім присвоєння.</li>
+        <li><code>at(-1)</code> і <code>at(-2)</code> — сучасна альтернатива <code>length - 1</code> / <code>length - 2</code> (ES2022).</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../01-intro/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">01 · Що таке масив?</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../03-push-pop/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">03 · push / pop</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

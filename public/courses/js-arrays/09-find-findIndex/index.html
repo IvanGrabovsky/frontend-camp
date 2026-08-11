@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 09 — find() та findIndex() · JS Масиви</title>
+  <meta name="description" content="Пошук за умовою: find(), findIndex(), findLast(), findLastIndex() та коли їх обирати замість indexOf." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">09 · find / findIndex</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../08-indexOf-includes/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../10-filter/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="9" data-total="21">
+        <span class="progress__label">Урок 9 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">09</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>find() та findIndex()</h1>
+      <div class="method-tags">
+        <span class="method-tag">find()</span>
+        <span class="method-tag">findIndex()</span>
+        <span class="method-tag">findLast()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>find()</code> повертає <strong>перший елемент</strong>, для якого callback повернув <code>true</code>, або <code>undefined</code>. <code>findIndex()</code> повертає його <strong>індекс</strong> (або <code>-1</code>).</p>
+      <p>Callback: <code>(element, index, array) => boolean</code> — <code>true</code> означає «знайшов», <code>false</code> — «продовжуй пошук».</p>
+      <p>На відміну від <code>indexOf</code>, тут ти задаєш <em>власну умову</em> — тому це ідеально для обʼєктів і складних перевірок.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🗂️</span> Аналогія з життя</div>
+      <p>Уяви базу клієнтів. Ти не просто питаєш «чи є клієнт», а кажеш: «<strong>знайди мені</strong> першого клієнта старшого за 18 років» — і отримуєш сам обʼєкт клієнта з усіма даними.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">array.find((element, index, array) => умова)</span>
+<span class="ln">array.findIndex((element) => умова)</span>
+<span class="ln">array.findLast((element) => умова)       <span class="cmt">// з кінця (ES2023)</span>
+<span class="ln">array.findLastIndex((element) => умова)  <span class="cmt">// індекс з кінця</span></span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри callback</h4>
+        <p class="syntax-params__note">* <code>element</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>element</code> завжди передається; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td>Функція-умова: <code>(element, index, array) => boolean</code></td></tr>
+                        <tr><td><code>index</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Індекс поточного елемента</td></tr>
+            <tr><td><code>array</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Посилання на весь масив</td></tr>
+            <tr><td><code>thisArg</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення <code>this</code> всередині callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/find" target="_blank" rel="noopener noreferrer">Array.prototype.find() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex" target="_blank" rel="noopener noreferrer">Array.prototype.findIndex() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/findLast" target="_blank" rel="noopener noreferrer">Array.prototype.findLast() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/findLastIndex" target="_blank" rel="noopener noreferrer">Array.prototype.findLastIndex() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Метод перебирає елементи й викликає для кожного твій callback.</li>
+        <li>Як тільки callback поверне <code>true</code> — пошук зупиняється (коротке замикання).</li>
+        <li><code>find</code> повертає сам елемент, <code>findIndex</code> — його позицію.</li>
+        <li><code>findLast</code>/<code>findLastIndex</code> роблять те саме, але з кінця масиву.</li>
+      </ol>
+
+      <h3>Коли find, а коли indexOf?</h3>
+      <p>Використовуй <code>indexOf</code>/<code>includes</code> для простих значень (число, рядок). Використовуй <code>find</code>/<code>findIndex</code>, коли шукаєш <strong>обʼєкт</strong> або маєш <strong>складну умову</strong>.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: перший повнолітній користувач</span>
+<span class="ln">const users = [</span>
+<span class="ln">  { id: 1, name: 'Аня', age: 20 },</span>
+<span class="ln">  { id: 2, name: 'Борис', age: 17 },</span>
+<span class="ln">  { id: 3, name: 'Вася', age: 25 },</span>
+<span class="ln">];</span>
+<span class="ln">const adult = users.find(u => u.age >= 18);</span>
+<span class="ln">console.log(adult); // { id: 1, name: 'Аня', age: 20 }</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: індекс першого неповнолітнього</span>
+<span class="ln">const minorIdx = users.findIndex(u => u.age < 18);</span>
+<span class="ln">console.log(minorIdx); // 1</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: нічого не знайдено</span>
+<span class="ln">const found = users.find(u => u.age > 100);</span>
+<span class="ln">console.log(found); // undefined</span>
+<span class="ln cmt">// Тому перед використанням перевіряй результат:</span>
+<span class="ln">if (found) { console.log(found.name); }</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У callback необовʼязковий <code>index</code> — знадобиться, коли шукаєш не перше, а <em>наступне</em> входження або елемент після певної позиції.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const prices = [100, 250, 180, 250, 90];</span>
+<span class="ln"></span>
+<span class="ln cmt">// find — перший дорогий товар</span>
+<span class="ln">console.log(prices.find(p => p > 200)); // 250</span>
+<span class="ln"></span>
+<span class="ln cmt">// findIndex + index — другий товар &gt; 200</span>
+<span class="ln">const secondIdx = prices.findIndex((p, i) => p > 200 && i > 0);</span>
+<span class="ln">console.log(secondIdx); // 3</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Не перевірити результат <code>find</code> на <code>undefined</code> перед зверненням до його полів → помилка.</li>
+        <li>Плутати <code>find</code> (повертає елемент) із <code>findIndex</code> (повертає число).</li>
+        <li>Використовувати <code>find</code> там, де треба <em>всі</em> збіги — для цього є <code>filter</code> (урок 10).</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=09">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Продукти <code>[{name:'Молоко', price:45}, {name:'Сир', price:120}, {name:'Хліб', price:30}]</code> — знайди перший дорожчий за 100 через <code>find</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>У тому ж масиві знайди індекс товару з найменшою ціною через <code>findIndex</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Користувачі <code>[{id:1, name:'Аня'}, {id:2, name:'Борис'}]</code> — напиши <code>findById(users, 2)</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Спробуй <code>find</code> з ціною <code>&gt; 500</code> у масиві продуктів вище — перевір результат перед доступом до <code>.name</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Пошук у списку товарів за умовою.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const products = [
+  { name: 'Ручка', price: 25 },
+  { name: 'Зошит', price: 45 },
+  { name: 'Рюкзак', price: 850 },
+  { name: 'Пенал', price: 120 },
+];
+
+const expensive = products.find(p => p.price > 100);
+console.log('Перший дорожче 100:', expensive);
+
+const idx = products.findIndex(p => p.name === 'Рюкзак');
+console.log('Індекс рюкзака:', idx);
+
+function findByName(arr, name) {
+  return arr.find(p => p.name === name);
+}
+console.log(findByName(products, 'Зошит'));</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив продуктів <code>{name, price}</code> — знайди перший, дорожчий за 100 грн, через <code>find</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>У тому ж масиві знайди індекс товару з найменшою ціною через <code>findIndex</code>. <span class="crystal-reward">💎 15</span></li>
+        <li>Утиліта <code>findById(arr, id)</code> — шукає обʼєкт за полем <code>id</code>, повертає його або <code>undefined</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — перший дорожчий за 100</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Використовують <code>filter</code> і беруть <code>[0]</code> — працює, але не те, що просили; або порівнюють рядок <code>'100'</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>products.find(p => p.price > 100)</code> — повертає перший обʼєкт або <code>undefined</code>.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — індекс найдешевшого</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Шукають <code>Math.min(...prices)</code> і потім <code>indexOf</code> — при однакових цінах може бути не той індекс.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>products.findIndex((p, i, arr) => p.price === Math.min(...arr.map(x => x.price)))</code> або простий цикл з накопичувачем.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — findById</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Повертають <code>-1</code> як у <code>findIndex</code>, хоча в ТЗ — <code>undefined</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>return arr.find(item => item.id === id);</code> — без збігів буде <code>undefined</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>find</code> зупиняється на першому збігу — швидше за <code>filter</code>, коли потрібен один елемент.</li>
+        <li>Callback у <code>find</code> отримує <code>(element, index, array)</code> — індекс іноді зручний для логів.</li>
+        <li>Якщо потрібен індекс, а не обʼєкт — одразу <code>findIndex</code>, не <code>find</code> + <code>indexOf</code>.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../08-indexOf-includes/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">08 · indexOf / includes</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../10-filter/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">10 · filter</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

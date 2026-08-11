@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 10 — filter() · JS Масиви</title>
+  <meta name="description" content="Метод filter() — відбір елементів за умовою у новий масив, ланцюжки методів." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../blocks/js-arrays/">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">10 · filter</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../09-find-findIndex/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../11-map/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="10" data-total="21">
+        <span class="progress__label">Урок 10 / 21</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">10</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+        <a class="crystal-badge" href="../crystals/index.html">💎 до 80 кристалів</a>
+      </div>
+      <h1>filter() — відбір за умовою</h1>
+      <div class="method-tags">
+        <span class="method-tag">filter()</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><code>filter()</code> створює <strong>новий масив</strong> лише з тих елементів, для яких callback повернув <code>true</code>. Оригінал не змінюється. Якщо нічого не пройшло — повертається порожній масив.</p>
+      <p>Callback: <code>(element, index, array) => boolean</code> — <code>true</code> залишає елемент, <code>false</code> відкидає.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">☕</span> Аналогія з життя</div>
+      <p>Це <strong>кавовий фільтр</strong>: рідка кава проходить, а гуща залишається. Ти задаєш умову «що пропускати» — і на виході тільки потрібне. Наприклад, зі списку студентів залишити лише повнолітніх.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const result = array.filter((element, index, array) => умова)</span>
+<span class="ln cmt">// умова повертає true → елемент лишається</span>
+<span class="ln cmt">// умова повертає false → елемент відкидається</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Параметри filter()</h4>
+        <p class="syntax-params__note">* <code>element</code>, <code>index</code>, <code>array</code> — аргументи <em>callback</em>, а не методу масиву. У callback <code>element</code> завжди передається; <code>index</code> і <code>array</code> — за потреби.</p>
+        <table class="params-table">
+          <thead><tr><th>Параметр</th><th>Обовʼязковий?</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td><code>callback</code></td><td><span class="param-required">обовʼязковий</span></td><td>Функція-умова: <code>(element, index, array) => boolean</code> — повертає <code>true</code> (залишити) або <code>false</code> (відкинути)</td></tr>
+            <tr><td><code>index</code>, <code>array</code></td><td><span class="param-optional">необовʼязкові</span></td><td>Індекс і посилання на масив — аргументи callback</td></tr>
+            <tr><td><code>thisArg</code></td><td><span class="param-optional">необовʼязковий</span></td><td>Значення <code>this</code> всередині callback</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/filter" target="_blank" rel="noopener noreferrer">Array.prototype.filter() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Метод проходить кожен елемент і викликає callback.</li>
+        <li>Callback має повернути <code>true</code> (залишити) або <code>false</code> (прибрати).</li>
+        <li>Усі «true»-елементи потрапляють у новий масив у тому ж порядку.</li>
+        <li>Оригінальний масив залишається незмінним.</li>
+      </ol>
+
+      <h3>Ланцюжки методів (chaining)</h3>
+      <p>Оскільки <code>filter</code> повертає масив, до нього можна одразу приєднати <code>.map()</code> чи <code>.reduce()</code> (уроки 11–12): <code>arr.filter(...).map(...)</code>.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 1: товари в наявності</span>
+<span class="ln">const products = [</span>
+<span class="ln">  { name: 'Ноутбук', price: 25000, inStock: true },</span>
+<span class="ln">  { name: 'Мишка', price: 500, inStock: false },</span>
+<span class="ln">  { name: 'Клавіатура', price: 1200, inStock: true },</span>
+<span class="ln">];</span>
+<span class="ln">const available = products.filter(p => p.inStock);</span>
+<span class="ln">console.log(available.length); // 2</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 2: доступні за ціною</span>
+<span class="ln">const affordable = products.filter(p => p.price < 2000);</span>
+<span class="ln">console.log(affordable.map(p => p.name)); // ['Мишка', 'Клавіатура']</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Приклад 3: прибрати «фальшиві» значення</span>
+<span class="ln">const messy = [0, 1, '', 'текст', null, 5, undefined];</span>
+<span class="ln">const clean = messy.filter(Boolean); // хитрий трюк</span>
+<span class="ln">console.log(clean); // [1, 'текст', 5]</span></code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h3>Необовʼязкові параметри в дії</h3>
+      <p class="syntax-params__note">У callback необовʼязковий <code>index</code> — зручно, коли умова залежить від <em>позиції</em>, а не лише від значення.</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">const nums = [10, 20, 30, 40, 50, 60];</span>
+<span class="ln"></span>
+<span class="ln cmt">// Залишити елементи на парних індексах (0, 2, 4…)</span>
+<span class="ln">const evenPositions = nums.filter((_, index) => index % 2 === 0);</span>
+<span class="ln">console.log(evenPositions); // [10, 30, 50]</span>
+<span class="ln"></span>
+<span class="ln cmt">// Пропустити перший елемент (наприклад, заголовок)</span>
+<span class="ln">const rows = ['Імʼя', 'Аня', 'Борис', 'Вася'];</span>
+<span class="ln">const names = rows.filter((_, index) => index > 0);</span>
+<span class="ln">console.log(names); // ['Аня', 'Борис', 'Вася']</span></code></pre>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Плутати <code>filter</code> (кілька елементів) із <code>find</code> (один елемент).</li>
+        <li>Забути <code>return</code> у callback із фігурними дужками — тоді все відкидається.</li>
+        <li>Думати, що <code>filter</code> мутує масив — ні, він завжди повертає новий.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика на занятті</div>
+      <p class="practice-block__intro">Виконай у пісочниці нижче або в <a href="../playground/index.html?lesson=10">окремій пісочниці</a>. Дані для кожного завдання — у формулюванні. За кожне своєчасно виконане завдання — кристали.</p>
+      <ol>
+        <li>Оцінки <code>[45, 72, 58, 90, 61, 33]</code> — залиш лише ≥ 60 через <code>filter</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Рядки <code>['js', 'html', 'css', 'arrays']</code> — залиш ті, що довші за 5 символів. <span class="crystal-reward">💎 10</span></li>
+        <li>Товари <code>[{name:'Мишка', inStock:true}, {name:'Клавіатура', inStock:false}, {name:'Монітор', inStock:true}]</code> — залиш лише <code>inStock === true</code>. <span class="crystal-reward">💎 10</span></li>
+        <li>Числа <code>[1, 2, 3, 4, 5, 6, 7, 8]</code> — відфільтруй парні і виведи їх кількість (<code>.length</code>). <span class="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+
+
+    <section class="sandbox" data-sandbox aria-label="Жива пісочниця">
+      <div class="sandbox__title"><span>🧪</span> Жива пісочниця</div>
+      <p>Фільтруємо оцінки студентів.</p>
+      <textarea class="sandbox__input" spellcheck="false" aria-label="Поле для коду">const grades = [45, 78, 92, 55, 63, 100, 30];
+
+const passed = grades.filter(g => g >= 60);
+console.log('Склали (>= 60):', passed);
+
+const failed = grades.filter(g => g < 60);
+console.log('Не склали:', failed);
+
+const words = ['код', 'функція', 'ok', 'масив', 'JS'];
+const long = words.filter(w => w.length > 3);
+console.log('Довші за 3 символи:', long);</textarea>
+      <div class="sandbox__toolbar">
+        <button class="btn btn--run sandbox__run" type="button">▶ Запустити</button>
+        <button class="btn btn--ghost sandbox__reset" type="button">↺ Скинути</button>
+      </div>
+      <pre class="sandbox__output" aria-live="polite"></pre>
+    </section>
+
+        <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Масив оцінок — залиш лише ті, що ≥ 60 (хто склав), через <code>filter</code> і виведи результат. <span class="crystal-reward">💎 15</span></li>
+        <li>Масив рядків — залиш тільки ті, довжина яких більша за 5 символів. <span class="crystal-reward">💎 15</span></li>
+        <li>З «брудного» масиву <code>[0, 1, null, 'текст', '', undefined, 5]</code> прибери falsy через <code>filter(Boolean)</code>. <span class="crystal-reward">💎 10</span></li>
+      </ol>
+      <p class="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <p class="hw-review-block__intro">Ніби ревʼю після здачі домашки: що часто плутають і як виправити. <a href="../crystals/index.html">Як рахуються кристали →</a></p>
+      <div class="hw-review-items">
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 1 — оцінки ≥ 60</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Мутують вихідний масив через <code>splice</code> у циклі замість нового масиву від <code>filter</code>.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const passed = grades.filter(g => g >= 60); console.log(passed);</code> — оригінал не чіпаємо.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 2 — рядки довші за 5</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Порівнюють <code>length > 5</code> з числом, але в масиві числа, не рядки — або плутають ≥ і >.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>words.filter(w => w.length > 5)</code> — <code>length</code> у рядка, не в масиві.</p>
+      </article>
+      <article class="hw-review-item">
+        <h4 class="hw-review-item__task">Завдання 3 — filter(Boolean)</h4>
+        <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Фільтрують вручну довгим ланцюжком <code>if</code>, забуваючи про <code>0</code> і <code>''</code> як falsy.</p>
+        <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>dirty.filter(Boolean)</code> — прибирає <code>0</code>, <code>null</code>, <code>undefined</code>, <code>''</code>, <code>false</code>.</p>
+      </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>filter</code> завжди повертає новий масив (може бути порожнім — це нормально).</li>
+        <li>Не плутай з <code>find</code>: filter — усі підходящі, find — перший.</li>
+        <li>Можна ланцюжити: <code>arr.filter(...).map(...)</code> — спочатку відбираємо, потім перетворюємо.</li>
+      </ul>
+    </section>
+
+<nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../09-find-findIndex/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">09 · find / findIndex</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../11-map/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">11 · map</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../blocks/js-arrays/">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/sandbox.js"></script>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>
