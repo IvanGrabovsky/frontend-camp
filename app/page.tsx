@@ -11,12 +11,12 @@ export default function HomePage() {
   return (
     <HubLayout>
       <section className="hero">
-        <span className="hero__badge">Roadmap · HTML → CSS → JS → Next.js</span>
+        <span className="hero__badge">Roadmap · Інтернет → HTML → CSS → JS → Next.js</span>
         <h1>Frontend Learning Hub</h1>
         <HeroQuote />
         {activeBlock?.startHref && (
           <Link className="btn btn--run playground-cta" href={`/blocks/${activeBlock.slug}/`}>
-            Почати з JavaScript масивів
+            Почати з JavaScript
           </Link>
         )}
       </section>
@@ -40,7 +40,7 @@ export default function HomePage() {
           <div className="how-step">
             <div className="how-step__num">01</div>
             <h4>Блоки roadmap</h4>
-            <p>HTML/CSS → JS основи → масиви → Next.js → фінальний проект.</p>
+            <p>Інтернет → HTML → CSS → JavaScript → Next.js → фінальний проект.</p>
           </div>
           <div className="how-step">
             <div className="how-step__num">02</div>
