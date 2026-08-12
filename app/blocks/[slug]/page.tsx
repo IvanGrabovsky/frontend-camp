@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { HubLayout } from '@/components/HubLayout';
-import { ArraysLessonCard } from '@/components/RoadmapBlockCard';
+import { LessonCard } from '@/components/RoadmapBlockCard';
 import { getBlock, ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 
@@ -54,36 +54,42 @@ export default async function BlockPage({ params }: BlockPageProps) {
       {isActive && block.lessons ? (
         <>
           <div className="block-actions">
-            <a className="btn btn--run" href={withBasePath(block.startHref || '/courses/js-arrays/01-intro/')}>
-              Почати урок 01
+            <a className="btn btn--run" href={withBasePath(block.startHref || `/courses/${block.courseSlug || block.slug}/01-intro/`)}>
+              Почати модуль 01
             </a>
-            <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/playground/')}>
-              🧪 Пісочниця
-            </a>
-            <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/crystals/')}>
-              💎 Кристали
-            </a>
+            {block.slug === 'javascript-basics' && (
+              <>
+                <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/playground/')}>
+                  🧪 Пісочниця
+                </a>
+                <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/crystals/')}>
+                  💎 Кристали
+                </a>
+              </>
+            )}
           </div>
 
           <section aria-labelledby="topics-title">
             <h2 id="topics-title">Теми блоку</h2>
             <div className="topics-grid">
               {block.lessons.map((lesson) => (
-                <ArraysLessonCard key={lesson.slug} {...lesson} />
+                <LessonCard key={lesson.slug} courseSlug={block.courseSlug || block.slug} {...lesson} />
               ))}
             </div>
           </section>
 
-          <section className="motivation-block" style={{ marginTop: '2rem' }}>
-            <h2>Структура кожного уроку</h2>
-            <ul>
-              <li>Теорія з аналогіями та прикладами</li>
-              <li>Жива пісочниця в браузері</li>
-              <li>4 завдання на занятті (💎 10 кожне)</li>
-              <li>3 домашні завдання (💎 40)</li>
-              <li>Розбір типових помилок ДЗ та цікаві фішки</li>
-            </ul>
-          </section>
+          {block.slug === 'javascript-basics' && (
+            <section className="motivation-block" style={{ marginTop: '2rem' }}>
+              <h2>Структура кожного уроку</h2>
+              <ul>
+                <li>Теорія з аналогіями та прикладами</li>
+                <li>Жива пісочниця в браузері</li>
+                <li>4 завдання на занятті (💎 10 кожне)</li>
+                <li>3 домашні завдання (💎 40)</li>
+                <li>Розбір типових помилок ДЗ та цікаві фішки</li>
+              </ul>
+            </section>
+          )}
         </>
       ) : (
         <section className="lesson-card">

@@ -37,7 +37,8 @@ export function RoadmapBlockCard({ block }: RoadmapBlockCardProps) {
   return <article className="topic-card topic-card--roadmap topic-card--disabled">{inner}</article>;
 }
 
-export function ArraysLessonCard({
+export function LessonCard({
+  courseSlug,
   num,
   slug,
   title,
@@ -45,6 +46,7 @@ export function ArraysLessonCard({
   difficulty,
   crystals,
 }: {
+  courseSlug: string;
   num: string;
   slug: string;
   title: string;
@@ -52,7 +54,7 @@ export function ArraysLessonCard({
   difficulty: 'easy' | 'medium' | 'hard';
   crystals: number;
 }) {
-  const href = withBasePath(`/courses/js-arrays/${slug}/`);
+  const href = withBasePath(`/courses/${courseSlug}/${slug}/`);
 
   return (
     <a className="topic-card" href={href}>

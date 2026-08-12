@@ -20,6 +20,7 @@ export interface RoadmapBlock {
   level: string;
   readmePath: string;
   lessons?: LessonMeta[];
+  courseSlug?: string;
   startHref?: string;
   topics?: string[];
 }
@@ -67,6 +68,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     status: 'active',
     level: 'Початківець',
     readmePath: 'blocks/00-how-internet-works/README.md',
+    courseSlug: 'how-internet-works',
     lessons: INTERNET_LESSONS,
     startHref: '/courses/how-internet-works/01-what-happens/',
     topics: [
@@ -122,6 +124,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     status: 'active',
     level: 'Початківець → середній',
     readmePath: 'blocks/03-javascript/README.md',
+    courseSlug: 'js-arrays',
     lessons: ARRAYS_LESSONS,
     startHref: '/courses/js-arrays/01-intro/',
     topics: ['Синтаксис ES6+', 'Умови та цикли', 'Функції', 'Робота з DOM', 'Масиви — 21 урок з пісочницею'],
