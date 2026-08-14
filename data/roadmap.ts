@@ -81,6 +81,17 @@ export const CSS_LESSONS: LessonMeta[] = [
   { num: '08', slug: '08-modern', title: 'Сучасний CSS', methods: ':has() · @layer · @scope · nesting', difficulty: 'hard', crystals: 0 },
 ];
 
+export const NEXTJS_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-what-is-nextjs', title: 'Що таке Next.js і навіщо він', methods: 'CSR · SSR · SSG · ISR', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-app-router', title: 'App Router: файлова маршрутизація', methods: 'page · layout · loading · error', difficulty: 'easy', crystals: 0 },
+  { num: '03', slug: '03-server-client', title: 'Server та Client Components', methods: '"use client" · RSC · hydration', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-data-fetching', title: 'Data Fetching', methods: 'fetch · cache · revalidate · Suspense', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-routing', title: 'Динамічні маршрути та навігація', methods: '[slug] · Link · useRouter · params', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-api-routes', title: 'Route Handlers (API)', methods: 'GET · POST · NextRequest · NextResponse', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-metadata-seo', title: 'Metadata та SEO', methods: 'generateMetadata · opengraph · robots', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-deploy', title: 'Deploy: Vercel та GitHub Pages', methods: 'output:export · basePath · CI/CD', difficulty: 'hard', crystals: 0 },
+];
+
 export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   {
     slug: 'how-internet-works',
@@ -145,11 +156,13 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     slug: 'nextjs',
     order: 4,
     title: 'Next.js',
-    subtitle: 'React, маршрутизація, деплой',
-    status: 'planned',
+    subtitle: 'React, App Router, Server Components, deploy — 8 уроків',
+    status: 'active',
     level: 'Середній',
     readmePath: 'blocks/04-nextjs/README.md',
-    topics: ['App Router', 'Server & Client Components', 'Data fetching', 'Deploy на Vercel'],
+    courseSlug: 'nextjs',
+    lessons: NEXTJS_LESSONS,
+    startHref: '/courses/nextjs/01-what-is-nextjs/',
   },
   {
     slug: 'capstone',

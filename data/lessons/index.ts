@@ -23,6 +23,7 @@ const loaders: Record<string, () => Promise<Record<string, string>>> = {
   html: () => import('@/data/lessons/html').then((m) => m.LESSONS_HTML),
   css: () => import('@/data/lessons/css').then((m) => m.LESSONS_HTML),
   'js-arrays': () => import('@/data/lessons/js-arrays').then((m) => m.LESSONS_HTML),
+  nextjs: () => import('@/data/lessons/nextjs').then((m) => m.LESSONS_HTML),
 };
 
 // ─── getAllLessonParams ────────────────────────────────────────────────────────
