@@ -59,6 +59,28 @@ export const INTERNET_LESSONS: LessonMeta[] = [
   { num: '08', slug: '08-realtime', title: 'Real-time комунікація', methods: 'WebSocket · SSE · HTTP/2', difficulty: 'hard', crystals: 0 },
 ];
 
+export const HTML_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-structure', title: 'Структура HTML-документа', methods: '<!DOCTYPE> · <html> · <head> · <body>', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-semantic', title: 'Семантичні теги', methods: 'header · main · article · section · nav', difficulty: 'easy', crystals: 0 },
+  { num: '03', slug: '03-text', title: 'Текстові елементи', methods: 'h1–h6 · p · ul · ol · strong · em', difficulty: 'easy', crystals: 0 },
+  { num: '04', slug: '04-links-images', title: 'Посилання та зображення', methods: '<a> · <img> · srcset · loading', difficulty: 'easy', crystals: 0 },
+  { num: '05', slug: '05-forms', title: 'Форми та інпути', methods: 'form · input · label · select · textarea', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-validation', title: 'Валідація форм', methods: 'required · pattern · type · novalidate', difficulty: 'medium', crystals: 0 },
+  { num: '07', slug: '07-accessibility', title: 'Доступність (a11y) та ARIA', methods: 'role · aria-label · tabindex · alt', difficulty: 'medium', crystals: 0 },
+  { num: '08', slug: '08-seo-meta', title: 'SEO та мета-теги', methods: 'title · meta · og: · canonical', difficulty: 'hard', crystals: 0 },
+];
+
+export const CSS_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-selectors', title: 'Селектори та специфічність', methods: 'class · id · attr · pseudo · :is()', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-box-model', title: 'Box model та позиціювання', methods: 'margin · padding · border · position', difficulty: 'easy', crystals: 0 },
+  { num: '03', slug: '03-flexbox', title: 'Flexbox', methods: 'flex · justify-content · align-items · gap', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-grid', title: 'CSS Grid', methods: 'grid-template · fr · auto-fill · subgrid', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-responsive', title: 'Адаптивна верстка', methods: 'media queries · clamp() · container queries', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-variables', title: 'Кастомні властивості', methods: '--var · var() · @property · fallback', difficulty: 'medium', crystals: 0 },
+  { num: '07', slug: '07-animations', title: 'Анімації та transitions', methods: 'transition · @keyframes · animation · will-change', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-modern', title: 'Сучасний CSS', methods: ':has() · @layer · @scope · nesting', difficulty: 'hard', crystals: 0 },
+];
+
 export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   {
     slug: 'how-internet-works',
@@ -86,35 +108,25 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     slug: 'html',
     order: 1,
     title: 'HTML',
-    subtitle: 'Семантична розмітка, доступність, форми',
-    status: 'planned',
+    subtitle: 'Семантична розмітка, доступність, форми — 8 уроків',
+    status: 'active',
     level: 'Початківець',
     readmePath: 'blocks/01-html/README.md',
-    topics: [
-      'Структура HTML-документа',
-      'Семантичні теги (header, main, article, section …)',
-      'Форми та валідація',
-      'Доступність (a11y) та ARIA',
-      'SEO-основи розмітки',
-      'Мета-теги та Open Graph',
-    ],
+    courseSlug: 'html',
+    lessons: HTML_LESSONS,
+    startHref: '/courses/html/01-structure/',
   },
   {
     slug: 'css',
     order: 2,
     title: 'CSS',
-    subtitle: 'Стилі, лейаут, адаптивність, анімації',
-    status: 'planned',
+    subtitle: 'Стилі, лейаут, адаптивність, анімації — 8 уроків',
+    status: 'active',
     level: 'Початківець',
     readmePath: 'blocks/02-css/README.md',
-    topics: [
-      'Селектори та специфічність',
-      'Box model та позиціювання',
-      'Flexbox & Grid',
-      'Адаптивна верстка (media queries, clamp, container queries)',
-      'Кастомні властивості (CSS variables)',
-      'Анімації та transitions',
-    ],
+    courseSlug: 'css',
+    lessons: CSS_LESSONS,
+    startHref: '/courses/css/01-selectors/',
   },
   {
     slug: 'javascript-basics',

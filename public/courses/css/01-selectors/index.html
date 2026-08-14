@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 01 — Селектори та специфічність · CSS</title>
+  <meta name="description" content="Типи CSS-селекторів, каскад, специфічність та інструмент :is() — як браузер вирішує який стиль застосувати." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">01 · Селектори та специфічність</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <span class="topnav__step topnav__step--disabled" aria-disabled="true" title="Перший урок">←</span>
+        <a class="topnav__step" href="../02-box-model/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="1" data-total="8">
+        <span class="progress__label">Урок 1 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">01</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Селектори та специфічність</h1>
+      <div class="method-tags">
+        <span class="method-tag">.class</span>
+        <span class="method-tag">#id</span>
+        <span class="method-tag">[attr]</span>
+        <span class="method-tag">:pseudo</span>
+        <span class="method-tag">:is()</span>
+        <span class="method-tag">specificity</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Селектор</strong> — це шаблон, яким CSS «вибирає» HTML-елементи для застосування стилів. Вміти писати правильні селектори — ключова навичка: від них залежить як точно і без побічних ефектів ти можеш стилізувати елементи.</p>
+      <p><strong>Специфічність</strong> — це система підрахунку «ваги» кожного правила. Коли два правила намагаються задати один і той самий стиль одному елементу, виграє той, у кого вища специфічність. Розуміння цього механізму позбавляє від хаотичних <code>!important</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎯</span> Аналогія зі знижками</div>
+      <p>Уяви, що кожне CSS-правило — це <strong>знижкова картка</strong>. Специфічність — це рівень карти: золота бʼє срібну, срібна — бронзову. Якщо у двох карток однаковий рівень, перемагає та, що <em>пізніша</em> в файлі (каскад). А <code>!important</code> — це VIP-картка, яка бʼє всіх.</p>
+    </section>
+
+    <section>
+      <h2>Типи селекторів</h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* 1. Тег (елемент) — специфічність: 0-0-1 */</span>
+<span class="ln">p { color: gray; }</span>
+<span class="ln">h1 { font-size: 2rem; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 2. Клас — специфічність: 0-1-0 */</span>
+<span class="ln">.btn { padding: 8px 16px; }</span>
+<span class="ln">.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 3. ID — специфічність: 1-0-0 */</span>
+<span class="ln">#header { position: sticky; top: 0; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 4. Атрибут — специфічність: 0-1-0 */</span>
+<span class="ln">input[type="text"] { border: 1px solid #ccc; }</span>
+<span class="ln">a[href^="https"] { color: green; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 5. Псевдоклас — специфічність: 0-1-0 */</span>
+<span class="ln">a:hover { text-decoration: underline; }</span>
+<span class="ln">li:first-child { font-weight: bold; }</span>
+<span class="ln">p:not(.special) { color: #333; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 6. Псевдоелемент — специфічність: 0-0-1 */</span>
+<span class="ln">p::first-line { font-variant: small-caps; }</span>
+<span class="ln">.btn::after { content: " →"; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 7. Комбінатори (не збільшують специфічність самі) */</span>
+<span class="ln">.nav &gt; li { display: inline-block; }    /* прямий нащадок */</span>
+<span class="ln">.card + .card { margin-top: 1rem; }    /* суміжний брат */</span>
+<span class="ln">.section ~ p { color: #666; }          /* всі наступні брати */</span></code></pre>
+      </div>
+
+      <h2>Специфічність — система підрахунку</h2>
+      <p>Специфічність записується як три числа <strong>(A, B, C)</strong>, де більше A завжди бʼє більше B, незалежно від C:</p>
+
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Тип</th><th>A</th><th>B</th><th>C</th><th>Приклад</th></tr></thead>
+          <tbody>
+            <tr><td>Inline стиль</td><td>1</td><td>0</td><td>0</td><td><code>style="color:red"</code></td></tr>
+            <tr><td>ID</td><td>0</td><td>1</td><td>0</td><td><code>#header</code></td></tr>
+            <tr><td>Клас, псевдоклас, атрибут</td><td>0</td><td>0</td><td>1</td><td><code>.btn</code>, <code>:hover</code>, <code>[type]</code></td></tr>
+            <tr><td>Тег, псевдоелемент</td><td>0</td><td>0</td><td>1</td><td><code>p</code>, <code>::before</code></td></tr>
+            <tr><td>Універсальний <code>*</code>, комбінатори</td><td>0</td><td>0</td><td>0</td><td><code>*</code>, <code>&gt;</code>, <code>+</code>, <code>~</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Приклади підрахунку специфічності */</span>
+<span class="ln">p              { color: gray }      /* 0-0-1 */</span>
+<span class="ln">.text          { color: blue }      /* 0-1-0 — перемагає */</span>
+<span class="ln">#main p        { color: green }     /* 1-0-1 */</span>
+<span class="ln">.nav .link     { color: purple }    /* 0-2-0 */</span>
+<span class="ln">#main .link    { color: orange }    /* 1-1-0 — перемагає над попереднім */</span>
+<span class="ln"></span>
+<span class="ln cmt">/* :is() та :not() беруть специфічність найважчого аргументу */</span>
+<span class="ln">:is(#id, .class) { color: red }     /* 1-0-0 (через #id) */</span>
+<span class="ln">:is(p, .class)   { color: red }     /* 0-1-0 (через .class) */</span></code></pre>
+      </div>
+
+      <h2>Сучасні інструменти: <code>:is()</code>, <code>:where()</code>, <code>:not()</code></h2>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* :is() — скорочення для груп селекторів */</span>
+<span class="ln cmt">/* Замість: header a, main a, footer a */</span>
+<span class="ln">:is(header, main, footer) a { color: blue; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* :where() — те саме, але специфічність завжди 0-0-0 */</span>
+<span class="ln cmt">/* Зручно для скидань стилів, які легко перезаписати */</span>
+<span class="ln">:where(h1, h2, h3) { margin-top: 0; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* :not() — виключення */</span>
+<span class="ln">.list li:not(:last-child) { border-bottom: 1px solid #eee; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* :has() — батько, що містить певний нащадок (CSS 2023) */</span>
+<span class="ln">.card:has(img) { padding: 0; }          /* картка із зображенням */</span>
+<span class="ln">form:has(input:invalid) { border: red; } /* форма з помилкою */</span></code></pre>
+      </div>
+
+      <h2>Каскад — порядок вирішення конфліктів</h2>
+      <p>Коли специфічність однакова, браузер застосовує правило, що <strong>йде пізніше</strong> в CSS (каскад). Але є й інші фактори, які враховуються в такому порядку пріоритету:</p>
+      <ol class="steps">
+        <li><strong>!important</strong> від користувача (accessibility overrides у браузері)</li>
+        <li><strong>!important</strong> від автора (ваш CSS)</li>
+        <li>Стилі автора (звичайні правила у вашому CSS)</li>
+        <li>Стилі браузера за замовчуванням (user-agent stylesheet)</li>
+      </ol>
+      <p>Всередині кожного рівня: вища специфічність → пізніше у файлі → виграє.</p>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity" target="_blank" rel="noopener noreferrer">Specificity — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:is" target="_blank" rel="noopener noreferrer">:is() — MDN</a></li>
+          <li><a href="https://specificity.keegan.st/" target="_blank" rel="noopener noreferrer">Specificity Calculator (онлайн)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Зловживання <code>#id</code> в CSS</strong> — специфічність 1-0-0 дуже важко перебити без ще одного ID або <code>!important</code>. Для стилізації краще завжди використовувати класи.</li>
+        <li><strong><code>!important</code> як рішення конфліктів</strong> — це симптом, а не ліки. Веде до ще більших конфліктів. Правильне рішення — зрозуміти специфічність і переписати селектор.</li>
+        <li><strong>Занадто «довгі» селектори</strong> — <code>.sidebar .nav ul li a.active</code> важко перебити і важко читати. Краще дати елементу власний клас.</li>
+        <li><strong>Плутанина <code>:nth-child()</code> і <code>:nth-of-type()</code></strong> — <code>:nth-child(2)</code> вибирає другого нащадка батька (будь-якого типу). <code>:nth-of-type(2)</code> — другий елемент <em>цього типу</em>.</li>
+        <li><strong>Не знати, що <code>:is()</code> бере специфічність найважчого аргументу</strong> — <code>:is(#id, p)</code> має специфічність 1-0-0, навіть якщо застосовується до <code>p</code>.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий онлайн-пісочницю <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Є кнопка <code>&lt;button class="btn" id="submit"&gt;</code>. Напиши три правила: для тегу <code>button</code>, для класу <code>.btn</code> і для ID <code>#submit</code> — кожне зі своїм кольором. Яке з них перемагає? Зміни порядок правил у CSS — результат той самий?</li>
+        <li>Напиши правило <code>p { color: blue; }</code> і <code>.text { color: red; }</code>. Додай елемент <code>&lt;p class="text"&gt;</code>. Якого кольору текст? Тепер додай <code>!important</code> до правила для <code>p</code> — що змінилось?</li>
+        <li>Перепиши <code>header a, main a, footer a { ... }</code> з використанням <code>:is()</code>.</li>
+        <li>Напиши правило, що стилізує всі <code>&lt;li&gt;</code> крім останнього (підказка: <code>:not(:last-child)</code>). Додай роздільну лінію між пунктами списку.</li>
+        <li>Порахуй специфічність вручну для: <code>div.wrapper &gt; p:first-child::before</code>. Відповідь перевір на <a href="https://specificity.keegan.st/" target="_blank" rel="noopener">specificity.keegan.st</a>.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка специфічність у селектора <code>.nav ul li.active a</code>? Порахуй: (A, B, C).</li>
+        <li>Що таке каскад у CSS і як він вирішує конфлікти при однаковій специфічності?</li>
+        <li>Чим відрізняється <code>:is()</code> від <code>:where()</code>?</li>
+        <li>Чому краще уникати ID-селекторів у CSS?</li>
+        <li>Що робить <code>:has()</code>? Наведи практичний приклад.</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке специфічність CSS?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «ID важливіший за клас» — правильно, але без пояснення механізму.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Специфічність — це три числа (A, B, C): A — кількість ID, B — класів/псевдокласів/атрибутів, C — тегів/псевдоелементів. При конфлікті порівнюються зліва направо. Inline-стиль ще вищий: (1,0,0,0).</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Навіщо !important і коли його використовувати?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Коли стиль не застосовується» — неправильно, це обходить проблему, а не вирішує.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>!important</code> законно для: (1) accessibility overrides — щоб стиль браузера/розширення не ламав доступність, (2) utility-класи в design systems (Tailwind теж так робить). В звичайному CSS — сигнал про проблему з архітектурою.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що новенького в CSS-селекторах?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Мовчання або «нічого не знаю».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>:is()</code> і <code>:where()</code> для групування (різна специфічність), <code>:has()</code> — «батьківський» селектор (CSS 2023, підтримується у всіх сучасних браузерах), CSS Nesting (нативний, без препроцесорів).</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>В DevTools (Chrome) → вкладка Elements → правая панель Styles: кожне CSS-правило показує його специфічність при наведенні на селектор (Chrome 121+).</li>
+        <li><strong>CSS Nesting</strong> (нативне, без SCSS) вже у всіх браузерах: <code>.card { &amp; .title { color: red; } }</code> — не потрібен препроцесор.</li>
+        <li><code>:where()</code> з нульовою специфічністю ідеальний для reset-стилів — будь-який клас їх легко перезаписує.</li>
+        <li>Атрибутний селектор <code>[href$=".pdf"]</code> вибирає посилання що закінчуються на «.pdf». <code>^=</code> — починаються з, <code>*=</code> — містять.</li>
+        <li><code>:focus-visible</code> замість <code>:focus</code> — показує outline тільки при навігації клавіатурою, але не при кліку мишею. Кращий UX + accessibility.</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill nav-pill--disabled" aria-disabled="true" href="#">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">Це перший урок</span>
+      </a>
+      <a class="nav-pill nav-pill--next nav-pill--disabled" aria-disabled="true" href="#">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">02 · Box model (скоро)</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

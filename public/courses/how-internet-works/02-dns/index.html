@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 02 — DNS: домен → IP-адреса · Як працює інтернет</title>
+  <meta name="description" content="Як DNS перетворює доменне ім'я на IP-адресу: резолвер, root-сервери, TLD, authoritative DNS, записи A/AAAA/CNAME/MX, TTL та кешування." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">02 · DNS: домен → IP-адреса</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../01-what-happens/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <span class="topnav__step topnav__step--disabled" aria-disabled="true" title="Далі скоро">→</span>
+      </div>
+      <div class="progress" data-lesson="2" data-total="8">
+        <span class="progress__label">Модуль 2 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">02</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко"><span class="difficulty-indicator__label">Складність</span><span class="difficulty-indicator__bars" aria-hidden="true"><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span></span></span>
+      </div>
+      <h1>DNS: як доменне ім'я стає IP-адресою</h1>
+      <div class="method-tags">
+        <span class="method-tag">A</span>
+        <span class="method-tag">AAAA</span>
+        <span class="method-tag">CNAME</span>
+        <span class="method-tag">MX</span>
+        <span class="method-tag">TTL</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>DNS (Domain Name System)</strong> — це розподілена база даних, яка відповідає за перетворення людиночитаних доменних імен (наприклад, <code>google.com</code>) на машинні IP-адреси (<code>142.250.185.46</code>). Без DNS ти мусив би запам'ятовувати числові адреси кожного сайту.</p>
+      <p>DNS — це не один сервер, а ієрархічна система з мільйонів серверів, розподілених по всьому світу. Саме вона робить можливим те, що <code>example.com</code> завжди веде на правильний сервер — незалежно де ти знаходишся.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📖</span> Аналогія з телефонною книгою</div>
+      <p>DNS — це як <strong>телефонна книга інтернету</strong>. Ти знаєш ім'я людини (домен), а книга дає тобі номер телефону (IP-адресу). Але на відміну від паперової книги, DNS-книга — глобальна, автоматично оновлюється і кешується на кожному рівні.</p>
+    </section>
+
+    <section>
+      <h2>Ієрархія DNS-серверів</h2>
+      <p>DNS має чотирирівневу структуру. Коли твій резолвер не знає відповіді, він іде знизу вгору:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+        </div>
+        <pre><code><span class="ln cmt">// Ієрархія DNS (від найвищого до найнижчого)</span>
+<span class="ln"></span>
+<span class="ln">1. Root DNS сервери (13 кластерів, по всьому світу)</span>
+<span class="ln">   └─ Знають адреси всіх TLD-серверів</span>
+<span class="ln">   └─ Позначаються крапкою: "."</span>
+<span class="ln"></span>
+<span class="ln">2. TLD (Top-Level Domain) сервери</span>
+<span class="ln">   └─ .com, .ua, .org, .net, .io тощо</span>
+<span class="ln">   └─ Знають адреси authoritative серверів для кожного домену</span>
+<span class="ln"></span>
+<span class="ln">3. Authoritative DNS сервери</span>
+<span class="ln">   └─ Зберігають реальні записи для конкретного домену</span>
+<span class="ln">   └─ Відповідають: "example.com → 93.184.216.34"</span>
+<span class="ln"></span>
+<span class="ln">4. Recursive Resolver (резолвер)</span>
+<span class="ln">   └─ Твій провайдер або 8.8.8.8 (Google), 1.1.1.1 (Cloudflare)</span>
+<span class="ln">   └─ Робить всю роботу за клієнта</span></code></pre>
+      </div>
+
+      <h2>Повний ланцюжок DNS-запиту</h2>
+      <p>Що відбувається, коли ти вперше запитуєш <code>example.com</code>:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+        </div>
+        <pre><code><span class="ln cmt">// Крок 1: Браузер перевіряє власний кеш</span>
+<span class="ln">Браузер: "Чи знаю я вже IP для example.com?"</span>
+<span class="ln">→ Ні → переходить до ОС</span>
+<span class="ln"></span>
+<span class="ln cmt">// Крок 2: ОС перевіряє /etc/hosts та системний DNS-кеш</span>
+<span class="ln">ОС: "Є щось у локальному файлі /etc/hosts?"</span>
+<span class="ln">→ Ні → звертається до резолвера</span>
+<span class="ln"></span>
+<span class="ln cmt">// Крок 3: Рекурсивний резолвер перевіряє свій кеш</span>
+<span class="ln">Resolver: "Чи є відповідь у моєму кеші?"</span>
+<span class="ln">→ Ні → запит до Root DNS</span>
+<span class="ln"></span>
+<span class="ln cmt">// Крок 4: Root DNS → TLD</span>
+<span class="ln">Root: "example.com? Не знаю, але .com → 192.5.6.30"</span>
+<span class="ln">→ Резолвер: запит до TLD (.com)</span>
+<span class="ln"></span>
+<span class="ln cmt">// Крок 5: TLD → Authoritative</span>
+<span class="ln">.com TLD: "example.com? Authoritative → ns1.example.com"</span>
+<span class="ln">→ Резолвер: запит до Authoritative</span>
+<span class="ln"></span>
+<span class="ln cmt">// Крок 6: Authoritative → відповідь</span>
+<span class="ln">Authoritative: "example.com A → 93.184.216.34 (TTL: 3600)"</span>
+<span class="ln">← Резолвер кешує і повертає клієнту</span>
+<span class="ln">← Браузер кешує відповідь</span></code></pre>
+      </div>
+
+      <h2>DNS-записи — типи</h2>
+      <p>Authoritative сервер зберігає різні типи записів:</p>
+
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Тип</th><th>Призначення</th><th>Приклад</th></tr></thead>
+          <tbody>
+            <tr><td><code>A</code></td><td>Домен → IPv4-адреса</td><td><code>example.com → 93.184.216.34</code></td></tr>
+            <tr><td><code>AAAA</code></td><td>Домен → IPv6-адреса</td><td><code>example.com → 2606:2800:220:1:248:1893:25c8:1946</code></td></tr>
+            <tr><td><code>CNAME</code></td><td>Псевдонім (аліас) до іншого домену</td><td><code>www.example.com → example.com</code></td></tr>
+            <tr><td><code>MX</code></td><td>Поштовий сервер для домену</td><td><code>example.com → mail.example.com</code></td></tr>
+            <tr><td><code>TXT</code></td><td>Довільний текст (SPF, DKIM, верифікація)</td><td><code>"v=spf1 include:..."</code></td></tr>
+            <tr><td><code>NS</code></td><td>Nameserver — хто відповідає за зону</td><td><code>example.com → ns1.example.com</code></td></tr>
+            <tr><td><code>TTL</code></td><td>Час кешування відповіді (секунди)</td><td><code>3600</code> = 1 година</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>TTL та кешування</h2>
+      <p><strong>TTL (Time To Live)</strong> — час у секундах, протягом якого відповідь може бути закешована. Після закінчення TTL резолвер повторює запит.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+        </div>
+        <pre><code><span class="ln cmt">// Типові значення TTL</span>
+<span class="ln">TTL = 300     // 5 хвилин  — часто змінювані записи</span>
+<span class="ln">TTL = 3600    // 1 година  — стандарт</span>
+<span class="ln">TTL = 86400   // 24 години — стабільні сайти</span>
+<span class="ln"></span>
+<span class="ln cmt">// Чому це важливо?</span>
+<span class="ln cmt">// При зміні IP (переїзд на новий сервер) DNS-зміни</span>
+<span class="ln cmt">// поширюються НЕ миттєво — чекати доведеться до закінчення TTL</span>
+<span class="ln cmt">// Тому перед переїздом зменшують TTL до 300s заздалегідь</span></code></pre>
+      </div>
+
+      <h2>Як перевірити DNS у терміналі</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+        </div>
+        <pre><code><span class="ln cmt"># Отримати A-запис (IPv4)</span>
+<span class="ln">dig example.com A</span>
+<span class="ln">nslookup example.com         # Windows</span>
+<span class="ln"></span>
+<span class="ln cmt"># Отримати всі записи</span>
+<span class="ln">dig example.com ANY</span>
+<span class="ln"></span>
+<span class="ln cmt"># Трасування повного ланцюжка</span>
+<span class="ln">dig example.com +trace</span>
+<span class="ln"></span>
+<span class="ln cmt"># Перевірити конкретний DNS-сервер</span>
+<span class="ln">dig @8.8.8.8 example.com A    # запитати Google DNS</span>
+<span class="ln">dig @1.1.1.1 example.com A    # запитати Cloudflare DNS</span></code></pre>
+      </div>
+      <div class="doc-links">
+        <h4>Офіційна документація та інструменти</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name" target="_blank" rel="noopener noreferrer">What is a domain name — MDN</a></li>
+          <li><a href="https://dnschecker.org/" target="_blank" rel="noopener noreferrer">DNS Checker — перевірити поширення DNS</a></li>
+          <li><a href="https://www.iana.org/domains/root/servers" target="_blank" rel="noopener noreferrer">IANA — Root DNS Servers</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol class="steps">
+        <li>Браузер перевіряє власний DNS-кеш → кеш ОС → файл <code>/etc/hosts</code>.</li>
+        <li>Якщо нічого немає — запит іде до рекурсивного резолвера (провайдер / 8.8.8.8 / 1.1.1.1).</li>
+        <li>Резолвер ітеративно обходить ієрархію: Root → TLD → Authoritative.</li>
+        <li>Кожен рівень кешує відповідь на час TTL — повний ланцюжок потрібен лише при першому запиті або після закінчення TTL.</li>
+        <li>IP-адреса повертається браузеру і кешується — наступний запит до того ж домену буде миттєвим.</li>
+      </ol>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки та хибні уявлення</div>
+      <ul>
+        <li><strong>«Зміна DNS-запису — миттєва»</strong> — ні. Поширення займає від хвилин до 24+ годин залежно від TTL. Перед переїздом зменши TTL до 300s заздалегідь.</li>
+        <li><strong>«www і example.com — це одне й те саме»</strong> — ні. <code>www.example.com</code> і <code>example.com</code> — окремі субдомени. <code>www</code> зазвичай задається через CNAME.</li>
+        <li><strong>«CNAME можна поставити на root-домен»</strong> — не можна. У <code>@</code> (root) підтримуються лише A, AAAA, MX, TXT, NS. Деякі провайдери обходять це через ALIAS/ANAME записи.</li>
+        <li><strong>«DNS безпечний»</strong> — базовий DNS надсилає запити у відкритому вигляді (UDP 53). Для шифрування використовують DNS-over-HTTPS (DoH) або DNS-over-TLS (DoT).</li>
+        <li><strong>«Один домен — одна IP»</strong> — ні. A-записів може бути декілька (round-robin для балансування навантаження або геолокаційний DNS).</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий термінал і виконай ці команди (або скористайся <a href="https://dnschecker.org" target="_blank" rel="noopener">dnschecker.org</a> для веб-інтерфейсу):</p>
+      <ol>
+        <li>Виконай <code>dig google.com A</code> — знайди розділ ANSWER, запиши IP-адреси та TTL.</li>
+        <li>Виконай <code>dig google.com +trace</code> і відстеж повний ланцюжок: Root → .com → google.com authoritative.</li>
+        <li>Порівняй відповіді від двох різних DNS-серверів: <code>dig @8.8.8.8 google.com</code> і <code>dig @1.1.1.1 google.com</code>. Чи відрізняються IP?</li>
+        <li>Перевір запис <code>dig google.com MX</code> — знайди поштові сервери Google.</li>
+        <li>Відкрий DevTools → вкладка Network → завантаж будь-яку сторінку → знайди у Timing запитів колонку "DNS Lookup". Скільки часу зайняв DNS для першого і для повторного запиту?</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Назви 4 рівні ієрархії DNS-серверів і поясни роль кожного.</li>
+        <li>Що таке TTL і чому важливо зменшувати його перед переїздом сайту на новий сервер?</li>
+        <li>Яка різниця між записами A і CNAME? Коли використовують кожен?</li>
+        <li>Чому не можна поставити CNAME на root-домен (<code>example.com</code>)?</li>
+        <li>Що таке рекурсивний резолвер і чим він відрізняється від authoritative DNS?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір типових помилок на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Поясни, що таке DNS»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «DNS перетворює домени в IP» — правильно, але занадто коротко. Немає розуміння ієрархії і процесу.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Поясни ієрархію (Root → TLD → Authoritative), роль резолвера, кешування з TTL і наведи конкретний приклад запиту для <code>google.com</code>.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке CNAME і коли його використовують?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «CNAME — це псевдонім» — без контексту коли і де застосовується.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> CNAME — псевдонім домену до іншого домену. Використовують для <code>www</code> → <code>example.com</code>, CDN-аліасів. Не можна на root-домені — там тільки A/AAAA.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Чому DNS-зміни не вступають в силу одразу?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Треба чекати» — не пояснює механізм.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Через TTL: кожен резолвер кешує відповідь на цей час. При TTL=86400 (24год) старе значення може зберігатися до 24 годин у різних резолверів по світу. Рішення — зменшити TTL до мінімуму (300s) за 24-48 годин до зміни.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Cloudflare <strong>1.1.1.1</strong> і Google <strong>8.8.8.8</strong> — публічні DNS-резолвери. Їх часто прописують вручну для швидшого або безпечнішого DNS (DNS-over-HTTPS).</li>
+        <li><strong>DNS cache poisoning</strong> — атака, при якій зловмисник підробляє DNS-відповіді. Захист — DNSSEC (цифровий підпис DNS-записів).</li>
+        <li>В Chrome можна перевірити DNS-кеш прямо у браузері: <code>chrome://net-internals/#dns</code> — там видно закешовані домени та їх адреси.</li>
+        <li>Деякі домени мають сотні A-записів (як Google) — це <strong>round-robin DNS</strong>: кожен запит отримує різні IP для балансування навантаження між серверами.</li>
+        <li>Файл <code>/etc/hosts</code> на Mac/Linux (або <code>C:\Windows\System32\drivers\etc\hosts</code> на Windows) обходить DNS повністю — локальні записи там завжди мають пріоритет. Саме так розробники тестують сайти локально через реальний домен.</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між модулями">
+      <a class="nav-pill" href="../01-what-happens/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">01 · Що відбувається коли вводиш URL</span>
+      </a>
+      <a class="nav-pill nav-pill--next nav-pill--disabled" aria-disabled="true" href="#">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">03 · TCP/IP (скоро)</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>
