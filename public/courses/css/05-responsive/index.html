@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 05 — Адаптивна верстка · CSS</title>
+  <meta name="description" content="Адаптивна верстка CSS: media queries, mobile-first підхід, clamp(), container queries та відносні одиниці." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">05 · Адаптивна верстка</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../04-grid/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../06-variables/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="5" data-total="8">
+        <span class="progress__label">Урок 5 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">05</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Адаптивна верстка</h1>
+      <div class="method-tags">
+        <span class="method-tag">media queries</span><span class="method-tag">clamp()</span><span class="method-tag">container queries</span><span class="method-tag">rem</span><span class="method-tag">vw</span><span class="method-tag">dvh</span>
+      </div>
+    </header>
+
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Адаптивна верстка</strong> (responsive design) — підхід, коли сторінка виглядає коректно на будь-якому розмірі екрана: від мобільного телефону до широкого монітора. Головні інструменти: media queries, відносні одиниці та сучасні функції <code>clamp()</code> і container queries.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">💧</span> Аналогія з рідиною</div>
+      <p>Адаптивний дизайн — як вода: займає форму того контейнера, в який її наливають. Контент «тече» і перебудовується залежно від розміру екрана, а не просто масштабується.</p>
+    </section>
+
+    <section>
+      <h2>Media Queries</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Mobile-first: базовий стиль для мобільних, потім розширюємо */</span>
+<span class="ln">.card { padding: 16px; font-size: 14px; }</span>
+<span class="ln"></span>
+<span class="ln">@media (min-width: 768px) {  <span class="cmt">/* tablet */</span></span>
+<span class="ln">  .card { padding: 24px; font-size: 16px; }</span>
+<span class="ln">}</span>
+<span class="ln">@media (min-width: 1200px) { <span class="cmt">/* desktop */</span></span>
+<span class="ln">  .card { padding: 32px; font-size: 18px; }</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Інші умови */</span>
+<span class="ln">@media (prefers-color-scheme: dark) { ... }   <span class="cmt">/* темна тема OS */</span></span>
+<span class="ln">@media (prefers-reduced-motion: reduce) { ... } <span class="cmt">/* вимкнути анімації */</span></span>
+<span class="ln">@media (orientation: landscape) { ... }        <span class="cmt">/* горизонтальна орієнтація */</span></span>
+<span class="ln">@media print { ... }                            <span class="cmt">/* для друку */</span></span></code></pre>
+      </div>
+
+      <h2><code>clamp()</code> — fluid typography без media queries</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* clamp(мін, ідеал, макс) */</span>
+<span class="ln">h1 { font-size: clamp(24px, 5vw, 48px); }  <span class="cmt">/* від 24px до 48px плавно */</span></span>
+<span class="ln">.container { width: clamp(320px, 90%, 1200px); margin: 0 auto; }</span>
+<span class="ln">.card { padding: clamp(16px, 3vw, 32px); }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* min() і max() */</span>
+<span class="ln">.sidebar { width: min(300px, 30vw); }  <span class="cmt">/* менше з двох */</span></span>
+<span class="ln">.content  { width: max(200px, 60%); }  <span class="cmt">/* більше з двох */</span></span></code></pre>
+      </div>
+
+      <h2>Container Queries (CSS 2023)</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Компонент адаптується до свого контейнера, а не вікна */</span>
+<span class="ln">.card-wrapper { container-type: inline-size; }</span>
+<span class="ln"></span>
+<span class="ln">@container (min-width: 400px) {</span>
+<span class="ln">  .card { display: flex; gap: 16px; }  <span class="cmt">/* горизонтальне розташування */</span></span>
+<span class="ln">}</span>
+<span class="ln">@container (max-width: 399px) {</span>
+<span class="ln">  .card { display: block; }            <span class="cmt">/* вертикальне */</span></span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Відносні одиниці</h4>
+        <table class="params-table">
+          <thead><tr><th>Одиниця</th><th>Відносно</th><th>Типове застосування</th></tr></thead>
+          <tbody>
+            <tr><td><code>%</code></td><td>батьківського елемента</td><td>ширини, відступи</td></tr>
+            <tr><td><code>em</code></td><td>font-size поточного елемента</td><td>padding, margin</td></tr>
+            <tr><td><code>rem</code></td><td>font-size кореневого елемента (html)</td><td>шрифти, розміри</td></tr>
+            <tr><td><code>vw</code></td><td>ширини вікна (1% = 1vw)</td><td>fluid typography</td></tr>
+            <tr><td><code>vh</code></td><td>висоти вікна (1% = 1vh)</td><td>hero sections</td></tr>
+            <tr><td><code>dvh</code></td><td>динамічна висота вікна (враховує mobile UI)</td><td>замість vh на мобільних</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries" target="_blank" rel="noopener noreferrer">CSS Media Queries — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/clamp" target="_blank" rel="noopener noreferrer">clamp() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries" target="_blank" rel="noopener noreferrer">Container Queries — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul><li><strong>Desktop-first замість mobile-first</strong>: <code>max-width</code> у media queries складніше підтримувати. Починай з мобільного базового стилю і розширюй через <code>min-width</code>.</li><li><strong>Використовувати <code>px</code> замість <code>rem</code></strong> для шрифтів — ламає налаштування розміру тексту в браузері, що важливо для accessibility.</li><li><strong>Забувати <code>meta viewport</code></strong> у <code>&lt;head&gt;</code> — без нього mobile viewport буде 980px, і media queries не спрацюють.</li><li><strong>Використовувати <code>vh</code> на мобільних</strong> — адресний рядок мобільного браузера змінює висоту. Замість <code>height: 100vh</code> використовуй <code>height: 100dvh</code>.</li><li><strong>Ігнорувати <code>prefers-reduced-motion</code></strong> — частина користувачів має вестибулярні порушення і важкі анімації викликають дискомфорт.</li></ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol><li>Зроби навігацію: на мобільному — стовпець, на планшеті та десктопі — рядок. Використовуй mobile-first підхід.</li><li>Задай заголовку <code>font-size: clamp(20px, 5vw, 48px)</code> — спостерігай як розмір плавно змінюється при ресайзі вікна.</li><li>Зроби картку що змінює вигляд (stack vs side-by-side) залежно від розміру <em>контейнера</em> (container queries).</li><li>Додай <code>@media (prefers-color-scheme: dark)</code> з темними кольорами для своєї сторінки.</li></ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol><li>Що таке mobile-first підхід і чому він кращий за desktop-first?</li><li>В чому різниця між <code>em</code> і <code>rem</code>?</li><li>Що робить <code>clamp(20px, 5vw, 48px)</code>?</li><li>Чим container queries відрізняються від media queries?</li><li>Чому <code>vh</code> може не працювати коректно на мобільних?</li></ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items"><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке responsive design?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це коли сайт виглядає добре на мобільному» — надто загально.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Responsive design — підхід, коли інтерфейс адаптується до будь-якого розміру екрана через fluid layouts (відносні одиниці, Grid/Flexbox), media/container queries та гнучкі зображення. Ключові принципи: mobile-first, breakpoints, відносні одиниці.</p>
+        </article><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Яка різниця між em і rem?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Обидва відносні до шрифту» — без уточнення різниці.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>em</code> відносний до <code>font-size</code> поточного елемента — може накопичуватись при вкладенні. <code>rem</code> відносний до <code>font-size</code> кореневого <code>&lt;html&gt;</code> — стабільний і передбачуваний. Для шрифтів і відступів краще <code>rem</code>.</p>
+        </article><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке container queries?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Не знаю» або «те саме що media queries».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Container queries дозволяють елементу адаптуватись до розміру свого <em>контейнера</em>, а не вікна браузера. Корисно для компонентів, що використовуються в різних частинах сторінки (сайдбар vs main). Підтримується у всіх сучасних браузерах з 2023р.</p>
+        </article></div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul><li><code>dvh</code> (dynamic viewport height) вирішує проблему адресного рядка мобільного браузера — завжди використовуй замість <code>vh</code> для full-screen секцій.</li><li>Breakpoints краще задавати в <code>rem</code>, а не <code>px</code>: якщо користувач збільшив розмір шрифту браузера — лейаут теж адаптується.</li><li><a href='https://utopia.fyi/' target='_blank' rel='noopener'>Utopia.fyi</a> — генератор fluid type scale та space scale через <code>clamp()</code>. Один раз задав — шрифти адаптуються без media queries.</li><li>Chrome DevTools → значок телефону → інструмент «Responsive» — одразу бачиш сайт при різних розмірах екрана та device presets.</li></ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../04-grid/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">04 · CSS Grid</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../06-variables/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">06 · Кастомні властивості</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

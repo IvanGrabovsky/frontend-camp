@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 02 — Оператори та вирази · JavaScript основи</title>
+  <meta name="description" content="JavaScript оператори: арифметика, сувора рівність ===, логічні оператори, nullish coalescing та optional chaining." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">02 · Оператори та вирази</span>
+      </nav>
+      <div class="topnav__steps">
+        <a class="topnav__step" href="../01-variables/index.html">←</a>
+        <a class="topnav__step" href="../03-conditions/index.html">→</a>
+      </div>
+      <div class="progress" data-lesson="2" data-total="8">
+        <span class="progress__label">Урок 2 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">02</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Оператори та вирази</h1>
+      <div class="method-tags"><span class="method-tag">===</span><span class="method-tag">!==</span><span class="method-tag">??</span><span class="method-tag">?.</span><span class="method-tag">&&</span><span class="method-tag">||</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Оператори</strong> — символи або ключові слова що виконують дії над значеннями. JS має арифметичні, порівняльні, логічні, присвоювання та спеціальні оператори. Розуміння <strong>суворого порівняння</strong> (<code>===</code> vs <code>==</code>) та <strong>короткого замикання</strong> є ключовим для уникнення типових багів.</p>
+    </article>
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">⚖️</span> Аналогія: операторові як правила гри</div>
+      <p>Уяви гру де є правила: «+» додає очки, «===» — суворий суддя що перевіряє і значення і тип, «==» — ліберальний суддя що спочатку конвертує типи. Логічний <code>&&</code> — як «і те, і це», <code>||</code> — «або те, або це».</p>
+    </section>
+    <section>
+      <h2>Арифметичні та присвоювання</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln">let x = 10;</span>
+<span class="ln">x + 3   // 13    x - 3  // 7</span>
+<span class="ln">x * 2   // 20    x / 4  // 2.5</span>
+<span class="ln">x % 3   // 1  ← залишок від ділення</span>
+<span class="ln">x ** 2  // 100 ← степінь</span>
+<span class="ln"></span>
+<span class="ln cmt">// Скорочені присвоювання</span>
+<span class="ln">x += 5;  // x = x + 5 = 15</span>
+<span class="ln">x -= 3;  // x = 12</span>
+<span class="ln">x++;     // x = 13 (після виразу)</span>
+<span class="ln">++x;     // x = 14 (до виразу)</span></code></pre>
+      </div>
+
+      <h2>Порівняння: === vs ==</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// === суворе — перевіряє значення І тип</span>
+<span class="ln">1 === 1     // true</span>
+<span class="ln">1 === '1'   // false ← різні типи</span>
+<span class="ln">0 === false // false</span>
+<span class="ln"></span>
+<span class="ln cmt">// == нестрогe — конвертує типи (не рекомендоване)</span>
+<span class="ln">1 == '1'   // true  ← JavaScript зробив '1' → 1</span>
+<span class="ln">0 == false // true  ← false → 0</span>
+<span class="ln">null == undefined // true  ← особливий випадок</span>
+<span class="ln"></span>
+<span class="ln cmt">// ЗАВЖДИ використовуй === і !== </span></code></pre>
+      </div>
+
+      <h2>Логічні оператори та коротке замикання</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// && — AND: повертає перше falsy або останнє значення</span>
+<span class="ln">true && 'hello'   // 'hello'</span>
+<span class="ln">false && 'hello'  // false  ← зупинився на false</span>
+<span class="ln">const user = { name: 'Іван' };</span>
+<span class="ln">user && user.name  // 'Іван'  ← безпечний доступ</span>
+<span class="ln"></span>
+<span class="ln cmt">// || — OR: повертає перше truthy або останнє значення</span>
+<span class="ln">null || 'default'   // 'default'</span>
+<span class="ln">'value' || 'default' // 'value'</span>
+<span class="ln"></span>
+<span class="ln cmt">// ?? — Nullish Coalescing: тільки null/undefined</span>
+<span class="ln">0 || 'default'  // 'default' ← 0 falsy!</span>
+<span class="ln">0 ?? 'default'  // 0         ← 0 не null/undefined</span>
+<span class="ln"></span>
+<span class="ln cmt">// ?. — Optional Chaining</span>
+<span class="ln">const city = user?.address?.city; // undefined замість помилки</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/operators" target="_blank" rel="noopener noreferrer">Оператори — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators" target="_blank" rel="noopener noreferrer">Operators — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати <code>==</code> замість <code>===</code></strong>: неявна конверсія типів — джерело важко відловлюваних багів.</li>
+        <li><strong>Плутати <code>||</code> і <code>??</code></strong>: <code>||</code> вважає <code>0</code>, <code>''</code>, <code>false</code> falsy-значеннями. <code>??</code> — тільки <code>null</code>/<code>undefined</code>.</li>
+        <li><strong>Не використовувати <code>?.</code></strong>: доступ до властивості без перевірки (<code>user.address.city</code>) кидає помилку якщо <code>address</code> є <code>undefined</code>.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Перевір в консолі: <code>0 == false</code>, <code>0 === false</code>, <code>'' == false</code>, <code>null == undefined</code>.</li>
+        <li>Напиши вираз що повертає ім'я користувача або <code>'Гість'</code> якщо ім'я не задане (використай <code>??</code>).</li>
+        <li>Створи об'єкт <code>user</code> без поля <code>address</code>. Безпечно отримай <code>user?.address?.city</code>.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що поверне <code>null == undefined</code> і <code>null === undefined</code>?</li>
+        <li>Яка різниця між <code>||</code> і <code>??</code>?</li>
+        <li>Що таке «коротке замикання» в логічних операторах?</li>
+        <li>Навіщо <code>?.</code> і яку помилку він запобігає?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Яка різниця між == і ===?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «== швидший, тому я його і використовую».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>===</code> — суворе рівність: перевіряє і значення і тип без конверсії. <code>==</code> виконує type coercion перед порівнянням (<code>'1' == 1 → true</code>). Завжди використовуй <code>===</code> — поведінка передбачувана і явна.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Оператор <code>!</code> (NOT) конвертує значення в boolean: <code>!!'text' === true</code>, <code>!!'' === false</code>. Подвійний <code>!!</code> — швидкий спосіб перетворити на boolean.</li>
+        <li><code>??=</code> (Logical Nullish Assignment): <code>x ??= 'default'</code> — присвоює тільки якщо <code>x</code> є <code>null</code>/<code>undefined</code>.</li>
+        <li><code>x ||= y</code> та <code>x &&= y</code> — логічне присвоювання (ES2021).</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../01-variables/index.html"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">01 · Змінні та типи даних</span></a>
+      <a class="nav-pill nav-pill--next" href="../03-conditions/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">03 · Умовні оператори</span></a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

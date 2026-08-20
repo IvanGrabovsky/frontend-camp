@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 03 — Умовні оператори · JavaScript основи</title>
+  <meta name="description" content="JavaScript умовні оператори: if/else, тернарний оператор, switch та об'єкт-словник." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">03 · Умовні оператори</span>
+      </nav>
+      <div class="topnav__steps">
+        <a class="topnav__step" href="../02-operators/index.html">←</a>
+        <a class="topnav__step" href="../04-loops/index.html">→</a>
+      </div>
+      <div class="progress" data-lesson="3" data-total="8">
+        <span class="progress__label">Урок 3 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">03</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Умовні оператори</h1>
+      <div class="method-tags"><span class="method-tag">if/else</span><span class="method-tag">тернарний ?:</span><span class="method-tag">switch</span><span class="method-tag">truthy/falsy</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Умовні оператори</strong> дозволяють виконувати різний код залежно від умови. Основні інструменти: <code>if/else</code>, тернарний оператор <code>?:</code>, та <code>switch</code> для множинного вибору.</p>
+    </article>
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🚦</span> Аналогія: світлофор</div>
+      <p>Умовні оператори — як світлофор: «якщо (if) горить зелений — іди, якщо (else if) жовтий — готуйся, інакше (else) — стій». <code>switch</code> — як меню в ресторані: перевіряєш кожен пункт і виконуєш відповідну дію.</p>
+    </section>
+    <section>
+      <h2>if / else if / else</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln">const score = 75;</span>
+<span class="ln"></span>
+<span class="ln">if (score >= 90) {</span>
+<span class="ln">  console.log('Відмінно');</span>
+<span class="ln">} else if (score >= 70) {</span>
+<span class="ln">  console.log('Добре');    // ← виконається</span>
+<span class="ln">} else if (score >= 50) {</span>
+<span class="ln">  console.log('Задовільно');</span>
+<span class="ln">} else {</span>
+<span class="ln">  console.log('Незадовільно');</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// Falsy значення в умові: false, 0, '', null, undefined, NaN</span>
+<span class="ln">if (0)         { /* не виконається */ }</span>
+<span class="ln">if ('')        { /* не виконається */ }</span>
+<span class="ln">if (null)      { /* не виконається */ }</span>
+<span class="ln">if ([])        { /* виконається — порожній масив truthy! */ }</span></code></pre>
+      </div>
+
+      <h2>Тернарний оператор</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// умова ? якщо_true : якщо_false</span>
+<span class="ln">const grade = score >= 90 ? 'A' : score >= 70 ? 'B' : 'C';</span>
+<span class="ln"></span>
+<span class="ln cmt">// Зручно в JSX/шаблонах</span>
+<span class="ln">const label = isLoggedIn ? 'Вийти' : 'Увійти';</span>
+<span class="ln">const color = theme === 'dark' ? '#fff' : '#000';</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Не вкладай більше 2 рівнів — стає нечитабельним</span></code></pre>
+      </div>
+
+      <h2>switch</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln">const day = 'Monday';</span>
+<span class="ln">switch (day) {</span>
+<span class="ln">  case 'Monday':</span>
+<span class="ln">  case 'Tuesday':    // fall-through — два кейси разом</span>
+<span class="ln">    console.log('Початок тижня'); break;</span>
+<span class="ln">  case 'Friday':</span>
+<span class="ln">    console.log('П'ятниця!'); break;</span>
+<span class="ln">  default:</span>
+<span class="ln">    console.log('Середина тижня');</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// Сучасна альтернатива — об'єкт-словник</span>
+<span class="ln">const labels = { en: 'Hello', uk: 'Привіт', de: 'Hallo' };</span>
+<span class="ln">const greeting = labels[lang] ?? labels.en;</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/ifelse" target="_blank" rel="noopener noreferrer">if/else — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch" target="_blank" rel="noopener noreferrer">switch — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Забути <code>break</code> у <code>switch</code></strong>: без нього виконання «проваліться» (fall-through) у наступний case.</li>
+        <li><strong>Покладатись на truthy/falsy без розуміння</strong>: <code>[]</code> і <code>{}</code> — truthy, навіть якщо «порожні».</li>
+        <li><strong>Надміру вкладати тернарні оператори</strong>: більше 2 рівнів — використовуй <code>if/else</code>.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Напиши функцію <code>getGrade(score)</code> що повертає 'A'/'B'/'C'/'D'/'F' залежно від балу.</li>
+        <li>Перепиши цю функцію через тернарний оператор.</li>
+        <li>Зроби <code>switch</code> що повертає назву місяця по числу (1 → 'Січень' і т.д.).</li>
+        <li>Перепиши <code>switch</code> через об'єкт-словник — яке рішення читабельніше?</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Які значення є falsy в JavaScript?</li>
+        <li>Що відбудеться якщо не написати <code>break</code> у <code>switch</code>?</li>
+        <li>Коли краще використовувати об'єкт-словник замість <code>switch</code>?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Коли використовувати switch замість if/else?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «switch швидший» — майже ніколи не вірно в JS.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>switch</code> зручний для множинного порівняння однієї змінної з кількома константами. Але сучасна альтернатива — об'єкт-словник: <code>const map = { key: value }; map[key]</code> — чистіше, без fall-through ризиків, легко розширити.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Early return pattern: замість вкладених if/else повертай раніше — код стає плоскішим і читабельнішим.</li>
+        <li>Guard clauses: перевіряй некоректні стани на початку функції і повертай одразу — основна логіка залишається без вкладеності.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../02-operators/index.html"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">02 · Оператори та вирази</span></a>
+      <a class="nav-pill nav-pill--next" href="../04-loops/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">04 · Цикли</span></a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 06 — Кастомні властивості · CSS</title>
+  <meta name="description" content="CSS Custom Properties: --name, var(), fallback, темна тема, оновлення через JS та @property для анімацій." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">06 · Кастомні властивості</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../05-responsive/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../07-animations/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="6" data-total="8">
+        <span class="progress__label">Урок 6 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">06</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Кастомні властивості</h1>
+      <div class="method-tags"><span class="method-tag">--var</span><span class="method-tag">var()</span><span class="method-tag">@property</span><span class="method-tag">fallback</span><span class="method-tag">:root</span></div>
+    </header>
+
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>CSS Custom Properties</strong> (кастомні властивості, або CSS-змінні) — нативні змінні CSS. Оголошуються через <code>--name: value</code> і використовуються через <code>var(--name)</code>. На відміну від SCSS-змінних вони <em>живі</em>: змінюються через JavaScript у runtime і успадковуються в DOM.</p>
+      <p><code>@property</code> (CSS Houdini) дозволяє оголосити тип змінної — тоді браузер знає як анімувати її через <code>transition</code> та <code>@keyframes</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎨</span> Аналогія з палітрою художника</div>
+      <p>Кастомні властивості — як іменована палітра: замість щоразу змішувати той самий «brand-blue» ти називаєш його раз і використовуєш скрізь. Захотів змінити тон — міняєш лише в палітрі (<code>:root</code>), а не по всьому полотну.</p>
+    </section>
+
+    <section>
+      <h2>Оголошення та використання</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* :root — глобальна область видимості */</span>
+<span class="ln">:root {</span>
+<span class="ln">  --color-primary:  #6366f1;</span>
+<span class="ln">  --color-text:     #1e1e2e;</span>
+<span class="ln">  --color-bg:       #f8f9fc;</span>
+<span class="ln">  --spacing-sm:     8px;</span>
+<span class="ln">  --spacing-md:     16px;</span>
+<span class="ln">  --spacing-lg:     32px;</span>
+<span class="ln">  --border-radius:  8px;</span>
+<span class="ln">  --shadow:         0 2px 12px rgba(0,0,0,.08);</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Використання */</span>
+<span class="ln">.btn  { background: var(--color-primary); border-radius: var(--border-radius); }</span>
+<span class="ln">.card { padding: var(--spacing-md); box-shadow: var(--shadow); }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Fallback — якщо змінна не визначена */</span>
+<span class="ln">color: var(--color-accent, #ff6b6b);</span></code></pre>
+      </div>
+
+      <h2>Темна тема через кастомні властивості</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln">:root { --bg: #fff; --text: #111; --surface: #f5f5f5; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Варіант 1: data-атрибут на html — перемикається через JS */</span>
+<span class="ln">[data-theme="dark"] { --bg: #0f0f1a; --text: #e2e8f0; --surface: #1a1a2e; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Варіант 2: системна перевага OS */</span>
+<span class="ln">@media (prefers-color-scheme: dark) {</span>
+<span class="ln">  :root { --bg: #0f0f1a; --text: #e2e8f0; }</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Всі елементи адаптуються автоматично */</span>
+<span class="ln">body { background: var(--bg); color: var(--text); }</span></code></pre>
+      </div>
+
+      <h2>Динамічне оновлення через JavaScript</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">// Читання</span>
+<span class="ln">getComputedStyle(document.documentElement).getPropertyValue('--color-primary');</span>
+<span class="ln"></span>
+<span class="ln cmt">// Запис</span>
+<span class="ln">document.documentElement.style.setProperty('--color-primary', '#ff6b6b');</span>
+<span class="ln"></span>
+<span class="ln cmt">// Перемикач теми</span>
+<span class="ln">btn.addEventListener('click', () =></span>
+<span class="ln">  document.documentElement.dataset.theme =</span>
+<span class="ln">    document.documentElement.dataset.theme === 'dark' ? '' : 'dark'</span>
+<span class="ln">);</span></code></pre>
+      </div>
+
+      <h2><code>@property</code> — типізовані змінні для анімацій</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Без @property браузер не знає тип — не може інтерполювати */</span>
+<span class="ln">@property --angle {</span>
+<span class="ln">  syntax: '&lt;angle&gt;';</span>
+<span class="ln">  inherits: false;</span>
+<span class="ln">  initial-value: 0deg;</span>
+<span class="ln">}</span>
+<span class="ln">.gradient {</span>
+<span class="ln">  background: conic-gradient(from var(--angle), #6366f1, #ec4899, #6366f1);</span>
+<span class="ln">  animation: spin 4s linear infinite;</span>
+<span class="ln">}</span>
+<span class="ln">@keyframes spin { to { --angle: 360deg; } }</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties" target="_blank" rel="noopener noreferrer">CSS Custom Properties — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@property" target="_blank" rel="noopener noreferrer">@property — MDN</a></li>
+          <li><a href="https://open-props.style/" target="_blank" rel="noopener noreferrer">Open Props — готова бібліотека CSS-змінних</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Плутати CSS Variables і SCSS-змінні</strong>: SCSS-змінні — статичні, компілюються у значення. CSS-змінні — живі, доступні в runtime через JS.</li>
+        <li><strong>Не вказувати fallback</strong>: якщо змінна не визначена — властивість стає <code>initial</code>. Завжди: <code>var(--color, #000)</code>.</li>
+        <li><strong>Незрозумілі назви</strong>: <code>--c1</code>, <code>--x</code> — погано. Використовуй семантику: <code>--color-primary</code>, <code>--spacing-sm</code>.</li>
+        <li><strong>Намагатись анімувати без <code>@property</code></strong>: без оголошення типу браузер не може інтерполювати числові значення.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Створи design token систему у <code>:root</code>: кольори, відступи, радіуси. Застосуй до кількох компонентів.</li>
+        <li>Реалізуй перемикач темної теми через <code>data-theme</code> атрибут і JavaScript.</li>
+        <li>Зроби компонент кнопки що повністю стилізується через CSS-змінні — без жодного хардкодованого кольору.</li>
+        <li>Спробуй <code>@property</code>: анімований gradient angle з прикладу вище.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>В чому різниця між CSS Custom Properties і SCSS-змінними?</li>
+        <li>Що таке fallback у <code>var()</code> і коли він спрацьовує?</li>
+        <li>Як реалізувати темну тему через кастомні властивості?</li>
+        <li>Як прочитати і записати CSS-змінну через JavaScript?</li>
+        <li>Навіщо потрібен <code>@property</code> і що він додає?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке CSS Custom Properties?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це те саме що SCSS змінні» — неточно.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> CSS Custom Properties — нативні змінні, оголошуються через <code>--name</code>, використовуються через <code>var()</code>. На відміну від SCSS — живі: змінюються через JS, наслідуються в DOM, доступні у runtime.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як зробити темну тему?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Окремий CSS-файл для темного режиму».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> CSS Custom Properties + <code>[data-theme="dark"]</code>: у <code>:root</code> оголошуємо змінні, у <code>[data-theme="dark"]</code> перевизначаємо їх. JS тільки перемикає атрибут — стилі оновлюються автоматично.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>CSS-змінну можна задати на будь-якому елементі — вона буде доступна тільки всередині нього. Зручно для «тем» компонентів.</li>
+        <li><code>color-mix(in oklch, var(--color) 50%, white)</code> — нативний спосіб освітлити колір без SCSS <code>lighten()</code>.</li>
+        <li><a href="https://open-props.style/" target="_blank" rel="noopener">Open Props</a> — готова бібліотека CSS-змінних (кольори, тіні, анімації). Підключається одним рядком.</li>
+        <li>Chrome DevTools → Elements → computed styles показує реальні значення CSS-змінних для обраного елемента.</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../05-responsive/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">05 · Адаптивна верстка</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../07-animations/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">07 · Анімації та transitions</span></a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 08 — Сучасний CSS · CSS</title>
+  <meta name="description" content=":has(), @layer, CSS Nesting та @scope — найважливіші нові функції CSS 2022-2024 що замінюють JavaScript і препроцесори." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">08 · Сучасний CSS</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../07-animations/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <span class="topnav__step topnav__step--disabled" aria-disabled="true" title="Останній урок">→</span>
+      </div>
+      <div class="progress" data-lesson="8" data-total="8">
+        <span class="progress__label">Урок 8 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">08</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Сучасний CSS</h1>
+      <div class="method-tags">
+        <span class="method-tag">:has()</span>
+        <span class="method-tag">@layer</span>
+        <span class="method-tag">@scope</span>
+        <span class="method-tag">nesting</span>
+        <span class="method-tag">container queries</span>
+      </div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Сучасний CSS</strong> — це потужні функції що з'явились в 2022–2024 роках і вже підтримуються у всіх сучасних браузерах. Вони суттєво спрощують код, усувають потребу в JavaScript та препроцесорах для багатьох задач.</p>
+      <p>Ключові нові інструменти: <code>:has()</code>, <code>@layer</code>, <code>@scope</code>, нативний CSS nesting та container queries.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🚀</span> CSS 2024 — як нова версія мови</div>
+      <p>Якщо CSS 2010 був як калькулятор, то CSS 2024 — як повноцінна мова програмування для стилів: умови, вкладеність, ізоляція областей видимості. Те що раніше вимагало SCSS або JavaScript тепер вбудовано нативно.</p>
+    </section>
+
+    <section>
+      <h2><code>:has()</code> — «батьківський» селектор</h2>
+      <p>До 2022 року CSS не мав батьківського селектора — це була найдовше очікувана фіча. <code>:has()</code> вибирає елемент <em>що містить</em> певних нащадків.</p>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Картка що має зображення — без padding зверху */</span>
+<span class="ln">.card:has(img) { padding-top: 0; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Форма з невалідним полем — показати повідомлення */</span>
+<span class="ln">form:has(input:invalid) .error-msg { display: block; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Навігація що має відкрите меню */</span>
+<span class="ln">nav:has(.menu:not([hidden])) { background: rgba(0,0,0,.5); }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* li що НЕ є останнім і містить вкладений ul */</span>
+<span class="ln">li:not(:last-child):has(ul) { border-bottom: 1px solid; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Раніше це потребувало JavaScript! */</span></code></pre>
+      </div>
+
+      <h2><code>@layer</code> — каскадні шари</h2>
+      <p><code>@layer</code> дозволяє явно керувати пріоритетом CSS-правил, не залежачи від специфічності. Стилі у пізнішому шарі перемагають ранніший незалежно від специфічності.</p>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Оголошення порядку шарів (від найнижчого до найвищого) */</span>
+<span class="ln">@layer reset, base, components, utilities;</span>
+<span class="ln"></span>
+<span class="ln">@layer reset {</span>
+<span class="ln">  * { box-sizing: border-box; margin: 0; }</span>
+<span class="ln">}</span>
+<span class="ln">@layer base {</span>
+<span class="ln">  body { font-family: Inter, sans-serif; }</span>
+<span class="ln">}</span>
+<span class="ln">@layer components {</span>
+<span class="ln">  .btn { padding: 8px 16px; background: var(--color-primary); }</span>
+<span class="ln">}</span>
+<span class="ln">@layer utilities {</span>
+<span class="ln">  /* utilities завжди перемагають components, навіть з нижчою специфічністю */</span>
+<span class="ln">  .mt-4 { margin-top: 16px; }</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h2>Нативний CSS Nesting</h2>
+      <p>Тепер можна вкладати CSS-правила одне в одне — без SCSS!</p>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Нативний nesting (без SCSS) */</span>
+<span class="ln">.card {</span>
+<span class="ln">  padding: 16px;</span>
+<span class="ln">  border-radius: 8px;</span>
+<span class="ln"></span>
+<span class="ln">  & .title { font-size: 1.25rem; font-weight: 600; }</span>
+<span class="ln">  & .body   { color: var(--text-muted); }</span>
+<span class="ln"></span>
+<span class="ln">  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }</span>
+<span class="ln"></span>
+<span class="ln">  @media (min-width: 768px) {</span>
+<span class="ln">    display: grid;</span>
+<span class="ln">    grid-template-columns: 1fr 2fr;</span>
+<span class="ln">  }</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h2><code>@scope</code> — ізоляція стилів компонента</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Стилі застосовуються тільки всередині .card */</span>
+<span class="ln">@scope (.card) {</span>
+<span class="ln">  .title { font-size: 1.25rem; }  /* тільки .title в .card */</span>
+<span class="ln">  img    { border-radius: 8px; }  /* тільки img в .card */</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* @scope з виключенням вкладеного компонента */</span>
+<span class="ln">@scope (.card) to (.nested-card) {</span>
+<span class="ln">  /* не зачіпає .nested-card всередині .card */</span>
+<span class="ln">  .title { color: var(--color-primary); }</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Підтримка браузерами (2024)</h4>
+        <table class="params-table">
+          <thead><tr><th>Функція</th><th>Chrome</th><th>Firefox</th><th>Safari</th></tr></thead>
+          <tbody>
+            <tr><td><code>:has()</code></td><td>105+</td><td>121+</td><td>15.4+</td></tr>
+            <tr><td><code>@layer</code></td><td>99+</td><td>97+</td><td>15.4+</td></tr>
+            <tr><td>CSS Nesting</td><td>112+</td><td>117+</td><td>17.2+</td></tr>
+            <tr><td><code>@scope</code></td><td>118+</td><td>—</td><td>17.4+</td></tr>
+            <tr><td>Container Queries</td><td>105+</td><td>110+</td><td>16+</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has" target="_blank" rel="noopener noreferrer">:has() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@layer" target="_blank" rel="noopener noreferrer">@layer — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting" target="_blank" rel="noopener noreferrer">CSS Nesting — MDN</a></li>
+          <li><a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer">caniuse.com — перевірка підтримки браузерами</a></li>
+          <li><a href="https://web.dev/blog/css-wrapped-2023" target="_blank" rel="noopener noreferrer">CSS Wrapped 2023 — web.dev</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Не перевіряти підтримку браузерами</strong>: <code>@scope</code> ще не підтримується Firefox. Для продакшену перевіряй <a href="https://caniuse.com/" target="_blank" rel="noopener">caniuse.com</a>.</li>
+        <li><strong>Плутати <code>:has()</code> зі специфічністю <code>:is()</code></strong>: <code>:has(#id)</code> має специфічність 1-0-0 через аргумент.</li>
+        <li><strong>Оголошення <code>@layer</code> без порядку</strong>: якщо не оголосити <code>@layer a, b, c</code> на початку, порядок визначається першим входженням — це може здивувати.</li>
+        <li><strong>Вкладати медіа-запити в nesting на старих проектах</strong>: nesting підтримується з Chrome 112, перевіряй БД підтримки якщо потрібна сумісність зі старішими браузерами.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Використай <code>:has()</code> щоб приховати порожній стан списку: <code>ul:not(:has(li)) + .empty-msg { display: block; }</code>.</li>
+        <li>Перепиши будь-який вкладений SCSS (або довгі CSS-правила) в нативний CSS Nesting.</li>
+        <li>Організуй стилі проекту в <code>@layer</code> шари: reset, base, components, utilities.</li>
+        <li>Зроби компонент картки із <code>@scope</code> — стилі всередині не впливають на зовнішній документ.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Що таке <code>:has()</code> і наведи 3 практичних приклади де він замінює JavaScript.</li>
+        <li>Як <code>@layer</code> вирішує проблему конфліктів специфічності?</li>
+        <li>Яка різниця між CSS Nesting і SCSS nesting?</li>
+        <li>Що таке <code>@scope</code> і яку проблему він вирішує?</li>
+        <li>Як перевірити підтримку нової CSS-функції перед використанням у продакшені?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що нового в CSS за останні 2 роки?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Нічого нового» або «не слідкую».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>:has()</code> — батьківський селектор (замінює JS для умовних стилів). <code>@layer</code> — шари каскаду (вирішує проблему специфічності в design systems). Нативний CSS Nesting (без SCSS). Container Queries. <code>@scope</code>. CSS Scroll-driven Animations. <code>color-mix()</code>, <code>light-dark()</code>.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як організувати CSS без конфліктів специфічності?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Ставлю <code>!important</code> коли не працює».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>@layer</code> вирішує це системно: оголошуємо порядок шарів <code>reset → base → components → utilities</code>. Utilities завжди перемагають components навіть з нижчою специфічністю. Ніяких <code>!important</code> та «гонки специфічностей».</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>light-dark(lightColor, darkColor)</code> (CSS 2024) — автоматично обирає колір залежно від теми. Замість медіа-запиту: просто <code>color: light-dark(#111, #eee)</code>.</li>
+        <li><a href="https://web.dev/blog/css-wrapped-2023" target="_blank" rel="noopener">CSS Wrapped 2023</a> — щорічний підсумок web.dev: всі нові CSS-функції з прикладами. Читай щороку.</li>
+        <li>CSS <code>@starting-style</code> (Chrome 117+) — анімація появи елемента від <code>display: none</code>. Нарешті можна анімувати відкриття <code>&lt;dialog&gt;</code> без JS!</li>
+        <li>Архів <code>@layer</code> для третьостороннього CSS: <code>@import url("bootstrap.css") layer(vendor);</code> — Bootstrap тепер в ізольованому шарі з найнижчим пріоритетом.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../07-animations/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">07 · Анімації та transitions</span>
+      </a>
+      <a class="nav-pill nav-pill--next nav-pill--disabled" aria-disabled="true" href="#">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">Це останній урок</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

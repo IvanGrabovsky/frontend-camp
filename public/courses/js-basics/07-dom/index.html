@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 07 — DOM та події · JavaScript основи</title>
+  <meta name="description" content="JavaScript DOM: вибірка елементів, маніпуляції, події та event delegation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">07 · DOM та події</span>
+      </nav>
+      <div class="topnav__steps"><a class="topnav__step" href="../06-objects/index.html">←</a><a class="topnav__step" href="../08-async/index.html">→</a></div>
+      <div class="progress" data-lesson="7" data-total="8">
+        <span class="progress__label">Урок 7 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">07</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>DOM та події</h1>
+      <div class="method-tags"><span class="method-tag">querySelector</span><span class="method-tag">addEventListener</span><span class="method-tag">classList</span><span class="method-tag">createElement</span><span class="method-tag">event delegation</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>DOM</strong> (Document Object Model) — об'єктне представлення HTML-документа. JavaScript взаємодіє з ним через API: знаходить елементи, змінює їх, реагує на події. Розуміння DOM — ключ до будь-якої інтерактивності на сторінці.</p>
+    </article>
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🌳</span> Аналогія: дерево з гілками</div>
+      <p>DOM — дерево: <code>&lt;html&gt;</code> — корінь, <code>&lt;body&gt;</code>, <code>&lt;head&gt;</code> — гілки, теги — листя. JavaScript — садівник: може знайти будь-який лист, змінити його, додати новий або видалити.</p>
+    </section>
+    <section>
+      <h2>Вибірка елементів</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// Сучасні методи (рекомендовані)</span>
+<span class="ln">document.querySelector('.btn');         // перший елемент</span>
+<span class="ln">document.querySelectorAll('.card');      // NodeList всіх</span>
+<span class="ln">document.querySelector('#header');       // за ID</span>
+<span class="ln">document.querySelector('input[type=text]'); // за атрибутом</span>
+<span class="ln"></span>
+<span class="ln cmt">// Старіші (але й досі швидші для ID/tag)</span>
+<span class="ln">document.getElementById('header');       // HTMLElement | null</span>
+<span class="ln">document.getElementsByClassName('card'); // HTMLCollection (live)</span></code></pre>
+      </div>
+
+      <h2>Маніпуляції з DOM</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln">const btn = document.querySelector('.btn');</span>
+<span class="ln"></span>
+<span class="ln cmt">// Зміна вмісту</span>
+<span class="ln">btn.textContent = 'Натисни';      // текст (безпечно)</span>
+<span class="ln">btn.innerHTML = '&lt;b&gt;Натисни&lt;/b&gt;'; // HTML (небезпечно з даними!)</span>
+<span class="ln"></span>
+<span class="ln cmt">// Стилі та класи</span>
+<span class="ln">btn.style.backgroundColor = '#6366f1';</span>
+<span class="ln">btn.classList.add('active');     // додати</span>
+<span class="ln">btn.classList.remove('hidden');  // видалити</span>
+<span class="ln">btn.classList.toggle('open');    // перемкнути</span>
+<span class="ln">btn.classList.contains('active');// перевірити</span>
+<span class="ln"></span>
+<span class="ln cmt">// Атрибути</span>
+<span class="ln">btn.setAttribute('disabled', '');</span>
+<span class="ln">btn.getAttribute('href');</span>
+<span class="ln">btn.removeAttribute('disabled');</span>
+<span class="ln"></span>
+<span class="ln cmt">// Створення та вставка</span>
+<span class="ln">const li = document.createElement('li');</span>
+<span class="ln">li.textContent = 'Новий елемент';</span>
+<span class="ln">list.append(li);      // в кінець</span>
+<span class="ln">list.prepend(li);     // на початок</span>
+<span class="ln">li.remove();          // видалити</span></code></pre>
+      </div>
+
+      <h2>Події (Events)</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// addEventListener — рекомендований спосіб</span>
+<span class="ln">btn.addEventListener('click', (event) => {</span>
+<span class="ln">  console.log(event.target);  // елемент що спричинив подію</span>
+<span class="ln">  event.preventDefault();     // скасувати стандартну поведінку</span>
+<span class="ln">  event.stopPropagation();    // зупинити bubbling</span>
+<span class="ln">});</span>
+<span class="ln"></span>
+<span class="ln cmt">// Event delegation — один обробник для кількох елементів</span>
+<span class="ln">document.querySelector('.list').addEventListener('click', (e) => {</span>
+<span class="ln">  if (e.target.matches('.list-item')) {</span>
+<span class="ln">    console.log('Клікнуто на:', e.target.textContent);</span>
+<span class="ln">  }</span>
+<span class="ln">});</span>
+<span class="ln"></span>
+<span class="ln cmt">// Популярні події</span>
+<span class="ln cmt">// click, dblclick, mouseover, mouseout, keydown, keyup</span>
+<span class="ln cmt">// input, change, submit, focus, blur, scroll, resize</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/dom-nodes" target="_blank" rel="noopener noreferrer">DOM — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" target="_blank" rel="noopener noreferrer">DOM API — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати <code>innerHTML</code> з даними користувача</strong>: XSS-атака. Використовуй <code>textContent</code> або <code>createElement</code>.</li>
+        <li><strong>Не перевіряти що елемент існує</strong>: <code>querySelector()</code> повертає <code>null</code> — наступний <code>.addEventListener()</code> кине помилку.</li>
+        <li><strong>Додавати обробники в цикл</strong>: замість цього використовуй event delegation — один обробник на батьківський елемент.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Зроби список задач (todo list): додавання через форму, видалення по кліку.</li>
+        <li>Реалізуй перемикач темної теми через <code>classList.toggle()</code>.</li>
+        <li>Зроби лічильник з кнопками +/- що оновлює текст на сторінці.</li>
+        <li>Використай event delegation для таблиці: один обробник виділяє рядок що клікнули.</li>
+      </ol>
+    </section>
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що таке event delegation і навіщо він?</li>
+        <li>Яка різниця між <code>textContent</code> і <code>innerHTML</code>?</li>
+        <li>Що таке bubbling подій?</li>
+        <li>Навіщо <code>event.preventDefault()</code>?</li>
+      </ol>
+    </section>
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>element.closest('.parent')</code> — шукає найближчого предка що відповідає селектору. Зручно в event delegation.</li>
+        <li><code>IntersectionObserver</code> — відстежує коли елемент входить у viewport без scroll-listener. Для lazy loading і анімацій.</li>
+        <li><code>MutationObserver</code> — відстежує зміни в DOM. Корисно для спостереження за динамічним контентом.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками"><a class="nav-pill" href="../06-objects/index.html"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">06 · Об'єкти</span></a><a class="nav-pill nav-pill--next" href="../08-async/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">08 · Async/Await</span></a></nav>
+    <div class="nav-pills__home"><a class="btn btn--ghost nav-home-link" href="../../../">🏠 На головну</a></div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

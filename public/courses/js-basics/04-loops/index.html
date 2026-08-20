@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 04 — Цикли · JavaScript основи</title>
+  <meta name="description" content="JavaScript цикли: for, while, for...of, for...in, break та continue." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">04 · Цикли</span>
+      </nav>
+      <div class="topnav__steps"><a class="topnav__step" href="../03-conditions/index.html">←</a><a class="topnav__step" href="../05-functions/index.html">→</a></div>
+      <div class="progress" data-lesson="4" data-total="8">
+        <span class="progress__label">Урок 4 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">04</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Цикли</h1>
+      <div class="method-tags"><span class="method-tag">for</span><span class="method-tag">while</span><span class="method-tag">for...of</span><span class="method-tag">for...in</span><span class="method-tag">break</span><span class="method-tag">continue</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Цикли</strong> дозволяють виконувати код декілька разів. JavaScript має: <code>for</code>, <code>while</code>, <code>do...while</code>, <code>for...of</code> (для ітерабельних), <code>for...in</code> (для властивостей об'єкта).</p>
+    </article>
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🔁</span> Аналогія: конвеєр</div>
+      <p>Цикл — як конвеєр на заводі: кожен елемент (ітерація) проходить однакову обробку доки є умова продовжувати. <code>break</code> — аварійна зупинка конвеєра, <code>continue</code> — пропустити один елемент.</p>
+    </section>
+    <section>
+      <h2>for та while</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// for — коли знаєш кількість ітерацій</span>
+<span class="ln">for (let i = 0; i < 5; i++) {</span>
+<span class="ln">  console.log(i); // 0 1 2 3 4</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// while — коли умова невідома наперед</span>
+<span class="ln">let count = 0;</span>
+<span class="ln">while (count < 5) { count++; }</span>
+<span class="ln"></span>
+<span class="ln cmt">// break та continue</span>
+<span class="ln">for (let i = 0; i < 10; i++) {</span>
+<span class="ln">  if (i === 3) continue; // пропустити 3</span>
+<span class="ln">  if (i === 7) break;    // зупинитись на 7</span>
+<span class="ln">  console.log(i); // 0 1 2 4 5 6</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h2>for...of та for...in</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// for...of — перебір елементів масиву/рядка</span>
+<span class="ln">const fruits = ['яблуко', 'банан', 'вишня'];</span>
+<span class="ln">for (const fruit of fruits) {</span>
+<span class="ln">  console.log(fruit);</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// З індексом через entries()</span>
+<span class="ln">for (const [i, fruit] of fruits.entries()) {</span>
+<span class="ln">  console.log(`${i}: ${fruit}`);</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// for...in — перебір ключів об'єкта (обережно!)</span>
+<span class="ln">const obj = { a: 1, b: 2, c: 3 };</span>
+<span class="ln">for (const key in obj) {</span>
+<span class="ln">  console.log(key, obj[key]);</span>
+<span class="ln">}</span>
+<span class="ln cmt">// ⚠️ for...in перебирає і успадковані властивості!</span>
+<span class="ln cmt">// Краще: Object.keys(obj).forEach(key => ...)</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/while-for" target="_blank" rel="noopener noreferrer">Цикли — javascript.info</a></li>
+        </ul>
+      </div>
+    </section>
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Нескінченний цикл</strong>: умова завжди <code>true</code> — браузер зависне. Завжди перевіряй що умова рано чи пізно стане <code>false</code>.</li>
+        <li><strong>Використовувати <code>for...in</code> для масивів</strong>: він перебирає і прототипні властивості. Для масивів — <code>for...of</code> або <code>.forEach()</code>.</li>
+        <li><strong>Мутувати масив під час перебору</strong>: непередбачувана поведінка. Якщо потрібно — перебирай копію <code>[...arr]</code>.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Напиши цикл що виводить числа від 1 до 100. Замість кратних 3 виводь «Fizz», кратних 5 — «Buzz», обох — «FizzBuzz».</li>
+        <li>Перебери масив імен через <code>for...of</code> з індексом через <code>entries()</code>.</li>
+        <li>Перебери об'єкт через <code>Object.entries()</code> і виведи пари ключ-значення.</li>
+      </ol>
+    </section>
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>В чому різниця між <code>for...of</code> і <code>for...in</code>?</li>
+        <li>Коли використовувати <code>while</code> замість <code>for</code>?</li>
+        <li>Що робить <code>break</code> і <code>continue</code>?</li>
+      </ol>
+    </section>
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Для масивів — майже завжди краще використовувати функціональні методи: <code>.map()</code>, <code>.filter()</code>, <code>.reduce()</code> замість циклів — код декларативніший і читабельніший.</li>
+        <li><code>for...of</code> працює з будь-яким ітерабельним: масив, рядок, Set, Map, Generator.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками"><a class="nav-pill" href="../03-conditions/index.html"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">03 · Умовні оператори</span></a><a class="nav-pill nav-pill--next" href="../05-functions/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">05 · Функції</span></a></nav>
+    <div class="nav-pills__home"><a class="btn btn--ghost nav-home-link" href="../../../">🏠 На головну</a></div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

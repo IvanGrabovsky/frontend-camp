@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 04 — CSS Grid · CSS</title>
+  <meta name="description" content="CSS Grid — двовимірна система розкладки. grid-template-columns, fr, repeat, auto-fill, minmax, named areas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">04 · CSS Grid</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../03-flexbox/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../05-responsive/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="4" data-total="8">
+        <span class="progress__label">Урок 4 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">04</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>CSS Grid</h1>
+      <div class="method-tags">
+        <span class="method-tag">grid-template</span><span class="method-tag">fr</span><span class="method-tag">auto-fill</span><span class="method-tag">minmax()</span><span class="method-tag">grid-area</span><span class="method-tag">span</span>
+      </div>
+    </header>
+
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>CSS Grid</strong> — двовимірна система розкладки: одночасно керує рядками і стовпцями. Flexbox чудовий для одновимірних компонентів (рядки або стовпці), Grid — ідеальний для сторінкових лейаутів і складних двовимірних сіток.</p>
+      <p>Думай про Grid як про «Excel-таблицю» для CSS: ти задаєш розміри рядків і стовпців, а потім розміщуєш елементи в конкретні клітинки.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🗺️</span> Аналогія з картою міста</div>
+      <p>Уяви план міста: вулиці по горизонталі — це рядки, вулиці по вертикалі — стовпці. Будівля може займати одну «квартальну одиницю» або кілька (span). Grid Lines — це вулиці, Grid Areas — квартали.</p>
+    </section>
+
+    <section>
+      <h2>Основні властивості контейнера</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln">.grid {</span>
+<span class="ln">  display: grid;</span>
+<span class="ln">  grid-template-columns: 1fr 2fr 1fr;    <span class="cmt">/* три стовпці: 25% 50% 25% */</span></span>
+<span class="ln">  grid-template-rows: auto 1fr auto;     <span class="cmt">/* три рядки */</span></span>
+<span class="ln">  gap: 16px;                              <span class="cmt">/* row-gap і column-gap */</span></span>
+<span class="ln">  column-gap: 24px; row-gap: 16px;       <span class="cmt">/* окремо */</span></span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* auto-fill vs auto-fit — адаптивна сітка без media queries */</span>
+<span class="ln">.cards {</span>
+<span class="ln">  display: grid;</span>
+<span class="ln">  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));</span>
+<span class="ln">  gap: 16px;</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h2>Розміщення елементів</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Span — елемент займає кілька клітинок */</span>
+<span class="ln">.item { grid-column: 1 / 3; }  <span class="cmt">/* від лінії 1 до лінії 3 (2 стовпці) */</span></span>
+<span class="ln">.item { grid-column: span 2; } <span class="cmt">/* займає 2 стовпці */</span></span>
+<span class="ln">.item { grid-row: 1 / -1; }   <span class="cmt">/* від першого до останнього рядка */</span></span>
+<span class="ln"></span>
+<span class="ln cmt">/* Named areas — для сторінкового лейауту */</span>
+<span class="ln">.layout {</span>
+<span class="ln">  display: grid;</span>
+<span class="ln">  grid-template-areas:</span>
+<span class="ln">    "header header"</span>
+<span class="ln">    "sidebar main"</span>
+<span class="ln">    "footer footer";</span>
+<span class="ln">  grid-template-columns: 240px 1fr;</span>
+<span class="ln">  grid-template-rows: auto 1fr auto;</span>
+<span class="ln">  min-height: 100vh;</span>
+<span class="ln">}</span>
+<span class="ln">.header  { grid-area: header; }</span>
+<span class="ln">.sidebar { grid-area: sidebar; }</span>
+<span class="ln">.main    { grid-area: main; }</span>
+<span class="ln">.footer  { grid-area: footer; }</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>fr — fractional unit</h4>
+        <table class="params-table">
+          <thead><tr><th>Запис</th><th>Результат</th></tr></thead>
+          <tbody>
+            <tr><td><code>1fr 1fr 1fr</code></td><td>Три рівні стовпці (по 33%)</td></tr>
+            <tr><td><code>1fr 2fr</code></td><td>1:2 — другий вдвічі ширший</td></tr>
+            <tr><td><code>200px 1fr</code></td><td>Фіксований сайдбар, решта — гнучка</td></tr>
+            <tr><td><code>minmax(200px, 1fr)</code></td><td>Від 200px до 1fr</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout" target="_blank" rel="noopener noreferrer">CSS Grid Layout — MDN</a></li>
+          <li><a href="https://cssgridgarden.com/#uk" target="_blank" rel="noopener noreferrer">Grid Garden (гра для практики)</a></li>
+          <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank" rel="noopener noreferrer">Complete Guide to Grid — CSS-Tricks</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul><li><strong>Плутати Grid і Flexbox</strong>: Grid — двовимірний (рядки + стовпці), Flexbox — одновимірний. Використовуй Grid для лейауту сторінки, Flexbox — для компонентів.</li><li><strong>Забувати про <code>minmax()</code></strong> в адаптивних сітках — <code>repeat(auto-fill, 200px)</code> не адаптується, <code>repeat(auto-fill, minmax(200px, 1fr))</code> — так.</li><li><strong>Плутати <code>auto-fill</code> і <code>auto-fit</code></strong>: <code>auto-fill</code> залишає порожні стовпці, <code>auto-fit</code> стискає їх — при малій кількості items вони займуть весь простір.</li><li><strong>Нумерація Grid Lines з 1</strong>, не з 0. <code>grid-column: 1 / 3</code> — від першої лінії до третьої (тобто 2 стовпці).</li><li><strong>Забувати <code>grid-template-areas</code></strong> при зміні лейауту — замість переписувати координати, просто змінюй ASCII-схему.</li></ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol><li>Зроби адаптивну сітку карток: мінімум 280px шириною, автоматична кількість стовпців через <code>auto-fill</code> + <code>minmax</code>.</li><li>Зроби класичний сторінковий лейаут: header, sidebar, main content, footer через <code>grid-template-areas</code>.</li><li>Зроби «featured» картку, що займає 2 стовпці через <code>grid-column: span 2</code>.</li><li>Порівняй результат <code>auto-fill</code> і <code>auto-fit</code> коли в сітці лише 2 картки.</li></ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol><li>В чому різниця між Grid і Flexbox? Коли використовувати кожен?</li><li>Що означає <code>1fr</code> і як воно рахується?</li><li>Яка різниця між <code>auto-fill</code> і <code>auto-fit</code>?</li><li>Як зробити елемент що займає всю ширину сітки (<code>span all columns</code>)?</li><li>Що таке <code>grid-template-areas</code> і яка перевага над координатами?</li></ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items"><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Grid чи Flexbox — що вибрати?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Grid завжди краще» або «Flexbox складніший» — спрощення.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Grid — для двовимірних лейаутів (сторінки, таблиці, галереї). Flexbox — для одновимірних компонентів (навігація, рядок кнопок, картка). Часто поєднують: Grid для сторінки, Flexbox всередині компонентів.</p>
+        </article><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як зробити адаптивну сітку без media queries?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Не знаю, завжди використовую media queries».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))</code> — автоматично визначає кількість стовпців залежно від ширини контейнера. Ніяких media queries не потрібно.</p>
+        </article><article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке fr?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це відсотки».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>fr</code> (fractional unit) — частка вільного простору після відрахування фіксованих розмірів. <code>1fr 2fr</code> ділить простір у відношенні 1:2. Відсотки не враховують gap, fr — враховує.</p>
+        </article></div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul><li><a href='https://cssgridgarden.com/#uk' target='_blank' rel='noopener'>Grid Garden</a> — 28 рівнів практики Grid в браузері.</li><li>Chrome DevTools → Elements → іконка grid → візуальний оверлей що показує лінії і номери трек прямо на сторінці.</li><li><code>subgrid</code> (CSS 2023) — дозволяє вкладеним grid-items вирівнюватись по треках батька. Підтримується у всіх сучасних браузерах.</li><li><code>place-items: center</code> — скорочення для <code>align-items: center; justify-items: center</code>. Миттєве центрування всіх items у grid-клітинках.</li></ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../03-flexbox/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">03 · Flexbox</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../05-responsive/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">05 · Адаптивна верстка</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

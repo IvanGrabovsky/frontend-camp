@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 06 — Об'єкти · JavaScript основи</title>
+  <meta name="description" content="JavaScript об'єкти: створення, деструктуризація, spread, Object.keys/values/entries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">06 · Об'єкти</span>
+      </nav>
+      <div class="topnav__steps"><a class="topnav__step" href="../05-functions/index.html">←</a><a class="topnav__step" href="../07-dom/index.html">→</a></div>
+      <div class="progress" data-lesson="6" data-total="8">
+        <span class="progress__label">Урок 6 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">06</span>
+        <span class="difficulty-indicator difficulty-indicator--medium" role="img" aria-label="Складність: середньо">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span><span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Об'єкти</h1>
+      <div class="method-tags"><span class="method-tag">object</span><span class="method-tag">деструктуризація</span><span class="method-tag">spread</span><span class="method-tag">Object.keys</span><span class="method-tag">Object.entries</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Об'єкт</strong> — колекція пар ключ-значення. <strong>Деструктуризація</strong> дозволяє зручно витягувати значення. <strong>Spread</strong> (<code>...</code>) копіює та об'єднує об'єкти. Є також прототипна модель та класи (ES6).</p>
+    </article>
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📋</span> Аналогія: анкета</div>
+      <p>Об'єкт — як заповнена анкета: ім'я, вік, адреса — кожне поле (ключ) має відповідне значення. Деструктуризація — як «вирвати» конкретне поле з анкети в окрему змінну.</p>
+    </section>
+    <section>
+      <h2>Створення та доступ</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln">const user = {</span>
+<span class="ln">  name:  'Іван',</span>
+<span class="ln">  age:   25,</span>
+<span class="ln">  email: 'ivan@example.com',</span>
+<span class="ln">  address: { city: 'Київ', zip: '01001' },</span>
+<span class="ln">  greet() { return `Привіт, ${this.name}!`; },</span>
+<span class="ln">};</span>
+<span class="ln"></span>
+<span class="ln cmt">// Доступ</span>
+<span class="ln">user.name;          // 'Іван' — dot notation</span>
+<span class="ln">user['email'];      // 'ivan@example.com' — bracket notation</span>
+<span class="ln">user.address.city;  // 'Київ'</span>
+<span class="ln">user.phone;         // undefined (не помилка!)</span>
+<span class="ln"></span>
+<span class="ln cmt">// Shorthand properties (ES6)</span>
+<span class="ln">const name = 'Марія'; const age = 30;</span>
+<span class="ln">const person = { name, age }; // { name: 'Марія', age: 30 }</span></code></pre>
+      </div>
+
+      <h2>Деструктуризація та spread</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
+        <pre><code><span class="ln cmt">// Деструктуризація об'єкта</span>
+<span class="ln">const { name, age, address: { city } } = user;</span>
+<span class="ln">console.log(name, age, city); // 'Іван' 25 'Київ'</span>
+<span class="ln"></span>
+<span class="ln cmt">// З перейменуванням та значенням за замовчуванням</span>
+<span class="ln">const { name: userName, role = 'user' } = user;</span>
+<span class="ln"></span>
+<span class="ln cmt">// Spread — копія об'єкта (shallow copy)</span>
+<span class="ln">const updated = { ...user, age: 26 };   // оновлення поля</span>
+<span class="ln">const merged  = { ...defaults, ...user }; // об'єднання</span>
+<span class="ln"></span>
+<span class="ln cmt">// Object.keys / values / entries</span>
+<span class="ln">Object.keys(user);    // ['name', 'age', 'email', 'address']</span>
+<span class="ln">Object.values(user);  // ['Іван', 25, ...]</span>
+<span class="ln">Object.entries(user); // [['name','Іван'], ['age',25], ...]</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/object" target="_blank" rel="noopener noreferrer">Objects — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" target="_blank" rel="noopener noreferrer">Destructuring — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Spread робить shallow copy</strong>: вкладені об'єкти копіюються по посиланню. <code>const copy = {...obj}</code> — зміна <code>copy.address.city</code> змінить і оригінал!</li>
+        <li><strong>Перевіряти властивість через <code>obj.prop === undefined</code></strong>: краще <code>'prop' in obj</code> — повертає <code>true</code> навіть якщо значення <code>undefined</code>.</li>
+        <li><strong>Мутувати об'єкти напряму</strong>: особливо в React/Next.js. Завжди створюй нову копію через spread.</li>
+      </ul>
+    </section>
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи об'єкт <code>product</code> з полями name, price, category. Деструктуруй з перейменуванням та дефолтом.</li>
+        <li>Зроби функцію <code>updateUser(user, changes)</code> що повертає новий об'єкт зі змінами (без мутації оригіналу).</li>
+        <li>Перебери <code>Object.entries(product)</code> і виведи всі пари ключ-значення.</li>
+      </ol>
+    </section>
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що таке shallow copy і чому це проблема при вкладених об'єктах?</li>
+        <li>Яка різниця між dot notation і bracket notation?</li>
+        <li>Що повертає <code>Object.entries()</code>?</li>
+      </ol>
+    </section>
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>structuredClone(obj)</code> (2022) — нативний deep clone без <code>JSON.parse(JSON.stringify())</code>. Підтримує Date, RegExp, Map, Set.</li>
+        <li>Computed property names: <code>const key = 'name'; const obj = { [key]: 'Іван' }</code>.</li>
+        <li><code>Object.freeze(obj)</code> — робить об'єкт незмінним (shallow). Корисно для конфігурацій.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками"><a class="nav-pill" href="../05-functions/index.html"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">05 · Функції</span></a><a class="nav-pill nav-pill--next" href="../07-dom/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">07 · DOM та події</span></a></nav>
+    <div class="nav-pills__home"><a class="btn btn--ghost nav-home-link" href="../../../">🏠 На головну</a></div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

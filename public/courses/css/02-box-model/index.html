@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 02 — Box model та позиціювання · CSS</title>
+  <meta name="description" content="Як браузер рахує розмір елемента: content, padding, border, margin. Position: static, relative, absolute, fixed, sticky." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">02 · Box model та позиціювання</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../01-selectors/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../03-flexbox/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="2" data-total="8">
+        <span class="progress__label">Урок 2 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">02</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Box model та позиціювання</h1>
+      <div class="method-tags">
+        <span class="method-tag">margin</span>
+        <span class="method-tag">padding</span>
+        <span class="method-tag">border</span>
+        <span class="method-tag">box-sizing</span>
+        <span class="method-tag">position</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Box model</strong> — це фундаментальна модель, за якою браузер розраховує розмір і відступи кожного HTML-елемента. Кожен елемент — це прямокутна «коробка» з чотирма шарами.</p>
+      <p><strong>Position</strong> визначає, як елемент розміщується в потоці документа: чи займає він своє «законне місце», чи може «вирватися» з нього.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📦</span> Аналогія з пакуванням</div>
+      <p>Уяви посилку: <strong>content</strong> — це сам товар, <strong>padding</strong> — пінопластова набивка навколо нього, <strong>border</strong> — стінки коробки, <strong>margin</strong> — відстань між коробкою та сусідніми коробками на складі.</p>
+    </section>
+
+    <section>
+      <h2>Чотири шари Box model</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Content — сам вміст (текст, картинка) */</span>
+<span class="ln">width: 200px; height: 100px;</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Padding — внутрішній відступ від вмісту до рамки */</span>
+<span class="ln">padding: 16px;               /* всі боки */</span>
+<span class="ln">padding: 8px 16px;           /* vertical | horizontal */</span>
+<span class="ln">padding: 8px 12px 4px 16px; /* top right bottom left */</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Border — рамка навколо padding */</span>
+<span class="ln">border: 2px solid #333;</span>
+<span class="ln">border-radius: 8px;          /* закруглені кути */</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Margin — зовнішній відступ від рамки */</span>
+<span class="ln">margin: 24px auto;           /* center horizontally */</span>
+<span class="ln">margin-top: 0;</span></code></pre>
+      </div>
+
+      <h2><code>box-sizing</code> — як рахується розмір</h2>
+      <p>За замовчуванням <code>width</code> враховує тільки <em>content</em>. Padding і border додаються зверху — елемент стає ширшим ніж задано. Рятує <code>box-sizing: border-box</code>:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* content-box (default): width = content only */</span>
+<span class="ln cmt">/* width:200 + padding:20 + border:2 → реальна ширина 244px */</span>
+<span class="ln">.el { width: 200px; padding: 20px; border: 2px solid; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* border-box: width = content + padding + border */</span>
+<span class="ln cmt">/* width: 200px → реальна ширина ЗАВЖДИ 200px */</span>
+<span class="ln">*, *::before, *::after { box-sizing: border-box; }</span>
+<span class="ln">.el { width: 200px; padding: 20px; border: 2px solid; }</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Значення <code>position</code></h4>
+        <table class="params-table">
+          <thead><tr><th>Значення</th><th>Опис</th><th>Потік</th></tr></thead>
+          <tbody>
+            <tr><td><code>static</code></td><td>Стандартний потік (за замовчуванням)</td><td>так</td></tr>
+            <tr><td><code>relative</code></td><td>Відносно власної початкової позиції</td><td>так</td></tr>
+            <tr><td><code>absolute</code></td><td>Відносно найближчого non-static предка</td><td>ні</td></tr>
+            <tr><td><code>fixed</code></td><td>Відносно вікна браузера</td><td>ні</td></tr>
+            <tr><td><code>sticky</code></td><td>Прокручується до порогу, потім фіксується</td><td>так</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">/* Absolute у контейнері — класичне центрування */</span>
+<span class="ln">.parent { position: relative; width: 300px; height: 200px; }</span>
+<span class="ln">.child  { position: absolute; top: 50%; left: 50%;</span>
+<span class="ln">          transform: translate(-50%, -50%); }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Fixed — хедер завжди видимий при скролі */</span>
+<span class="ln">.topbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Sticky — заголовок «липне» при скролі */</span>
+<span class="ln">.title { position: sticky; top: 64px; background: white; }</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_model" target="_blank" rel="noopener noreferrer">CSS Box Model — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position" target="_blank" rel="noopener noreferrer">position — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing" target="_blank" rel="noopener noreferrer">box-sizing — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Не застосовувати <code>box-sizing: border-box</code></strong> глобально — елементи «розпухають» більше за задану ширину.</li>
+        <li><strong><code>margin: auto</code> центрує лише горизонтально</strong> і тільки блочні елементи з заданою шириною.</li>
+        <li><strong>Плутати <code>absolute</code> і <code>fixed</code></strong>: абсолютне позиціювання залежить від батька, фіксоване — від вікна.</li>
+        <li><strong><code>z-index</code> не працює без <code>position</code></strong> (крім <code>static</code>) — спочатку задай <code>relative</code>/<code>absolute</code>.</li>
+        <li><strong>Margin collapsing</strong>: вертикальні margin сусідніх блоків «зливаються» — менший поглинається більшим.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Створиш <code>&lt;div&gt;</code> 200×200px із <code>padding: 20px</code>, <code>border: 4px solid</code>. Яка реальна ширина з <code>content-box</code>? Додай <code>box-sizing: border-box</code> — що змінилось?</li>
+        <li>Зроби картку з <code>position: relative</code> і кнопку «×» у правому верхньому куті через <code>position: absolute; top: 8px; right: 8px</code>.</li>
+        <li>Зроби хедер, що «прилипає» до верху при прокрутці (<code>sticky</code>).</li>
+        <li>Поясни різницю між <code>margin</code> і <code>padding</code> задавши фоновий колір елементу.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між <code>content-box</code> та <code>border-box</code>? Наведи числовий приклад.</li>
+        <li>Що таке margin collapsing і коли він відбувається?</li>
+        <li>В чому відмінність <code>position: absolute</code> від <code>position: fixed</code>?</li>
+        <li>Як відцентрувати елемент абсолютно в батьківському блоці?</li>
+        <li>Чому <code>z-index: 999</code> може не спрацювати?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Яка різниця між margin і padding?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Padding — зовнішній, margin — внутрішній» — переплутано.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Padding — <em>внутрішній</em> відступ (між вмістом і рамкою), фон поширюється на нього. Margin — <em>зовнішній</em> відступ між рамкою і сусідами, прозорий.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке box-sizing?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Не знаю, ніколи не використовував» — при верстці це базово.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>box-sizing: border-box</code> означає, що <code>width</code>/<code>height</code> включають padding і border. Стандартний reset через <code>*, *::before, *::after { box-sizing: border-box; }</code>.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як зробити sticky header?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> <code>position: fixed</code> — хедер вирвався з потоку, контент «залізе» під нього.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>position: sticky; top: 0</code> — залишається в потоці до порогу, потім «липне». Не треба окремо додавати <code>margin-top</code> до контенту.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>outline</code> — як <code>border</code>, але не займає місця в box model. Ідеальний для дебагу: <code>* { outline: 1px solid red; }</code></li>
+        <li><code>margin: auto</code> у Flexbox розтягується у обох напрямах — класичний спосіб «відштовхнути» елемент до краю контейнера.</li>
+        <li>Щоб убезпечитись від margin collapsing — використовуй Flexbox/Grid (де collapsing не відбувається).</li>
+        <li><code>inset: 0</code> — shorthand для <code>top:0; right:0; bottom:0; left:0</code>. Розтягне absolute/fixed на весь батьківський блок.</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../01-selectors/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">01 · Селектори та специфічність</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../03-flexbox/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">03 · Flexbox</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

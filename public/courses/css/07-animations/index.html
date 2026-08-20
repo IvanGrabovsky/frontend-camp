@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 07 — Анімації та transitions · CSS</title>
+  <meta name="description" content="CSS transitions та @keyframes animations: easing, fill-mode, will-change та prefers-reduced-motion для доступності." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/css/">CSS</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">07 · Анімації та transitions</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../06-variables/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../08-modern/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="7" data-total="8">
+        <span class="progress__label">Урок 7 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">07</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Анімації та transitions</h1>
+      <div class="method-tags"><span class="method-tag">transition</span><span class="method-tag">@keyframes</span><span class="method-tag">animation</span><span class="method-tag">will-change</span><span class="method-tag">prefers-reduced-motion</span></div>
+    </header>
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>CSS Transitions</strong> плавно змінюють одне значення властивості в інше при зміні стану (наприклад, <code>:hover</code>). <strong>CSS Animations</strong> (<code>@keyframes</code>) дозволяють створювати складні багатокрокові анімації що запускаються автоматично або за допомогою класу.</p>
+      <p><code>will-change</code> підказує браузеру заздалегідь оптимізувати рендеринг елемента, що буде анімуватись — але зловживання ним шкодить продуктивності.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎬</span> Аналогія з кіно</div>
+      <p>Transition — це плавний перехід між двома кадрами (A → B). Animation (@keyframes) — це цілий фільм зі сценарієм: ключові кадри 0%, 50%, 100%, де на кожному щось відбувається.</p>
+    </section>
+
+    <section>
+      <h2>transition — плавні переходи</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* transition: властивість тривалість функція затримка */</span>
+<span class="ln">.btn {</span>
+<span class="ln">  background: #6366f1;</span>
+<span class="ln">  transform: translateY(0);</span>
+<span class="ln">  box-shadow: 0 2px 8px rgba(0,0,0,.15);</span>
+<span class="ln">  transition: background 0.2s ease,</span>
+<span class="ln">              transform  0.2s ease,</span>
+<span class="ln">              box-shadow 0.2s ease;</span>
+<span class="ln">}</span>
+<span class="ln">.btn:hover {</span>
+<span class="ln">  background: #4f46e5;</span>
+<span class="ln">  transform: translateY(-2px);</span>
+<span class="ln">  box-shadow: 0 6px 20px rgba(99,102,241,.4);</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Easing functions */</span>
+<span class="ln">transition-timing-function: ease;              /* за замовч. */</span>
+<span class="ln">transition-timing-function: ease-in-out;       /* плавніше */</span>
+<span class="ln">transition-timing-function: cubic-bezier(.34,1.56,.64,1); /* spring */</span>
+<span class="ln">transition-timing-function: linear(0,1);       /* CSS 2023 */</span></code></pre>
+      </div>
+
+      <h2>@keyframes — складні анімації</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Оголошення keyframes */</span>
+<span class="ln">@keyframes fadeInUp {</span>
+<span class="ln">  from { opacity: 0; transform: translateY(24px); }</span>
+<span class="ln">  to   { opacity: 1; transform: translateY(0); }</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln">@keyframes pulse {</span>
+<span class="ln">  0%, 100% { transform: scale(1); }</span>
+<span class="ln">  50%       { transform: scale(1.05); }</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Застосування */</span>
+<span class="ln">.card {</span>
+<span class="ln">  animation: fadeInUp 0.4s ease both;   /* both = зберігає кінцевий стан */</span>
+<span class="ln">}</span>
+<span class="ln">.badge {</span>
+<span class="ln">  animation: pulse 2s ease-in-out infinite;</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* animation shorthand */</span>
+<span class="ln">/* name duration timing-fn delay iteration direction fill-mode */</span>
+<span class="ln">animation: fadeInUp 0.4s ease 0.1s 1 normal both;</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Властивості animation</h4>
+        <table class="params-table">
+          <thead><tr><th>Властивість</th><th>Значення</th><th>Що робить</th></tr></thead>
+          <tbody>
+            <tr><td><code>animation-duration</code></td><td><code>0.3s</code>, <code>1s</code></td><td>Тривалість одного циклу</td></tr>
+            <tr><td><code>animation-iteration-count</code></td><td><code>1</code>, <code>infinite</code></td><td>Кількість повторень</td></tr>
+            <tr><td><code>animation-direction</code></td><td><code>normal</code>, <code>reverse</code>, <code>alternate</code></td><td>Напрямок відтворення</td></tr>
+            <tr><td><code>animation-fill-mode</code></td><td><code>none</code>, <code>both</code>, <code>forwards</code></td><td>Стан до/після анімації</td></tr>
+            <tr><td><code>animation-play-state</code></td><td><code>running</code>, <code>paused</code></td><td>Пауза через JS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2><code>will-change</code> та GPU-шар</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* will-change: підказує браузеру виділити GPU-шар заздалегідь */</span>
+<span class="ln">.modal { will-change: transform, opacity; }</span>
+<span class="ln"></span>
+<span class="ln cmt">/* ⚠️ Не зловживай: GPU-шари займають VRAM */</span>
+<span class="ln cmt">/* Додавай only перед анімацією, прибирай після */</span>
+<span class="ln">el.addEventListener('mouseenter', () => el.style.willChange = 'transform');</span>
+<span class="ln">el.addEventListener('animationend', () => el.style.willChange = 'auto');</span>
+<span class="ln"></span>
+<span class="ln cmt">/* Анімуй тільки: opacity, transform, filter — вони не тригерять reflow */</span>
+<span class="ln cmt">/* Ніколи не анімуй: width, height, top, left — дорогий repaint */</span></code></pre>
+      </div>
+
+      <h2>Поважай налаштування користувача</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">/* Вимикай анімації якщо користувач вибрав "Зменшити рух" в OS */</span>
+<span class="ln">@media (prefers-reduced-motion: reduce) {</span>
+<span class="ln">  *, *::before, *::after {</span>
+<span class="ln">    animation-duration: 0.01ms !important;</span>
+<span class="ln">    animation-iteration-count: 1 !important;</span>
+<span class="ln">    transition-duration: 0.01ms !important;</span>
+<span class="ln">    scroll-behavior: auto !important;</span>
+<span class="ln">  }</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Офіційна документація та інструменти</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations" target="_blank" rel="noopener noreferrer">CSS Animations — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/transition" target="_blank" rel="noopener noreferrer">transition — MDN</a></li>
+          <li><a href="https://easings.net/" target="_blank" rel="noopener noreferrer">easings.net — каталог easing функцій з демо</a></li>
+          <li><a href="https://cubic-bezier.com/" target="_blank" rel="noopener noreferrer">cubic-bezier.com — візуальний редактор кривих</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Анімувати властивості що тригерять reflow</strong>: <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code> — браузер перераховує весь лейаут. Завжди використовуй <code>transform</code> та <code>opacity</code>.</li>
+        <li><strong>Забути <code>prefers-reduced-motion</code></strong>: частина користувачів має вестибулярні порушення, важкі анімації викликають фізичний дискомфорт.</li>
+        <li><strong>Зловживати <code>will-change</code></strong>: додавання на всі елементи займає VRAM і може уповільнити рендеринг.</li>
+        <li><strong>Не використовувати <code>animation-fill-mode: both</code></strong>: без нього елемент «стрибає» на початкову позицію після анімації.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Зроби кнопку з 3 різними transition властивостями (колір, transform, box-shadow) при <code>:hover</code>.</li>
+        <li>Анімуй появу картки через <code>@keyframes fadeInUp</code> з затримкою у 0.1s.</li>
+        <li>Зроби безкінечно пульсуючу індикаторну крапку (як "typing..." у месенджері).</li>
+        <li>Додай <code>@media (prefers-reduced-motion: reduce)</code> і перевір у DevTools → Rendering → Emulate CSS media feature.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між <code>transition</code> і <code>animation</code>?</li>
+        <li>Чому варто анімувати <code>transform</code> замість <code>width/height</code>?</li>
+        <li>Що таке <code>animation-fill-mode: both</code> і коли це потрібно?</li>
+        <li>Навіщо <code>will-change</code> і чому не можна ставити його всюди?</li>
+        <li>Що таке <code>prefers-reduced-motion</code> і хто ним користується?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як зробити плавну анімацію без "стрибків"?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Збільшити duration» або «використати JavaScript».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Анімувати тільки <code>transform</code> та <code>opacity</code> — вони не тригерять reflow/repaint, виконуються на GPU. Для «стрибків» після анімації — <code>animation-fill-mode: both</code>. Для плавності — <code>will-change: transform</code> до початку анімації.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що перевіряєш після додавання анімацій?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Нічого, якщо виглядає добре — ОК».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> (1) <code>prefers-reduced-motion</code> — чи вимикається для тих хто чутливий. (2) Performance tab у DevTools — чи є jank (frames > 16ms). (3) Mobile — менш потужне залізо, складні анімації можуть гальмувати.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><code>linear()</code> (CSS 2023) — дозволяє задати довільну криву через набір точок, без <code>cubic-bezier</code>. Ідеально для spring-анімацій.</li>
+        <li>Chrome DevTools → More tools → Animations — записує всі CSS-анімації на сторінці, дозволяє уповільнити і відтворити покадрово.</li>
+        <li><code>animation-timeline: scroll()</code> (CSS Scroll-driven Animations, 2023) — анімація залежно від позиції скролу, без JavaScript.</li>
+        <li><a href="https://easings.net/" target="_blank" rel="noopener">easings.net</a> — каталог кривих з копіпастним кодом і живим демо.</li>
+      </ul>
+    </section>
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../06-variables/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">06 · Кастомні властивості</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../08-modern/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">08 · Сучасний CSS</span></a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

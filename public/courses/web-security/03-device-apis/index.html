@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 03 — Device APIs · Веб-безпека</title>
+  <meta name="description" content="Вразливості Vibration API (фінгерпринтинг), Screen Wake Lock (фізична безпека), EyeDropper (pixel stealing) та Picture-in-Picture (UI spoofing)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Повернутися назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/web-security/">Веб-безпека</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">03 · Device APIs</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <a class="topnav__step" href="../02-permission-apis/index.html" aria-label="Попередній урок" title="Попередній урок">←</a>
+        <a class="topnav__step" href="../04-css-sidechannels/index.html" aria-label="Наступний урок" title="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="3" data-total="4">
+        <span class="progress__label">Урок 3 / 4</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">03</span>
+        <span class="difficulty-indicator difficulty-indicator--hard" role="img" aria-label="Складність: складно">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Device APIs: Vibration, Wake Lock, EyeDropper, PiP</h1>
+      <div class="method-tags">
+        <span class="method-tag">navigator.vibrate</span>
+        <span class="method-tag">navigator.wakeLock</span>
+        <span class="method-tag">EyeDropper</span>
+        <span class="method-tag">PiP</span>
+        <span class="method-tag">UI Spoofing</span>
+        <span class="method-tag">Fingerprinting</span>
+      </div>
+    </header>
+
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Device APIs дають браузерному коду доступ до фізичних можливостей пристрою. Це відкриває унікальні вектори загроз: від непомітного фінгерпринтингу через вібрацію до викрадення пікселів з екрана через «піпетку» кольору та ідеальних фішингових вікон без адресного рядка.</p>
+    </article>
+
+    <section>
+      <h2>📳 1. Vibration API (<code>navigator.vibrate</code>)</h2>
+
+      <div class="analogy-block">
+        <div class="analogy-block__title"><span class="analogy-block__icon">👆</span> Аналогія: унікальний відбиток пальця</div>
+        <p>Кожен вібродвигун вібрує трохи по-різному — мікросекундні відхилення є унікальними для кожного пристрою. Виміряти ці відхилення — все одно що зняти відбиток пальця без відома людини.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Легітимне використання — тактильний зворотній звʼязок</span>
+<span class="ln">navigator.vibrate(200);          // 200ms вібрація</span>
+<span class="ln">navigator.vibrate([100, 50, 100]); // вібрація - пауза - вібрація</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака 1: Hardware Fingerprinting</span>
+<span class="ln">// Вимірювання затримки реакції на вібрацію через DeviceMotion</span>
+<span class="ln">// для побудови унікального fingerprint пристрою</span>
+<span class="ln">window.addEventListener('devicemotion', (e) => {</span>
+<span class="ln">  // Збираємо мікросекундні характеристики акселерометра</span>
+<span class="ln">  const signature = hashVibrationResponse(e.acceleration);</span>
+<span class="ln">  // Відправляємо на tracking сервер</span>
+<span class="ln">});</span>
+<span class="ln">navigator.vibrate([50, 10, 50, 10, 50]); // провокуємо унікальну реакцію</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака 2: Scareware — імітація системного попередження</span>
+<span class="ln">// Сайт викликає тривожну вібрацію + показує фейковий alert</span>
+<span class="ln">navigator.vibrate([500, 100, 500, 100, 500]);</span>
+<span class="ln">// "Ваш телефон заражено! Встановіть антивірус негайно!"</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Вразливості Vibration API</h4>
+        <table class="params-table">
+          <thead><tr><th>Загроза</th><th>Механізм</th><th>Наслідок</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Hardware Fingerprinting</td>
+              <td>Вимірювання унікальних фізичних характеристик вібродвигуна через DeviceMotion</td>
+              <td>Стеження без cookies, стійке до очищення браузера та VPN</td>
+            </tr>
+            <tr>
+              <td>Scareware / Фішинг</td>
+              <td>Тривожна вібрація + фейковий overlay «вірус знайдено»</td>
+              <td>Паніка → встановлення шкідливого ПЗ або передача грошей</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-block tip-block--warn" style="margin-top: 16px;">
+        <div class="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Firefox і Safari обмежують або повністю блокують Vibration API — Chrome більш ліберальний</li>
+          <li>Специфікація W3C вимагає user gesture для вібрації — але не всі браузери це дотримуються суворо</li>
+          <li>Якщо бачиш вібрацію без очевидної причини (натискання кнопки, сповіщення) — закривай вкладку</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>🔆 2. Screen Wake Lock API (<code>navigator.wakeLock.request</code>)</h2>
+
+      <div class="analogy-block">
+        <div class="analogy-block__title"><span class="analogy-block__icon">🔓</span> Аналогія: заблокований замок готельного номера</div>
+        <p>Уяви: ти виходиш з готелю і залишаєш ноутбук. Нормально — замок вмикається автоматично. Але шкідливий сайт у фоновій вкладці утримує «замок» відкритим — будь-хто може зайти.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Легітимне використання — презентація, відео-плеєр</span>
+<span class="ln">let wakeLock = null;</span>
+<span class="ln">try {</span>
+<span class="ln">  wakeLock = await navigator.wakeLock.request('screen');</span>
+<span class="ln">  // Екран не гасне поки активна ця вкладка</span>
+<span class="ln">} catch (e) { console.error(e); }</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака 1: Фізична безпека</span>
+<span class="ln">// Шкідливий сайт у фоновій вкладці тримає wakeLock активним</span>
+<span class="ln">// Пристрій залишений без нагляду — екран НЕ блокується</span>
+<span class="ln">// Сторонні особи отримують доступ до відкритих додатків</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака 2: Ресурсний DoS</span>
+<span class="ln">// Постійно активний екран = критичний перегрів + батарея</span>
+<span class="ln">// Особливо небезпечно для мобільних пристроїв</span>
+<span class="ln">// OLED-екрани — вигорання пікселів при тривалому статичному зображенні</span></code></pre>
+      </div>
+
+      <div class="tip-block tip-block--warn" style="margin-top: 16px;">
+        <div class="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Wake Lock автоматично скидається коли вкладка йде у фон — але <strong>не коли браузер повноекранний</strong></li>
+          <li>Перевіряй <code>chrome://settings/content/wakeLock</code> — які сайти мають постійний дозвіл</li>
+          <li>Не залишай браузер відкритим у публічних місцях — навіть «заблокований» екран OS не захистить від Wake Lock</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>🎨 3. EyeDropper API (та <code>&lt;input type="color"&gt;</code>)</h2>
+
+      <div class="analogy-block">
+        <div class="analogy-block__title"><span class="analogy-block__icon">🔍</span> Аналогія: підглядання через замкову щілину</div>
+        <p>EyeDropper дозволяє вибрати колір <em>будь-де на екрані</em> — навіть у сусідніх вікнах. Це як отримати підзорну трубу що дивиться крізь стіни між додатками.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Легітимне використання</span>
+<span class="ln">const eyeDropper = new EyeDropper();</span>
+<span class="ln">const result = await eyeDropper.open();</span>
+<span class="ln">console.log(result.sRGBHex); // наприклад '#ff6b6b'</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака: Cross-Origin Pixel Stealing</span>
+<span class="ln">// 1. Зловмисна сторінка відкриває EyeDropper</span>
+<span class="ln">// 2. Через Clickjacking або соціальну інженерію</span>
+<span class="ln">//    змушує користувача навести "піпетку" на сусіднє вікно</span>
+<span class="ln">// 3. Наприклад: відкрите вікно з паролем у менеджері паролів,</span>
+<span class="ln">//    приватний документ, банківський PIN</span>
+<span class="ln">// 4. Піксель за пікселем читаємо структуру чужого екрану</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Вразливість в Chromium (2022, виправлена)</span>
+<span class="ln">// EyeDropper використовувався для обходу захисту autofill</span>
+<span class="ln">// і отримання збережених паролів без дозволу</span></code></pre>
+      </div>
+
+      <div class="tip-block tip-block--warn" style="margin-top: 16px;">
+        <div class="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>EyeDropper вимагає <strong>user gesture</strong> і показує унікальний курсор — користувач <em>повинен</em> побачити що відбувається вибір кольору</li>
+          <li>Браузери обмежили частоту зчитування пікселів щоб унеможливити автоматичне сканування екрану</li>
+          <li>Не наводь «піпетку» на вікна з конфіденційними даними якщо не впевнений у джерелі сайту</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>🖼️ 4. Picture-in-Picture API (Document PiP)</h2>
+
+      <div class="analogy-block">
+        <div class="analogy-block__title"><span class="analogy-block__icon">🎭</span> Аналогія: маскарад без обличчя</div>
+        <p>Звичайне вікно браузера має адресний рядок — ти бачиш <em>хто ти є насправді</em>. Document PiP — вікно <strong>без адресного рядка взагалі</strong>. Ідеальна маска для фішингу.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// Легітимне використання — відео в кутку екрана</span>
+<span class="ln">const pipWindow = await documentPictureInPicture.requestWindow({</span>
+<span class="ln">  width: 400, height: 300</span>
+<span class="ln">});</span>
+<span class="ln">pipWindow.document.body.append(videoElement);</span>
+<span class="ln"></span>
+<span class="ln cmt">// ⚠️ Атака: UI Spoofing / Фішинг</span>
+<span class="ln">// Document PiP дозволяє рендерити БУДЬ-ЯКИЙ HTML</span>
+<span class="ln">// у плаваючому вікні БЕЗ адресного рядка</span>
+<span class="ln">const pipWindow = await documentPictureInPicture.requestWindow(...);</span>
+<span class="ln">// Вставляємо клон форми авторизації Google/банку</span>
+<span class="ln">pipWindow.document.body.innerHTML = `</span>
+<span class="ln">  &lt;div class="google-login-clone"&gt;</span>
+<span class="ln">    &lt;img src="/fake-google-logo.png" /&gt;</span>
+<span class="ln">    &lt;input type="password" placeholder="Введіть пароль" /&gt;</span>
+<span class="ln">  &lt;/div&gt;</span>
+<span class="ln">`;</span>
+<span class="ln">// Користувач не бачить URL — немає ніяких підказок що це фейк</span></code></pre>
+      </div>
+
+      <div class="tip-block tip-block--warn" style="margin-top: 16px;">
+        <div class="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Chrome показує невелику іконку 🔒 та назву сайту в PiP-вікні — завжди перевіряй її перед введенням даних</li>
+          <li>Легітимні сервіси (Google, банки) <strong>ніколи</strong> не просять ввести пароль у плаваючому міні-вікні</li>
+          <li>PiP-вікно закривається при переключенні вкладок — якщо воно «прилипло» і не зникає, це підозрілий сигнал</li>
+          <li>Специфікація W3C активно обговорює обов'язкове відображення origin у PiP-вікні</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Загальні типові помилки</div>
+      <ul>
+        <li><strong>«Нові API = безпечні API»</strong>: чим потужніший інструмент, тим більший потенціал для зловживання. Нові API W3C проходять security review, але вразливості в імплементаціях знаходять постійно.</li>
+        <li><strong>Ігнорування fingerprinting</strong>: комбінація Vibration + DeviceMotion + WebGL + Canvas fingerprint дає унікальний ідентифікатор стійкіший за cookies.</li>
+        <li><strong>Довіра до UI без перевірки origin</strong>: будь-яке вікно без адресного рядка — потенційний фішинг.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Досліди у DevTools (тільки на своїх пристроях!):</p>
+      <ol>
+        <li>Відкрий консоль на мобільному в Chrome і виконай <code>navigator.vibrate(500)</code> — відчуєш вібрацію 0.5 сек. Потім <code>navigator.vibrate([200,100,200])</code>.</li>
+        <li>Знайди будь-який CSS color picker в інтернеті і відкрий EyeDropper. Спробуй навести на інші вікна — що бачиш?</li>
+        <li>Перевір який сайт отримав Wake Lock дозвіл: <code>chrome://settings/content/wakeLock</code></li>
+        <li>Пошукай у GitHub: «EyeDropper pixel stealing PoC» — подивись на реальні proof-of-concept демонстрації.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яким чином Vibration API може бути використаний для стеження без cookies?</li>
+        <li>Чому Screen Wake Lock є загрозою фізичної безпеки?</li>
+        <li>Що таке «Cross-Origin Pixel Stealing» і який API це дозволяє?</li>
+        <li>Чому Document Picture-in-Picture є ідеальним середовищем для фішингу?</li>
+        <li>Яка спільна риса всіх чотирьох API з точки зору захисту?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Що таке Browser Fingerprinting?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це те саме що cookies для відстеження».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Fingerprinting — збір унікального «відбитку» пристрою через комбінацію характеристик: розмір екрану, шрифти, WebGL renderer, Canvas rendering, DeviceMotion від вібрації, часовий пояс та десятки інших параметрів. На відміну від cookies — не зберігається на пристрої і не очищається при очищенні браузера.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «Як розпізнати фішинговий PiP?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «У браузері все безпечно, він показує замок».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> PiP-вікна навмисно позбавлені стандартного браузерного chrome (адресного рядка, кнопок навігації). Ознаки фішингу: (1) форма авторизації у міні-вікні без URL, (2) вікно що неможливо закрити звичайними методами, (3) запит чутливих даних у нетиповому контексті.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><a href="https://coveryourtracks.eff.org/" target="_blank" rel="noopener">coveryourtracks.eff.org</a> (EFF) — тест відбитку вашого браузера. Показує наскільки ви унікальні серед мільйонів відвідувачів.</li>
+        <li>Firefox і Safari агресивніше обмежують Device APIs — частково саме через fingerprinting. Chrome зазвичай прийомніший до розробників, але це компроміс з приватністю.</li>
+        <li>Privacy Sandbox від Google — ініціатива замінити cookie-трекінг на нові API що агреговано передають дані без ідентифікації конкретного користувача.</li>
+        <li>Tor Browser рандомізує більшість fingerprinting-векторів включаючи Canvas і WebGL — ціна: деякі сайти не працюють коректно.</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill" href="../02-permission-apis/index.html">
+        <span class="nav-pill__label">← Назад</span>
+        <span class="nav-pill__title">02 · APIs дозволів</span>
+      </a>
+      <a class="nav-pill nav-pill--next" href="../04-css-sidechannels/index.html">
+        <span class="nav-pill__label">Далі →</span>
+        <span class="nav-pill__title">04 · CSS та Side-channel атаки</span>
+      </a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>

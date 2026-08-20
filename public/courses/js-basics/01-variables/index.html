@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 01 — Змінні та типи даних · JavaScript основи</title>
+  <meta name="description" content="JavaScript змінні: let, const vs var, типи даних, typeof та template literals." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('js-arrays-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="topnav">
+    <div class="topnav__inner">
+      <button class="topnav__back" type="button" onclick="history.back()" aria-label="Назад" title="Назад">←</button>
+      <nav class="breadcrumb" aria-label="Хлібні крихти">
+        <a href="../../../">Курс</a>
+        <span class="breadcrumb__sep">→</span>
+        <a href="../../../blocks/javascript-basics/">JavaScript</a>
+        <span class="breadcrumb__sep">→</span>
+        <span class="breadcrumb__current">01 · Змінні та типи даних</span>
+      </nav>
+      <div class="topnav__steps" aria-label="Попередній / наступний урок">
+        <span class="topnav__step topnav__step--disabled" aria-disabled="true">←</span>
+        <a class="topnav__step" href="../02-operators/index.html" aria-label="Наступний урок">→</a>
+      </div>
+      <div class="progress" data-lesson="1" data-total="8">
+        <span class="progress__label">Урок 1 / 8</span>
+        <span class="progress__bar"><span class="progress__fill"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="lesson-header">
+      <div class="lesson-header__meta">
+        <span class="lesson-num">01</span>
+        <span class="difficulty-indicator difficulty-indicator--easy" role="img" aria-label="Складність: легко">
+          <span class="difficulty-indicator__label">Складність</span>
+          <span class="difficulty-indicator__bars" aria-hidden="true">
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+            <span class="difficulty-indicator__bar"></span>
+          </span>
+        </span>
+      </div>
+      <h1>Змінні та типи даних</h1>
+      <div class="method-tags"><span class="method-tag">let</span><span class="method-tag">const</span><span class="method-tag">typeof</span><span class="method-tag">template literals</span><span class="method-tag">null vs undefined</span></div>
+    </header>
+
+    
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Змінна</strong> — це іменоване місце в пам'яті, де зберігається значення. JavaScript має три способи оголосити змінну: <code>var</code> (застарілий), <code>let</code> (для значень що змінюються) і <code>const</code> (для констант).</p>
+      <p><strong>Тип даних</strong> визначає що може зберігатись у змінній: число, рядок, булеве значення, <code>null</code>, <code>undefined</code>, об'єкт, або <code>Symbol</code>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📦</span> Аналогія: коробки з підписами</div>
+      <p>Змінна — як підписана коробка. <code>const</code> — запаяна коробка (не можна змінити вміст). <code>let</code> — відкрита коробка (вміст можна замінити). Тип даних — це те що всередині: число, текст, або «нічого» (<code>null</code>).</p>
+    </section>
+
+    <section>
+      <h2>let та const</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">// const — значення не змінюється (рекомендований за замовчуванням)</span>
+<span class="ln">const name = 'Іван';</span>
+<span class="ln">const age  = 25;</span>
+<span class="ln">const PI   = 3.14159;</span>
+<span class="ln"></span>
+<span class="ln cmt">// let — значення може змінитись</span>
+<span class="ln">let score = 0;</span>
+<span class="ln">score = 10;   // OK</span>
+<span class="ln">score += 5;   // OK → 15</span>
+<span class="ln"></span>
+<span class="ln cmt">// ❌ const — не можна перевизначити</span>
+<span class="ln">const MAX = 100;</span>
+<span class="ln">MAX = 200; // TypeError: Assignment to constant variable</span></code></pre>
+      </div>
+
+      <h2>Типи даних</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати код"></button></div>
+        <pre><code><span class="ln cmt">// Примітивні типи</span>
+<span class="ln">const str  = 'Привіт, світе!';   // string</span>
+<span class="ln">const num  = 42;                  // number</span>
+<span class="ln">const big  = 9007199254740993n;   // bigint</span>
+<span class="ln">const bool = true;                // boolean</span>
+<span class="ln">const empty = null;               // null — навмисна відсутність</span>
+<span class="ln">let notSet;                       // undefined — ще не задано</span>
+<span class="ln">const id = Symbol('unique');      // symbol</span>
+<span class="ln"></span>
+<span class="ln cmt">// typeof — визначити тип</span>
+<span class="ln">typeof 'text'   // 'string'</span>
+<span class="ln">typeof 42       // 'number'</span>
+<span class="ln">typeof true     // 'boolean'</span>
+<span class="ln">typeof null     // 'object' ← відома помилка JS!</span>
+<span class="ln">typeof undefined // 'undefined'</span>
+<span class="ln"></span>
+<span class="ln cmt">// Template literals — рядки з виразами</span>
+<span class="ln">const greeting = `Привіт, ${name}! Тобі ${age} років.`;</span>
+<span class="ln">const multiline = `</span>
+<span class="ln">  Рядок перший</span>
+<span class="ln">  Рядок другий</span>
+<span class="ln">`;</span></code></pre>
+      </div>
+
+      <div class="syntax-params">
+        <h4>Порівняння let / const / var</h4>
+        <table class="params-table">
+          <thead><tr><th></th><th>const</th><th>let</th><th>var</th></tr></thead>
+          <tbody>
+            <tr><td>Перевизначення</td><td>❌</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Область видимості</td><td>block</td><td>block</td><td>function</td></tr>
+            <tr><td>Hoisting</td><td>TDZ</td><td>TDZ</td><td>undefined</td></tr>
+            <tr><td>Рекомендований</td><td>✅ завжди</td><td>✅ якщо змінюється</td><td>❌ не використовуй</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures" target="_blank" rel="noopener noreferrer">JavaScript data types — MDN</a></li>
+          <li><a href="https://javascript.info/variables" target="_blank" rel="noopener noreferrer">Variables — javascript.info</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати <code>var</code></strong>: function-scope і hoisting створюють несподівані баги. Завжди використовуй <code>const</code>/<code>let</code>.</li>
+        <li><strong>Плутати <code>null</code> і <code>undefined</code></strong>: <code>null</code> — ти навмисно встановив «нічого». <code>undefined</code> — значення ще не задано.</li>
+        <li><strong><code>typeof null === 'object'</code></strong>: відома помилка JS з 1995 року. Для перевірки null використовуй <code>=== null</code>.</li>
+        <li><strong>Перевизначати <code>const</code> об'єкти</strong>: <code>const arr = []</code> — не можна змінити <em>посилання</em> на масив, але можна змінювати його <em>вміст</em>: <code>arr.push(1)</code> — це OK.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <p class="practice-block__intro">Відкрий консоль браузера (F12) або <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a>:</p>
+      <ol>
+        <li>Оголоси <code>const</code> для свого імені та року народження. Обрахуй вік через <code>new Date().getFullYear()</code>.</li>
+        <li>Виведи <code>typeof</code> для 5 різних значень. Перевір <code>typeof null</code> — це сюрприз!</li>
+        <li>Створи template literal з привітанням: «Привіт, [ім'я]! Тобі [вік] років.»</li>
+        <li>Спробуй перевизначити <code>const</code> і подивись на помилку в консолі.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між <code>let</code> і <code>const</code>?</li>
+        <li>Чому не варто використовувати <code>var</code>?</li>
+        <li>Що поверне <code>typeof null</code> і чому це дивно?</li>
+        <li>Як написати багаторядковий рядок без конкатенації?</li>
+        <li>Чи можна додати елемент до <code>const arr = []</code>?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">Питання: «В чому різниця між let, const та var?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «const — для констант, let — для змінних, var — застарілий» — поверхнево.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>const</code>/<code>let</code> — block scope (видимі тільки в межах блоку <code>{}</code>). <code>var</code> — function scope і hoisting (підіймається на початок функції зі значенням <code>undefined</code>). <code>const</code> не дозволяє перевизначення (але мутацію об'єктів — дозволяє). TDZ (Temporal Dead Zone) — звернення до <code>let</code>/<code>const</code> до їх оголошення кидає <code>ReferenceError</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Правило: <strong>завжди починай з <code>const</code></strong>. Якщо потрібно перевизначити — зміни на <code>let</code>. Це мінімізує мутації і робить код передбачуваним.</li>
+        <li><code>Number.isNaN()</code> — надійніший спосіб перевірити NaN ніж <code>isNaN()</code>: <code>isNaN('text') === true</code>, а <code>Number.isNaN('text') === false</code>.</li>
+        <li>Nullish coalescing: <code>const val = input ?? 'default'</code> — повертає <code>'default'</code> тільки якщо <code>input</code> є <code>null</code> або <code>undefined</code> (не <code>0</code> або <code>''</code>).</li>
+      </ul>
+    </section>
+
+    <nav class="nav-pills" aria-label="Навігація між уроками">
+      <a class="nav-pill nav-pill--disabled" aria-disabled="true" href="#"><span class="nav-pill__label">← Назад</span><span class="nav-pill__title">Це перший урок</span></a>
+      <a class="nav-pill nav-pill--next" href="../02-operators/index.html"><span class="nav-pill__label">Далі →</span><span class="nav-pill__title">02 · Оператори та вирази</span></a>
+    </nav>
+    <div class="nav-pills__home">
+      <a class="btn btn--ghost nav-home-link" href="../../../">🏠 Повернутися на головну</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Проект підготував <a href="https://github.com/IvanGrabovsky">GitHub</a> · <strong>Іван Грабовський</strong> · 2026</p>
+  </footer>
+
+  <script src="../assets/js/theme.js"></script>
+</body>
+</html>
