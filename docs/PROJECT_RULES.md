@@ -1,53 +1,39 @@
-# Правила та архітектура проекту Frontend Camp
+# Frontend Camp Project Rules & Architecture
 
-Цей документ описує ключові архітектурні рішення та правила, яких потрібно дотримуватись при розширенні курсу.
+This document outlines key architectural decisions and rules to follow when extending the course.
 
-## 1. Чому статичні HTML-файли замість JSX (Next.js)?
+## 1. Learning Platform Architecture
 
-Хоча основний застосунок написаний на Next.js (React), самі навчальні матеріали (уроки) в папці `public/courses/` написані на чистому HTML/CSS/JS. Чому?
+The project is built as a fully-featured learning platform based on **Next.js (App Router)**.
+The entire learning process, navigation, roadmap, and content rendering are handled exclusively within the platform's UI.
 
-- **Ізоляція концепцій:** Мета початкових блоків — навчити студента "сирим" веб-технологіям (HTML, CSS, JS), як їх бачить браузер, без магії React, JSX чи бандлерів.
-- **Відсутність збірки:** Статичні файли в папці `public/` віддаються сервером Next.js напряму. Студент може відкрити DevTools і побачити чистий код, який ми написали, без мініфікації чи Webpack ін'єкцій.
-- **Простота розширення:** Для додавання нового уроку достатньо створити один `.html` файл з правильними посиланнями на загальні CSS/JS ассети, без необхідності створювати нові React-компоненти чи оновлювати роутинг.
+**The single source of truth for lesson content is the `data/lessons/` directory (or `content/lessons/` for MDX).**
+We do **NOT** create standalone static HTML files for each lesson inside `public/courses/`. Lesson content is provided either as HTML strings or MDX files, and is dynamically rendered inside the `HubLayout` wrapper (`app/courses/[courseSlug]/[lessonSlug]/page.tsx`).
 
-*React/Next.js використовується лише як оболонка (хаб) для навігації, відображення дорожньої карти (roadmap) та прогресу студента.*
+*(The `public/courses/` folder may only be used for specific interactive playgrounds or static assets, but never for duplicating lesson text).*
 
-## 2. Структура проекту та Roadmap
+## 2. Project Structure & Roadmap
 
-Відображення блоків курсу у Next.js додатку повністю керується файлом `data/roadmap.ts`.
+The display of course blocks in the Next.js app is entirely driven by the `data/roadmap.ts` file.
 
-Коли ви додаєте новий блок або курс, ви повинні гарантувати узгодженість трьох частин:
+When adding a new block or course, you must ensure consistency across three parts:
 
-1. **Конфігурація (roadmap.ts):** Блок реєструється в масиві `ROADMAP_BLOCKS`.
-2. **README файл (папка blocks/):** Поле `readmePath` у конфігурації **повинно вказувати на існуючий Markdown-файл**. Якщо файл не існує, Next.js не зможе відрендерити сторінку блоку!
-3. **Контент (папка public/courses/):** HTML-файли уроків повинні існувати за адресами, вказаними у властивості `startHref` та масиві `lessons`.
+1. **Configuration (`roadmap.ts`):** Register the block in the `ROADMAP_BLOCKS` array. Define the lessons array (e.g., `JS_BASICS_LESSONS`) containing metadata (title, difficulty, etc.).
+2. **README file (`blocks/` folder):** The `readmePath` property in the configuration **must point to an existing Markdown file** describing the module. If this file is missing, the Next.js app will fail to render the block overview page!
+3. **Lesson Content (`data/lessons/` or `content/lessons/`):** The actual content for each lesson must be provided.
 
-### Правило додавання нового блоку:
-- **КРОК 1:** Створіть папку в `blocks/` (наприклад, `blocks/06-web-security/`).
-- **КРОК 2:** Створіть `README.md` всередині цієї папки з описом блоку.
-- **КРОК 3:** Додайте конфігурацію блоку в `data/roadmap.ts`, і **перевірте що `readmePath` точно збігається з шляхом створеного файлу**.
-- **КРОК 4:** Створіть HTML файли уроків у `public/courses/[courseSlug]/`.
+### Rule for Adding a New Block & Lessons:
+- **STEP 1:** Create a folder in `blocks/` (e.g., `blocks/06-web-security/`).
+- **STEP 2:** Create a `README.md` inside this folder describing the block.
+- **STEP 3:** Add the block configuration in `data/roadmap.ts`, and **verify that `readmePath` exactly matches the created file path**.
+- **STEP 4:** Create the content for the course (e.g. `data/lessons/[courseSlug].ts` for HTML strings, or `.mdx` files if using the MDX setup).
+- **STEP 5:** **MANDATORY:** Register the new course in the `loaders` array inside `data/lessons/index.ts` so Next.js knows how to load it.
 
-## 3. Типові помилки, яких слід уникати
+## 3. Common Pitfalls to Avoid
 
-- ❌ **Невідповідність шляхів до README:** Завжди перевіряйте, що папка `blocks/[slug]/README.md` існує. Наприклад, якщо у `roadmap.ts` прописано `readmePath: 'blocks/05-web-security/README.md'`, а папка називається `07-capstone`, додаток впаде з помилкою.
-- ❌ **Видалення або перейменування папок без оновлення `roadmap.ts`:** `roadmap.ts` є єдиним джерелом правди.
-- ❌ **Забуті посилання на ассети:** У нових `.html` уроках перевіряйте правильність відносних шляхів до `../assets/css/style.css` та `../assets/js/theme.js`.
+- ❌ **Creating lessons in `public/courses/` instead of `data/lessons/` (or MDX):** The platform only fetches content from the data/content directories. Adding HTML files to `public/` does not add them to Next.js navigation.
+- ❌ **Mismatched README paths:** Always ensure the folder `blocks/[slug]/README.md` exists. For example, if `roadmap.ts` states `readmePath: 'blocks/05-web-security/README.md'`, but the folder is named `07-capstone`, the app will crash.
+- ❌ **Unregistered loader:** If you created `data/lessons/my-course.ts` but forgot to add it to `data/lessons/index.ts`, lesson pages will open empty.
+- ❌ **Deleting or renaming folders without updating `roadmap.ts`:** `roadmap.ts` is the single source of truth.
 
-Дотримуйтесь цих правил, і розширення курсу буде відбуватись без збоїв платформи.
-
-## 4. Подвійне життя контенту уроків (Дуже важливо!)
-
-Вам потрібно розуміти, що уроки існують у **двох вимірах**:
-
-1. **Як статичні HTML файли:** Лежать у `public/courses/`. Їх можна відкрити напряму (наприклад `/courses/css/01-selectors/index.html`), вони є повністю незалежними і містять власні теги `<html>`, `<head>`, `<nav>` тощо.
-2. **Як контент для Next.js Хабу:** Коли користувач клікає на урок в хабі, Next.js перехоплює URL (`/courses/[courseSlug]/[lessonSlug]/`) і рендерить свою власну сторінку-обгортку (`HubLayout`).
-
-**Проблема:** Next.js хаб **НЕ читає** контент зі статичних HTML-файлів. Він бере його зі словників у папці **`data/lessons/`**!
-
-### Правило додавання контенту уроків:
-Якщо ви створюєте нові уроки, недостатньо просто створити HTML-файли в `public/`. Ви також повинні:
-1. Скопіювати "корисний" контент (все всередині `<main>`, але без `<header>` та `<nav>`) у відповідний TypeScript файл у папці `data/lessons/` (наприклад `data/lessons/css.ts`).
-2. Якщо ви створили новий модуль (наприклад `web-security`), вам потрібно створити новий файл `data/lessons/web-security.ts` та **обов'язково** зареєструвати його у `loaders` у файлі `data/lessons/index.ts`.
-
-Без цього кроку сторінка уроку в Next.js відкриється, але контенту всередині не буде!
+Follow these rules to ensure the course expands smoothly without breaking the platform.

@@ -1,0 +1,61 @@
+<Card className="p-6 mb-6">
+  ## Що це таке?
+  **Селектор** — шаблон, яким CSS вибирає HTML-елементи. **Специфічність** — система підрахунку «ваги» правил. При конфлікті двох правил виграє те з вищою специфічністю. Розуміння позбавляє від хаотичних `!important`.
+</Card>
+
+<Alert className="mb-6 bg-blue-50/50 border-blue-200">
+  <span className="text-xl mr-2">🎯</span>
+  <div className="flex flex-col">
+    <strong>Аналогія зі знижками</strong>
+    <p>Кожне правило — знижкова картка. Специфічність — рівень: золота бʼє срібну, срібна — бронзову. При однаковому рівні виграє <em>пізніша</em> в файлі (каскад). `!important` — VIP-картка.</p>
+  </div>
+</Alert>
+
+## Типи селекторів
+
+<div className="code-block my-4">
+  <div className="code-block__head"><span className="code-block__dots"><span></span><span></span><span></span></span></div>
+  ```css
+  /* Тег — 0-0-1 */
+  p { color: gray; }
+
+  /* Клас — 0-1-0 */
+  .btn { padding: 8px 16px; }
+
+  /* ID — 1-0-0 */
+  #header { position: sticky; top: 0; }
+
+  /* Атрибут — 0-1-0 */
+  input[type="text"] { border: 1px solid #ccc; }
+
+  /* Псевдоклас — 0-1-0 */
+  a:hover { text-decoration: underline; }
+  li:first-child { font-weight: bold; }
+
+  /* Псевдоелемент — 0-0-1 */
+  .btn::after { content: " →"; }
+
+  /* Комбінатори (не додають специфічності) */
+  .nav > li   { display: inline-block; }  /* прямий нащадок */
+  .card + .card { margin-top: 1rem; }    /* суміжний брат */
+  ```
+</div>
+
+<Alert variant="destructive" className="my-6">
+  <span className="text-xl mr-2">⚠️</span>
+  <div className="flex flex-col">
+    <strong>Типові помилки</strong>
+    <ul className="list-disc ml-4 mt-2">
+      <li><strong>Стилізація по ID:</strong> ID важко перевизначити. Краще використовувати класи.</li>
+      <li><strong>Надмірна вкладеність:</strong> `.nav ul li a` — повільно і важко підтримувати. Краще `.nav-link`.</li>
+      <li><strong>Зловживання `!important`:</strong> Це вбиває каскад. Використовуй тільки для утиліт (наприклад, `.hidden`).</li>
+    </ul>
+  </div>
+</Alert>
+
+## Практика
+
+1. Знайди елемент `<button id="submit" class="btn primary">`. Напиши селектор, що змінить його колір.
+2. Що виграє: `#app .text` чи `div.container p.text`?
+
+<Badge variant="outline" className="mt-4">Спробуй самостійно!</Badge>

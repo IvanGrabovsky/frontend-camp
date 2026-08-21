@@ -4,6 +4,17 @@ import { loadLessonData, getAllLessonParams } from '@/data/lessons';
 import { getBlock } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 import Link from 'next/link';
+import fs from 'fs/promises';
+import path from 'path';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+
+// Shadcn UI Components
+import { Card } from '@/components/ui/card';
+import { Alert } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+const components = { Card, Alert, Badge, Tabs, TabsContent, TabsList, TabsTrigger };
 
 interface LessonPageProps {
   params: Promise<{ courseSlug: string; lessonSlug: string }>;
@@ -33,6 +44,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const currentIndex = lessons.findIndex((l) => l.slug === lessonSlug);
   const prev = currentIndex > 0 ? lessons[currentIndex - 1] : null;
   const next = currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+
+  let mdxSource: string | null = null;
+  try {
+    const mdxPath = path.join(process.cwd(), 'content', 'lessons', courseSlug, `${lessonSlug}.mdx`);
+    mdxSource = await fs.readFile(mdxPath, 'utf8');
+  } catch (err) {
+    // MDX file not found, will fallback to HTML
+  }
 
   return (
     <HubLayout
@@ -72,7 +91,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
       </header>
 
       {/* Lesson content */}
-      <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml }} />
+      <div className="mt-8 prose prose-slate dark:prose-invert max-w-none">
+        {mdxSource ? (
+          <MDXRemote source={mdxSource} components={components} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml }} />
+        )}
+      </div>
 
       {/* Navigation */}
       <nav className="nav-pills" aria-label="Навігація між уроками">

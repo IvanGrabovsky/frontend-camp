@@ -52,7 +52,7 @@ export const LESSONS_HTML: Record<string, string> = {
 <span class="ln">typeof undefined // 'undefined'</span>
 <span class="ln"></span>
 <span class="ln cmt">// Template literals — рядки з виразами</span>
-<span class="ln">const greeting = \`Привіт, ${name}! Тобі ${age} років.\`;</span>
+<span class="ln">const greeting = \`Привіт, \${name}! Тобі \${age} років.\`;</span>
 <span class="ln">const multiline = \`</span>
 <span class="ln">  Рядок перший</span>
 <span class="ln">  Рядок другий</span>
@@ -414,7 +414,7 @@ export const LESSONS_HTML: Record<string, string> = {
 <span class="ln"></span>
 <span class="ln cmt">// З індексом через entries()</span>
 <span class="ln">for (const [i, fruit] of fruits.entries()) {</span>
-<span class="ln">  console.log(\`${i}: ${fruit}\`);</span>
+<span class="ln">  console.log(\`\${i}: \${fruit}\`);</span>
 <span class="ln">}</span>
 <span class="ln"></span>
 <span class="ln cmt">// for...in — перебір ключів об'єкта (обережно!)</span>
@@ -480,14 +480,14 @@ export const LESSONS_HTML: Record<string, string> = {
         <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy></button></div>
         <pre><code><span class="ln cmt">// Function declaration (hoisting — можна викликати до оголошення)</span>
 <span class="ln">function greet(name) {</span>
-<span class="ln">  return \`Привіт, ${name}!\`;</span>
+<span class="ln">  return \`Привіт, \${name}!\`;</span>
 <span class="ln">}</span>
 <span class="ln"></span>
 <span class="ln cmt">// Function expression (змінна — немає hoisting)</span>
-<span class="ln">const greet = function(name) { return \`Привіт, ${name}!\`; };</span>
+<span class="ln">const greet = function(name) { return \`Привіт, \${name}!\`; };</span>
 <span class="ln"></span>
 <span class="ln cmt">// Arrow function (ES6) — коротший синтаксис</span>
-<span class="ln">const greet = (name) => \`Привіт, ${name}!\`;</span>
+<span class="ln">const greet = (name) => \`Привіт, \${name}!\`;</span>
 <span class="ln">const add = (a, b) => a + b;   // неявний return</span>
 <span class="ln">const double = n => n * 2;      // один параметр — без дужок</span></code></pre>
       </div>
@@ -585,7 +585,7 @@ export const LESSONS_HTML: Record<string, string> = {
 <span class="ln">  age:   25,</span>
 <span class="ln">  email: 'ivan@example.com',</span>
 <span class="ln">  address: { city: 'Київ', zip: '01001' },</span>
-<span class="ln">  greet() { return \`Привіт, ${this.name}!\`; },</span>
+<span class="ln">  greet() { return \`Привіт, \${this.name}!\`; },</span>
 <span class="ln">};</span>
 <span class="ln"></span>
 <span class="ln cmt">// Доступ</span>
@@ -814,7 +814,7 @@ export const LESSONS_HTML: Record<string, string> = {
 <span class="ln">    const response = await fetch('https://jsonplaceholder.typicode.com/users');</span>
 <span class="ln"></span>
 <span class="ln">    if (!response.ok) {</span>
-<span class="ln">      throw new Error(\`HTTP ${response.status}\`);</span>
+<span class="ln">      throw new Error(\`HTTP \${response.status}\`);</span>
 <span class="ln">    }</span>
 <span class="ln"></span>
 <span class="ln">    const users = await response.json();</span>
