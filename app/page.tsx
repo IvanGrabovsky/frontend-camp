@@ -6,7 +6,7 @@ import { ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 
 export default function HomePage() {
-  const activeBlock = ROADMAP_BLOCKS.find((b) => b.status === 'active');
+  const jsBlock = ROADMAP_BLOCKS.find((b) => b.slug === 'javascript-basics');
 
   return (
     <HubLayout>
@@ -14,8 +14,8 @@ export default function HomePage() {
         <span className="hero__badge">Roadmap · Інтернет → HTML → CSS → JS → Next.js</span>
         <h1>Frontend Learning Hub</h1>
         <HeroQuote />
-        {activeBlock?.startHref && (
-          <Link className="btn btn--run playground-cta" href={`/blocks/${activeBlock.slug}/`}>
+        {jsBlock?.startHref && (
+          <Link className="btn btn--run playground-cta" href={`/blocks/${jsBlock.slug}/`}>
             Почати з JavaScript
           </Link>
         )}
