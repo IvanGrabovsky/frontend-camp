@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { HubLayout } from '@/components/HubLayout';
-import { LessonCard } from '@/components/RoadmapBlockCard';
+import { LessonCard, RoadmapBlockCard } from '@/components/RoadmapBlockCard';
 import { getBlock, ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 
@@ -10,7 +13,16 @@ interface BlockPageProps {
 }
 
 export function generateStaticParams() {
-  return ROADMAP_BLOCKS.map((block) => ({ slug: block.slug }));
+  const slugs: { slug: string }[] = [];
+  for (const block of ROADMAP_BLOCKS) {
+    slugs.push({ slug: block.slug });
+    if (block.children) {
+      for (const child of block.children) {
+        slugs.push({ slug: child.slug });
+      }
+    }
+  }
+  return slugs;
 }
 
 export async function generateMetadata({ params }: BlockPageProps) {
@@ -37,41 +49,43 @@ export default async function BlockPage({ params }: BlockPageProps) {
         { label: block.title },
       ]}
     >
-      <header className="lesson-header">
-        <div className="lesson-header__meta">
-          <span className="lesson-num">{String(block.order).padStart(2, '0')}</span>
+      <header className="py-12 md:py-20 mb-12">
+        <div className="flex items-center space-x-3 mb-6">
+          <span className="text-3xl font-bold text-primary">{String(block.order).padStart(2, '0')}</span>
           {isActive ? (
-            <span className="roadmap-badge roadmap-badge--active">Доступно</span>
+            <Badge className="bg-primary text-primary-foreground">Доступно</Badge>
           ) : (
-            <span className="roadmap-badge roadmap-badge--soon">Скоро</span>
+            <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">Скоро</Badge>
           )}
         </div>
-        <h1>{block.title}</h1>
-        <p style={{ color: 'var(--text-muted)' }}>{block.subtitle}</p>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Рівень: {block.level}</p>
+        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4 tracking-tight">{block.title}</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mb-6">{block.subtitle}</p>
+        <Badge variant="secondary" className="text-sm font-medium">Рівень: {block.level}</Badge>
       </header>
 
       {isActive && block.lessons ? (
         <>
-          <div className="block-actions">
-            <a className="btn btn--run" href={withBasePath(block.startHref || `/courses/${block.courseSlug || block.slug}/01-intro/`)}>
-              Почати модуль 01
-            </a>
+          <div className="flex flex-wrap gap-4 mb-16">
+            <Button asChild size="lg" className="h-12 px-8 font-semibold shadow-md shadow-primary/20">
+              <a href={withBasePath(block.startHref || `/courses/${block.courseSlug || block.slug}/01-intro/`)}>
+                Почати модуль 01 →
+              </a>
+            </Button>
             {block.slug === 'javascript-basics' && (
               <>
-                <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/playground/')}>
-                  🧪 Пісочниця
-                </a>
-                <a className="btn btn--ghost" href={withBasePath('/courses/js-arrays/crystals/')}>
-                  💎 Кристали
-                </a>
+                <Button asChild variant="outline" size="lg" className="h-12 px-6">
+                  <Link href="/playground/">🧪 Пісочниця</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="h-12 px-6 text-accent border-accent/30 hover:bg-accent/10 hover:text-accent">
+                  <a href={withBasePath('/courses/js-arrays/crystals/')}>💎 Кристали</a>
+                </Button>
               </>
             )}
           </div>
 
-          <section aria-labelledby="topics-title">
-            <h2 id="topics-title">Теми блоку</h2>
-            <div className="topics-grid">
+          <section aria-labelledby="topics-title" className="mb-24">
+            <h2 id="topics-title" className="text-3xl font-bold mb-8">Теми блоку</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto' }}>
               {block.lessons.map((lesson) => (
                 <LessonCard key={lesson.slug} courseSlug={block.courseSlug || block.slug} {...lesson} />
               ))}
@@ -79,39 +93,58 @@ export default async function BlockPage({ params }: BlockPageProps) {
           </section>
 
           {block.slug === 'javascript-basics' && (
-            <section className="motivation-block" style={{ marginTop: '2rem' }}>
-              <h2>Структура кожного уроку</h2>
-              <ul>
-                <li>Теорія з аналогіями та прикладами</li>
-                <li>Жива пісочниця в браузері</li>
-                <li>4 завдання на занятті (💎 10 кожне)</li>
-                <li>3 домашні завдання (💎 40)</li>
-                <li>Розбір типових помилок ДЗ та цікаві фішки</li>
-              </ul>
+            <Card className="mb-24 border-none shadow-md bg-secondary/30">
+              <CardHeader>
+                <CardTitle className="text-xl">Структура кожного уроку</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4 text-muted-foreground list-none">
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Теорія з аналогіями та прикладами</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Жива пісочниця в браузері</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> 4 завдання на занятті (💎 10 кожне)</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> 3 домашні завдання (💎 40)</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Розбір типових помилок ДЗ та цікаві фішки</li>
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {block.children && (
+            <section aria-labelledby="subblocks-title" className="mb-24">
+              <h2 id="subblocks-title" className="text-3xl font-bold mb-8">Підмодулі</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {block.children.map((child) => (
+                  <RoadmapBlockCard key={child.slug} block={child} />
+                ))}
+              </div>
             </section>
           )}
         </>
       ) : (
-        <section className="lesson-card">
-          <h2>Контент у розробці</h2>
-          <p>Цей блок ще в roadmap. Опис і очікувані теми — у README репозиторію:</p>
-          <p>
-            <code>{block.readmePath}</code>
-          </p>
-          {block.topics && (
-            <>
-              <h3>Заплановані теми</h3>
-              <ul>
-                {block.topics.map((topic) => (
-                  <li key={topic}>{topic}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          <p style={{ marginTop: '1.5rem' }}>
-            <Link href="/">← Повернутися до roadmap</Link>
-          </p>
-        </section>
+        <Card className="border-none shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Контент у розробці</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6">Цей блок ще в roadmap. Опис і очікувані теми — у README репозиторію:</p>
+            <div className="bg-secondary p-4 rounded-lg font-mono text-sm mb-8 text-foreground border border-border/50">
+              <code>{block.readmePath}</code>
+            </div>
+            {block.topics && (
+              <>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Заплановані теми</h3>
+                <ul className="space-y-2 mb-8">
+                  {block.topics.map((topic) => (
+                    <li key={topic} className="flex items-center"><span className="text-muted-foreground mr-3">—</span><span className="text-muted-foreground">{topic}</span></li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <Button asChild variant="outline" className="mt-4">
+              <Link href="/">← Повернутися до roadmap</Link>
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </HubLayout>
   );

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import { courseStylesHref } from '@/components/SiteShell';
+import './globals.css';
 import { ThemeInitScript } from '@/components/ThemeToggle';
-import { Geist } from "next/font/google";
+import { Inter, Fira_Code } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font-sans' });
+const firaCode = Fira_Code({ subsets: ['latin', 'cyrillic'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
   title: 'Frontend Learning Hub — HTML, CSS, JavaScript, Next.js',
@@ -14,16 +15,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="uk" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="uk" suppressHydrationWarning className={cn(inter.variable, firaCode.variable)}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <ThemeInitScript />
-        <link rel="stylesheet" href={courseStylesHref()} />
       </head>
       <body>{children}</body>
     </html>

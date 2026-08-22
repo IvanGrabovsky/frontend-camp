@@ -7,14 +7,16 @@ import Link from 'next/link';
 import fs from 'fs/promises';
 import path from 'path';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
 
 // Shadcn UI Components
 import { Card } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const components = { Card, Alert, Badge, Tabs, TabsContent, TabsList, TabsTrigger };
+const components = { Card, Alert, Badge, Button, Tabs, TabsContent, TabsList, TabsTrigger };
 
 interface LessonPageProps {
   params: Promise<{ courseSlug: string; lessonSlug: string }>;
@@ -61,37 +63,39 @@ export default async function LessonPage({ params }: LessonPageProps) {
         { label: `${lesson.num} · ${lesson.title}` },
       ]}
     >
-      <header className="lesson-header">
-        <div className="lesson-header__meta">
-          <span className="lesson-num">{lesson.num}</span>
-          <span
-            className={`difficulty-indicator difficulty-indicator--${lesson.difficulty}`}
-            role="img"
-            aria-label={`Складність: ${lesson.difficulty}`}
-          >
-            <span className="difficulty-indicator__label">Складність</span>
-            <span className="difficulty-indicator__bars" aria-hidden="true">
-              <span className="difficulty-indicator__bar" />
-              <span className="difficulty-indicator__bar" />
-              <span className="difficulty-indicator__bar" />
+      {/* Lesson Header */}
+      <header className="py-8 sm:py-12 border-b border-border/60 mb-8 sm:mb-12">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl sm:text-3xl font-bold font-mono text-primary">
+              {lesson.num}
             </span>
-          </span>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Урок {currentIndex + 1} / {lessons.length}
+            <Badge variant="outline" className="text-xs uppercase tracking-wider">
+              {lesson.difficulty}
+            </Badge>
+          </div>
+          <span className="text-xs sm:text-sm font-mono text-muted-foreground bg-muted/60 px-3 py-1 rounded-full">
+            Урок {currentIndex + 1} з {lessons.length}
           </span>
         </div>
-        <h1>{lesson.title}</h1>
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
+          {lesson.title}
+        </h1>
+
         {lesson.methods && (
-          <div className="method-tags">
+          <div className="flex flex-wrap gap-2 pt-2">
             {lesson.methods.split(' · ').map((m) => (
-              <span key={m} className="method-tag">{m}</span>
+              <Badge key={m} variant="secondary" className="font-mono text-xs px-2.5 py-1">
+                {m}
+              </Badge>
             ))}
           </div>
         )}
       </header>
 
-      {/* Lesson content */}
-      <div className="mt-8 prose prose-slate dark:prose-invert max-w-none">
+      {/* Lesson Content */}
+      <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline prose-code:font-mono prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none mb-16">
         {mdxSource ? (
           <MDXRemote source={mdxSource} components={components} />
         ) : (
@@ -99,33 +103,63 @@ export default async function LessonPage({ params }: LessonPageProps) {
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="nav-pills" aria-label="Навігація між уроками">
-        {prev ? (
-          <Link className="nav-pill" href={withBasePath(`/courses/${courseSlug}/${prev.slug}/`)}>
-            <span className="nav-pill__label">← Назад</span>
-            <span className="nav-pill__title">{prev.num} · {prev.title}</span>
-          </Link>
-        ) : (
-          <a className="nav-pill nav-pill--disabled" aria-disabled="true" href="#">
-            <span className="nav-pill__label">← Назад</span>
-            <span className="nav-pill__title">Це перший урок</span>
-          </a>
-        )}
-        {next ? (
-          <Link className="nav-pill nav-pill--next" href={withBasePath(`/courses/${courseSlug}/${next.slug}/`)}>
-            <span className="nav-pill__label">Далі →</span>
-            <span className="nav-pill__title">{next.num} · {next.title}</span>
-          </Link>
-        ) : (
-          <a className="nav-pill nav-pill--next nav-pill--disabled" aria-disabled="true" href="#">
-            <span className="nav-pill__label">Далі →</span>
-            <span className="nav-pill__title">Це останній урок</span>
-          </a>
-        )}
-      </nav>
-      <div className="nav-pills__home">
-        <Link className="btn btn--ghost nav-home-link" href="/">🏠 Повернутися на головну</Link>
+      {/* Navigation Footer */}
+      <div className="pt-8 border-t border-border/60 space-y-6">
+        <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Навігація між уроками">
+          {prev ? (
+            <Link
+              className="group flex flex-col p-4 rounded-xl border border-border bg-card hover:bg-muted/40 hover:border-primary/50 transition-all hover:shadow-md"
+              href={withBasePath(`/courses/${courseSlug}/${prev.slug}/`)}
+            >
+              <span className="text-xs text-muted-foreground flex items-center gap-1 mb-1 font-medium group-hover:text-primary transition-colors">
+                <ChevronLeft className="w-4 h-4" /> Попередній урок
+              </span>
+              <span className="font-semibold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors">
+                {prev.num} · {prev.title}
+              </span>
+            </Link>
+          ) : (
+            <div className="p-4 rounded-xl border border-border/40 bg-card/40 opacity-50 cursor-not-allowed">
+              <span className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
+                <ChevronLeft className="w-4 h-4" /> Початок курсу
+              </span>
+              <span className="font-medium text-sm sm:text-base text-muted-foreground">
+                Це перший урок
+              </span>
+            </div>
+          )}
+
+          {next ? (
+            <Link
+              className="group flex flex-col p-4 rounded-xl border border-border bg-card hover:bg-muted/40 hover:border-primary/50 transition-all hover:shadow-md text-left sm:text-right"
+              href={withBasePath(`/courses/${courseSlug}/${next.slug}/`)}
+            >
+              <span className="text-xs text-muted-foreground flex items-center justify-start sm:justify-end gap-1 mb-1 font-medium group-hover:text-primary transition-colors">
+                Наступний урок <ChevronRight className="w-4 h-4" />
+              </span>
+              <span className="font-semibold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors">
+                {next.num} · {next.title}
+              </span>
+            </Link>
+          ) : (
+            <div className="p-4 rounded-xl border border-border/40 bg-card/40 opacity-50 cursor-not-allowed text-left sm:text-right">
+              <span className="text-xs text-muted-foreground flex items-center justify-start sm:justify-end gap-1 mb-1">
+                Кінець курсу <ChevronRight className="w-4 h-4" />
+              </span>
+              <span className="font-medium text-sm sm:text-base text-muted-foreground">
+                Це останній урок
+              </span>
+            </div>
+          )}
+        </nav>
+
+        <div className="flex justify-center pt-2">
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link href="/">
+              <Home className="w-4 h-4" /> Повернутися на головну
+            </Link>
+          </Button>
+        </div>
       </div>
     </HubLayout>
   );

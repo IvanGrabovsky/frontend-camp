@@ -10,7 +10,7 @@ export function HubLayout({
   return (
     <>
       <SiteHeader breadcrumb={breadcrumb} />
-      <main className="container">{children}</main>
+      <main className="container max-w-6xl mx-auto px-4 py-12">{children}</main>
       <SiteFooter />
     </>
   );

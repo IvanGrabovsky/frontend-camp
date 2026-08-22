@@ -23,6 +23,7 @@ export interface RoadmapBlock {
   courseSlug?: string;
   startHref?: string;
   topics?: string[];
+  children?: RoadmapBlock[];
 }
 
 export const ARRAYS_LESSONS: LessonMeta[] = [
@@ -169,19 +170,21 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     lessons: JS_BASICS_LESSONS,
     startHref: '/courses/js-basics/01-variables/',
     topics: ['Змінні та типи даних (let, const, typeof)', 'Оператори: ===, ??, ?., &&, ||', 'Умовні оператори та switch', 'Цикли: for, while, for...of', 'Функції, arrow functions та замикання', "Об'єкти, деструктуризація та spread", 'DOM: querySelector, classList, addEventListener', 'Async/Await, Fetch API та Promise'],
-  },
-  {
-    slug: 'js-arrays',
-    order: 4,
-    title: 'JavaScript — Масиви',
-    subtitle: 'Всі 21 метод масивів з інтерактивними пісочницями',
-    status: 'active',
-    level: 'Початківець → середній',
-    readmePath: 'blocks/03-js-arrays/README.md',
-    courseSlug: 'js-arrays',
-    lessons: ARRAYS_LESSONS,
-    startHref: '/courses/js-arrays/01-intro/',
-    topics: ['push · pop · shift · unshift', 'map · filter · reduce · forEach', 'find · findIndex · includes', 'sort · reverse · flat · flatMap', 'spread · деструктуризація · every · some'],
+    children: [
+      {
+        slug: 'js-arrays',
+        order: 4,
+        title: 'JavaScript — Масиви',
+        subtitle: 'Всі 21 метод масивів з інтерактивними пісочницями',
+        status: 'active',
+        level: 'Початківець → середній',
+        readmePath: 'blocks/03-js-arrays/README.md',
+        courseSlug: 'js-arrays',
+        lessons: ARRAYS_LESSONS,
+        startHref: '/courses/js-arrays/01-intro/',
+        topics: ['push · pop · shift · unshift', 'map · filter · reduce · forEach', 'find · findIndex · includes', 'sort · reverse · flat · flatMap', 'spread · деструктуризація · every · some'],
+      }
+    ]
   },
   {
     slug: 'nextjs',
@@ -233,7 +236,14 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
 ];
 
 export function getBlock(slug: string): RoadmapBlock | undefined {
-  return ROADMAP_BLOCKS.find((b) => b.slug === slug);
+  for (const block of ROADMAP_BLOCKS) {
+    if (block.slug === slug) return block;
+    if (block.children) {
+      const found = block.children.find((b) => b.slug === slug);
+      if (found) return found;
+    }
+  }
+  return undefined;
 }
 
 export function lessonPath(slug: string, basePath = ''): string {
