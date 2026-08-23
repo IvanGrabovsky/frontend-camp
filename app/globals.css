@@ -7,98 +7,257 @@
     --font-heading: var(--font-sans);
   }
   :root {
-    --background: 0 0% 100%;       /* #FFFFFF */
-    --foreground: 224 71% 4%;      /* #020817 - Rich dark text */
+    --background: 0 0% 100%;          /* #FFFFFF */
+    --foreground: 224 71% 4%;         /* #020817 - Rich crisp text */
     --card: 0 0% 100%;
     --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71% 4%;
-    --primary: 262 83% 58%;        /* #7C3AED */
+    --primary: 262 83% 58%;           /* #7C3AED */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;      /* #F1F5F9 */
+    --secondary: 220 14% 96%;         /* #F1F5F9 */
     --secondary-foreground: 224 71% 4%;
-    --muted: 220 14% 96%;          /* #F1F5F9 */
-    --muted-foreground: 220 9% 40%;/* #55657E - High contrast text */
-    --accent: 199 89% 42%;         /* #067DBB */
+    --muted: 220 14% 96%;             /* #F1F5F9 */
+    --muted-foreground: 220 9% 40%;   /* #55657E */
+    --accent: 199 89% 42%;            /* #067DBB */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 90%;         /* #E2E8F0 */
+    --border: 220 13% 90%;            /* #E2E8F0 */
     --input: 220 13% 90%;
     --ring: 262 83% 58%;
     --radius: 0.75rem;
   }
   .dark,
   [data-theme='dark'] {
-    --background: 224 71% 4%;      /* #020817 */
-    --foreground: 210 20% 98%;     /* #F8FAFC */
-    --card: 222 47% 8%;            /* #0B1120 */
-    --card-foreground: 210 20% 98%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263 70% 58%;        /* #8B5CF6 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 14%;      /* #161F33 */
-    --secondary-foreground: 210 20% 98%;
-    --muted: 217 33% 14%;
-    --muted-foreground: 215 20% 70%;
-    --accent: 199 89% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 217 33% 18%;         /* #1E293B */
-    --input: 217 33% 18%;
-    --ring: 263 70% 58%;
+    /* Soft slate palette tuned for reading comfort without glare */
+    --background: 222 18% 11.5%;      /* #151821 - Deep comfortable slate */
+    --foreground: 215 18% 88%;        /* #DCE1EB - Soft off-white text (prevents eye strain) */
+    --card: 222 16% 15%;              /* #1E222D - Elevated surface */
+    --card-foreground: 215 18% 90%;   /* #E2E7F0 */
+    --popover: 222 16% 15%;           /* #1E222D */
+    --popover-foreground: 215 18% 90%;
+    --primary: 255 75% 72%;           /* #A78BFA - Softened pastel lilac */
+    --primary-foreground: 224 71% 8%; /* #0C101A */
+    --secondary: 222 14% 19%;         /* #252B38 - Calm secondary surface */
+    --secondary-foreground: 215 18% 88%;
+    --muted: 222 14% 18%;             /* #232836 */
+    --muted-foreground: 215 14% 63%;  /* #929EAF - Calm readable secondary */
+    --accent: 187 70% 50%;            /* #26C6DA - Gentle cyan */
+    --accent-foreground: 224 71% 8%;
+    --destructive: 0 65% 58%;         /* #F87171 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 22%;            /* #2F3646 - Subtle refined dividers */
+    --input: 220 13% 22%;
+    --ring: 255 75% 72%;
   }
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/25 selection:text-foreground;
   }
 }
 
-/* Lesson content custom element styling */
+/* ─── Lesson Content Typography & Blocks ─────────────────────────────────────── */
+
 .lesson-card {
-  @apply rounded-xl border border-border bg-card p-6 shadow-sm mb-6;
+  @apply rounded-xl border border-border bg-card p-6 shadow-sm mb-6 border-l-4 border-l-primary transition-colors;
 }
 
 .analogy-block {
-  @apply rounded-xl border border-primary/20 bg-primary/5 p-6 mb-6;
+  @apply rounded-xl border border-violet-500/20 bg-violet-500/5 dark:border-violet-400/25 dark:bg-violet-500/10 p-6 mb-6 transition-colors;
 }
 
 .analogy-block__title {
-  @apply font-bold text-base text-primary flex items-center gap-2 mb-2;
+  @apply font-bold text-base text-violet-700 dark:text-violet-300 flex items-center gap-2 mb-2;
 }
 
-.code-block {
-  @apply rounded-xl border border-border bg-muted/40 overflow-hidden my-6 shadow-sm;
+.analogy-block__icon {
+  @apply text-xl leading-none;
 }
 
-.code-block__head {
-  @apply flex items-center justify-between px-4 py-2 bg-muted/70 border-b border-border text-xs text-muted-foreground;
+.tip-block {
+  @apply rounded-xl border border-primary/20 bg-primary/5 dark:border-primary/25 dark:bg-primary/10 p-6 my-6 transition-colors border-l-4 border-l-primary;
 }
 
-.code-block pre {
-  @apply p-4 overflow-x-auto text-sm font-mono leading-relaxed bg-transparent text-foreground;
+.tip-block--warn {
+  @apply border-amber-500/30 bg-amber-500/5 dark:border-amber-400/25 dark:bg-amber-500/10 border-l-amber-500 dark:border-l-amber-400;
 }
 
-.params-table, .comparison-table {
-  @apply w-full text-left text-sm border-collapse my-6 rounded-xl overflow-hidden border border-border;
+.tip-block__title {
+  @apply font-bold text-base text-amber-700 dark:text-amber-300 flex items-center gap-2 mb-3;
 }
 
-.params-table th, .comparison-table th {
-  @apply bg-muted/80 font-semibold p-3 border-b border-border text-foreground;
+.practice-block {
+  @apply rounded-xl border border-teal-500/30 bg-teal-500/5 dark:border-teal-400/25 dark:bg-teal-500/10 p-6 my-6 transition-colors border-l-4 border-l-teal-600 dark:border-l-teal-400;
 }
 
-.params-table td, .comparison-table td {
-  @apply p-3 border-b border-border/60 text-muted-foreground;
+.practice-block__title {
+  @apply font-bold text-base text-teal-700 dark:text-teal-300 flex items-center gap-2 mb-3;
+}
+
+.homework-block {
+  @apply rounded-xl border border-amber-500/30 bg-amber-500/5 dark:border-amber-400/25 dark:bg-amber-500/10 p-6 my-6 transition-colors border-l-4 border-l-amber-500 dark:border-l-amber-400;
+}
+
+.homework-block__title {
+  @apply font-bold text-base text-amber-700 dark:text-amber-300 flex items-center gap-2 mb-3;
+}
+
+.homework-block ol,
+.practice-block ol {
+  @apply pl-5 space-y-2 text-foreground/90;
+}
+
+.homework-block li,
+.practice-block li,
+.tip-block li {
+  @apply leading-relaxed;
+}
+
+.hw-review-block {
+  @apply rounded-xl border border-indigo-500/20 bg-indigo-500/5 dark:border-indigo-400/25 dark:bg-indigo-500/10 p-6 my-6 transition-colors;
+}
+
+.hw-review-block__title {
+  @apply font-bold text-base text-indigo-700 dark:text-indigo-300 flex items-center gap-2 mb-4;
+}
+
+.hw-review-items {
+  @apply space-y-3;
+}
+
+.hw-review-item {
+  @apply rounded-lg border border-border bg-card p-4 space-y-2 shadow-sm;
+}
+
+.hw-review-item__task {
+  @apply font-semibold text-sm sm:text-base text-foreground mb-1;
+}
+
+.hw-review-item__bad {
+  @apply text-xs sm:text-sm text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-md p-2.5 leading-relaxed;
+}
+
+.hw-review-item__good {
+  @apply text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-md p-2.5 leading-relaxed;
+}
+
+.hw-review-label {
+  @apply font-bold mr-1.5;
 }
 
 .pro-tips-block {
-  @apply rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-6 my-6 text-foreground;
+  @apply rounded-xl border border-emerald-500/25 bg-emerald-500/5 dark:border-emerald-400/25 dark:bg-emerald-500/10 p-6 my-6 text-foreground border-l-4 border-l-emerald-600 dark:border-l-emerald-400 transition-colors;
 }
 
 .pro-tips-block__title {
-  @apply font-bold text-base text-emerald-600 dark:text-emerald-400 flex items-center gap-2 mb-2;
+  @apply font-bold text-base text-emerald-700 dark:text-emerald-300 flex items-center gap-2 mb-3;
+}
+
+.pro-tips-block ul {
+  @apply pl-5 space-y-2 text-foreground/90;
+}
+
+.pro-tips-block li {
+  @apply leading-relaxed;
+}
+
+.doc-links {
+  @apply rounded-xl border border-border bg-muted/40 dark:bg-muted/30 p-5 my-6;
+}
+
+.doc-links h4 {
+  @apply font-bold text-sm text-foreground mb-2 mt-0;
+}
+
+.doc-links ul {
+  @apply m-0 pl-5 space-y-1.5 text-sm;
+}
+
+.doc-links a {
+  @apply text-primary hover:underline underline-offset-4 font-medium;
+}
+
+/* ─── Code Blocks ───────────────────────────────────────────────────────────── */
+
+.code-block {
+  @apply rounded-xl border border-border bg-slate-950 dark:bg-[#11141D] overflow-hidden my-6 shadow-sm transition-colors;
+}
+
+.code-block__head {
+  @apply flex items-center justify-between px-4 py-2 bg-slate-900 dark:bg-[#171B26] border-b border-slate-800 dark:border-border/60 text-xs text-slate-400 dark:text-muted-foreground font-mono select-none;
+}
+
+.code-block__dots {
+  @apply flex items-center gap-1.5;
+}
+
+.code-block__dots span {
+  @apply w-2.5 h-2.5 rounded-full bg-slate-700 dark:bg-slate-700/80 inline-block;
+}
+
+.code-block pre {
+  @apply p-4 overflow-x-auto text-xs sm:text-sm font-mono leading-relaxed bg-transparent text-slate-200 dark:text-[#D3DCE8];
+}
+
+.code-block .cmt {
+  @apply text-slate-400 dark:text-[#7888A2] italic;
+}
+
+.code-block .ln {
+  @apply block;
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────────── */
+
+.syntax-params {
+  @apply overflow-x-auto my-6;
+}
+
+.params-table,
+.comparison-table {
+  @apply w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-border shadow-sm bg-card;
+}
+
+.params-table th,
+.comparison-table th {
+  @apply bg-muted/80 dark:bg-muted/60 font-semibold p-3.5 border-b border-border text-foreground tracking-tight whitespace-nowrap;
+}
+
+.params-table td,
+.comparison-table td {
+  @apply p-3.5 border-b border-border/60 text-foreground/80 align-top leading-relaxed;
+}
+
+.params-table tbody tr:last-child td,
+.comparison-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.params-table tbody tr:hover,
+.comparison-table tbody tr:hover {
+  @apply bg-muted/30 transition-colors;
+}
+
+/* ─── Prose Overrides for Dark Mode Reading Comfort ─────────────────────────── */
+
+.dark .prose {
+  --tw-prose-body: hsl(215 18% 88%);
+  --tw-prose-headings: hsl(215 25% 94%);
+  --tw-prose-lead: hsl(215 16% 75%);
+  --tw-prose-links: hsl(255 75% 76%);
+  --tw-prose-bold: hsl(215 25% 95%);
+  --tw-prose-counters: hsl(215 14% 65%);
+  --tw-prose-bullets: hsl(215 14% 50%);
+  --tw-prose-hr: hsl(220 13% 22%);
+  --tw-prose-quotes: hsl(215 20% 90%);
+  --tw-prose-quote-borders: hsl(255 75% 72%);
+  --tw-prose-captions: hsl(215 14% 65%);
+  --tw-prose-code: hsl(255 75% 78%);
+  --tw-prose-pre-code: hsl(215 20% 90%);
+  --tw-prose-pre-bg: hsl(222 18% 11.5%);
+  --tw-prose-th-borders: hsl(220 13% 22%);
+  --tw-prose-td-borders: hsl(220 13% 20%);
 }
