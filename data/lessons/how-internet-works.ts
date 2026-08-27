@@ -543,5 +543,131 @@ export const LESSONS_HTML: Record<string, string> = {
       </ul>
     </section>
   `,
+
+  '05-tls': `
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>TLS (Transport Layer Security)</strong> — криптографічний протокол, який гарантує конфіденційність (шифрування), цілісність (захист від підміни) та автентифікацію (підтвердження того, з ким ви спілкуєтесь) між браузером і сервером.</p>
+      <p><strong>SSL (Secure Sockets Layer)</strong> — застарілий попередник TLS. Назва «SSL» збереглася у вжитку як синонім (наприклад, «SSL-сертифікат»), але сучасний інтернет працює виключно на <strong>TLS 1.2 та TLS 1.3</strong>.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🔐</span> Аналогія з дипломатичною валізою</div>
+      <p>Уяви, що тобі потрібно передати секретний документ кур'єром. Замість того, щоб шукати спільний ключ по незахищеній пошті (де його можуть перехопити), банк надсилає тобі відкритий навісний замок (Public Key). Ти замикаєш ним валізу зі своїм секретним шифром сесії. Відкрити замок може тільки банк своїм єдиним ключем (Private Key). Після цього ви обидва знаєте спільний швидкий пароль і спілкуєтесь блискавично.</p>
+    </section>
+
+    <section>
+      <h2>Симетричне vs Асиметричне шифрування</h2>
+      <p>TLS поєднує обидва підходи (гібридне шифрування), щоб отримати максимальну безпеку без втрати швидкості:</p>
+
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Критерій</th><th>Асиметричне шифрування</th><th>Симетричне шифрування</th></tr></thead>
+          <tbody>
+            <tr><td>Ключі</td><td>Пара: Публічний (Public) + Приватний (Private)</td><td>Один спільний сесійний ключ (Session Key)</td></tr>
+            <tr><td>Швидкість</td><td>🐢 Повільне (важкі математичні операції)</td><td>⚡ Блискавичне (апаратне прискорення AES-NI)</td></tr>
+            <tr><td>Роль у TLS</td><td>Лише під час Handshake (автентифікація та обмін ключами)</td><td>Шифрування 100% реального трафіку (HTML, JS, фото)</td></tr>
+            <tr><td>Алгоритми</td><td>ECDHE, RSA, Ed25519</td><td>AES-256-GCM, ChaCha20-Poly1305</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Ланцюжок довіри та X.509 Сертифікати</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span></div>
+        <pre><code><span class="ln cmt">// Ланцюжок перевірки сертифіката (Trust Chain)</span>
+<span class="ln">Root CA (Кореневий центр сертифікації — зашитий в macOS/Windows/iOS/Android)</span>
+<span class="ln">  │  підписаний цифровим підписом Root CA</span>
+<span class="ln">  ▼</span>
+<span class="ln">Intermediate CA (Проміжний центр — наприклад, Let's Encrypt R3)</span>
+<span class="ln">  │  підписаний цифровим підписом Intermediate CA</span>
+<span class="ln">  ▼</span>
+<span class="ln">Leaf Certificate (Сертифікат твого сайту — example.com)</span></code></pre>
+      </div>
+
+      <h2>Анатомія TLS Handshake (TLS 1.2 vs TLS 1.3)</h2>
+      <p>У TLS 1.3 рукостискання скоротилося з 2 RTT (Round Trips) до всього <strong>1 RTT</strong> завдяки надсиланню параметрів ключів одразу в першому пакеті:</p>
+
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln cmt">// TLS 1.3 Handshake (1 RTT)</span>
+<span class="ln">Клієнт                                                 Сервер</span>
+<span class="ln">  │                                                      │</span>
+<span class="ln">  │─── ClientHello + Supported Ciphers + KeyShare ──────▶│ (1) Пропонує шифри й одразу шле свій ECDHE ключ</span>
+<span class="ln">  │                                                      │</span>
+<span class="ln">  │◀── ServerHello + KeyShare + Certificate + Finished ──│ (2) Вибирає шифр, шле свій ключ, сертифікат і підпис</span>
+<span class="ln">  │                                                      │</span>
+<span class="ln">  │════════════ Зашифрований HTTP-трафік ═══════════════▶│ Спільний Session Key обчислено обома сторонами!</span></code></pre>
+      </div>
+
+      <h2>Perfect Forward Secrecy (PFS)</h2>
+      <p>Сучасний TLS вимагає <strong>Forward Secrecy</strong>: навіть якщо зловмисник записував ваш трафік роками, а в майбутньому викраде приватний ключ сервера, він <strong>не зможе</strong> розшифрувати старі записи. Щоразу під час Handshake генеруються унікальні одноразові сесійні ключі (Ephemeral Diffie-Hellman — ECDHE).</p>
+
+      <div class="doc-links">
+        <h4>Документація та перевірка</h4>
+        <ul>
+          <li><a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener">Qualys SSL Labs — перевірити якість TLS сайту</a></li>
+          <li><a href="https://letsencrypt.org/howitworks/" target="_blank" rel="noopener">Як працює Let's Encrypt (ACME протокол)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«HTTPS захищає від зламу коду»</strong> — ні! TLS шифрує лише передачу даних «по дротах». Якщо на сервері SQL-ін'єкція або XSS у браузері, HTTPS від цього не захищає.</li>
+        <li><strong>Протермінований сертифікат</strong> — браузер миттєво блокує користувачів червоним екраном «Ваше підключення не приватне». Для автоматизації використовуйте Certbot / Let's Encrypt.</li>
+        <li><strong>Self-signed (самопідписаний) сертифікат на продакшені</strong> — браузери не довіряють сертифікатам, не підписаним валідним Root CA зі сховища системи.</li>
+        <li><strong>Mixed Content</strong> — коли на HTTPS сторінці завантажується незахищений ресурс <code>http://...</code> (скрипт або CSS блокуються браузером автоматично).</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика в терміналі та DevTools</div>
+      <ol>
+        <li>Відкрий у браузері будь-який сайт → клікни на іконку налаштувань біля URL (замок) → «З'єднання захищене» → переглянь видавця сертифіката та термін дії.</li>
+        <li>Виконай у терміналі: <code>openssl s_client -connect google.com:443 -servername google.com</code> — побач повний ланцюжок сертифікатів (Certificate chain) та версію TLS 1.3.</li>
+        <li>Перевір версію TLS через curl: <code>curl -vI --tlsv1.3 https://cloudflare.com 2>&amp;1 | grep "SSL connection"</code>.</li>
+        <li>Знайди у DevTools → Security вкладку Main Origin і подивись cipher suite (наприклад, <code>TLS_AES_128_GCM_SHA256</code>).</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Чому TLS не використовує асиметричне шифрування для всього трафіку, а застосовує гібридну схему?</li>
+        <li>Що таке SNI (Server Name Indication) і навіщо він потрібен при розміщенні сотень HTTPS-сайтів на одній IP-адресі?</li>
+        <li>У чому полягає перевага TLS 1.3 над TLS 1.2 щодо швидкості (RTT) та безпеки?</li>
+        <li>Що таке Forward Secrecy і чому статичний RSA-обмін ключами було заборонено в TLS 1.3?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Як працює TLS Handshake простими словами?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Браузер і сервер обмінюються паролями».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Клієнт і сервер обмінюються випадковими числами та підтримуваними шифрами (ClientHello/ServerHello). Сервер надсилає свій сертифікат, підписаний CA. Клієнт перевіряє ланцюжок довіри до Root CA. За допомогою алгоритму Діффі-Хеллмана (ECDHE) сторони безпечно обчислюють спільний сесійний ключ і переходять на швидке симетричне шифрування AES/ChaCha20.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Що таке Mixed Content і як з ним боротися?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це коли на сторінці є і текст, і картинки».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Mixed Content виникає, коли основний HTML завантажено по безпечному HTTPS, але окремі ресурси (JS, CSS, img) підвантажуються через незахищений HTTP. Браузер повністю блокує Mixed Active Content (скрипти). Рішення: використовувати відносні шляхи або директиву CSP <code>upgrade-insecure-requests</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li><strong>0-RTT Resumption (TLS 1.3)</strong> — при повторному підключенні браузер може надіслати зашифрований HTTP-запит одразу в першому пакеті handshake без жодних затримок.</li>
+        <li><strong>SNI (Server Name Indication)</strong> — передає ім'я потрібного хоста ще на етапі TLS handshake до передачі HTTP-заголовка <code>Host</code>, що дозволяє одному серверу хостити тисячі різних SSL-сайтів.</li>
+        <li><strong>ALPN (Application-Layer Protocol Negotiation)</strong> — дозволяє під час TLS Handshake домовитися про використання протоколу HTTP/2 або HTTP/3 без додаткового RTT.</li>
+        <li><strong>Certificate Transparency (CT)</strong> — публічний відкритий журнал усіх виданих сертифікатів у світі, що унеможливлює непомітний випуск підробленого сертифіката для вашого домену.</li>
+      </ul>
+    </section>
+  `,
 };
+
 

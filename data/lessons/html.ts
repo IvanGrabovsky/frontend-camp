@@ -588,5 +588,167 @@ export const LESSONS_HTML: Record<string, string> = {
       </ul>
     </section>
   `,
+
+  '05-forms': `
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>HTML-форми (<code>&lt;form&gt;</code>)</strong> — це фундамент інтерактивності вебу: авторизація, реєстрація, пошукові рядки, фільтри товарів, оформлення замовлень та зворотний зв'язок. Вони збирають дані користувача і відправляють їх на сервер або передають у JavaScript.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">📋</span> Аналогія з бланком анкети</div>
+      <p><code>&lt;form&gt;</code> — це паперова папка з анкетою. <code>&lt;label&gt;</code> — це надрукований підпис поля («Введіть ваше ім'я:»). <code>&lt;input&gt;</code> — пусте поле для запису. <code>&lt;select&gt;</code> — список варіантів із галочкою. <code>&lt;button type="submit"&gt;</code> — кнопка «Здати анкету адміністратору».</p>
+    </section>
+
+    <section>
+      <h2>Анатомія форми (тег <code>&lt;form&gt;</code>)</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln">&lt;form action="/api/login" method="POST" autocomplete="on"&gt;</span>
+<span class="ln">  &lt;!-- 1. Явний зв'язок label та input через id і for --&gt;</span>
+<span class="ln">  &lt;div class="form-group"&gt;</span>
+<span class="ln">    &lt;label for="user-email"&gt;Електронна пошта:&lt;/label&gt;</span>
+<span class="ln">    &lt;input type="email" id="user-email" name="email" required placeholder="name@example.com" /&gt;</span>
+<span class="ln">  &lt;/div&gt;</span>
+<span class="ln"></span>
+<span class="ln">  &lt;div class="form-group"&gt;</span>
+<span class="ln">    &lt;label for="user-pass"&gt;Пароль:&lt;/label&gt;</span>
+<span class="ln">    &lt;input type="password" id="user-pass" name="password" required minlength="8" /&gt;</span>
+<span class="ln">  &lt;/div&gt;</span>
+<span class="ln"></span>
+<span class="ln">  &lt;button type="submit"&gt;Увійти в кабінет&lt;/button&gt;</span>
+<span class="ln">&lt;/form&gt;</span></code></pre>
+      </div>
+
+      <h2>Головні атрибути форми</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Атрибут</th><th>Значення</th><th>Призначення</th></tr></thead>
+          <tbody>
+            <tr><td><code>action</code></td><td>URL ендпоінту</td><td>Куди надсилати дані форми. У React/Next.js часто опускається або замінюється на Server Actions.</td></tr>
+            <tr><td><code>method</code></td><td><code>GET</code> або <code>POST</code></td><td><code>GET</code> — додає поля у рядок URL (пошук, фільтри). <code>POST</code> — надсилає дані в тілі запиту (паролі, реєстрація).</td></tr>
+            <tr><td><code>enctype</code></td><td><code>multipart/form-data</code></td><td><strong>Обов'язковий</strong> при завантаженні файлів через <code>&lt;input type="file"&gt;</code>. За замовчуванням: <code>application/x-www-form-urlencoded</code>.</td></tr>
+            <tr><td><code>name</code></td><td>Рядок ідентифікатора</td><td>Ключ, під яким значення інпуту надсилається на сервер (<code>email=ivan%40dev.ua</code>).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Типи інпутів (HTML5 Input Types)</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>type</th><th>Вигляд і поведінка</th><th>Мобільна клавіатура / Валідація</th></tr></thead>
+          <tbody>
+            <tr><td><code>text</code></td><td>Звичайний однорядковий текст</td><td>Стандартна буквена клавіатура</td></tr>
+            <tr><td><code>email</code></td><td>Пошта з перевіркою @ і домену</td><td>Клавіатура зі знаками <code>@</code> та <code>.</code></td></tr>
+            <tr><td><code>password</code></td><td>Приховані символи (крапки/зірочки)</td><td>Безпечний режим введення</td></tr>
+            <tr><td><code>number</code></td><td>Числове поле (зі стрілками min/max/step)</td><td>Цифрова клавіатура</td></tr>
+            <tr><td><code>tel</code></td><td>Телефонний номер</td><td>Клавіатура набору номера телефону (NumPad)</td></tr>
+            <tr><td><code>checkbox</code></td><td>Прапорець незалежного вибору [v]</td><td>Кілька одночасно активних опцій</td></tr>
+            <tr><td><code>radio</code></td><td>Перемикач єдиного вибору (•)</td><td>Лише одна опція в групі з однаковим <code>name</code></td></tr>
+            <tr><td><code>file</code></td><td>Діалог завантаження файлу</td><td>Атрибути <code>accept="image/*"</code> та <code>multiple</code></td></tr>
+            <tr><td><code>range</code></td><td>Повзунок вибору значення</td><td>Атрибути <code>min="0" max="100" step="5"</code></td></tr>
+            <tr><td><code>hidden</code></td><td>Приховане поле</td><td>Передача службових токенів (CSRF token, user_id)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Інші ключові елементи форми</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln cmt">&lt;!-- 1. Багаторядкове поле (textarea) --&gt;</span>
+<span class="ln">&lt;label for="bio"&gt;Про себе:&lt;/label&gt;</span>
+<span class="ln">&lt;textarea id="bio" name="bio" rows="4" cols="50" placeholder="Розкажіть про свій досвід..."&gt;&lt;/textarea&gt;</span>
+<span class="ln"></span>
+<span class="ln cmt">&lt;!-- 2. Випадаючий список (select + option + optgroup) --&gt;</span>
+<span class="ln">&lt;label for="country"&gt;Країна:&lt;/label&gt;</span>
+<span class="ln">&lt;select id="country" name="country"&gt;</span>
+<span class="ln">  &lt;optgroup label="Європа"&gt;</span>
+<span class="ln">    &lt;option value="ua" selected&gt;Україна&lt;/option&gt;</span>
+<span class="ln">    &lt;option value="pl"&gt;Польща&lt;/option&gt;</span>
+<span class="ln">  &lt;/optgroup&gt;</span>
+<span class="ln">&lt;/select&gt;</span>
+<span class="ln"></span>
+<span class="ln cmt">&lt;!-- 3. Групування блоків (fieldset + legend) --&gt;</span>
+<span class="ln">&lt;fieldset&gt;</span>
+<span class="ln">  &lt;legend&gt;Спосіб доставки&lt;/legend&gt;</span>
+<span class="ln">  &lt;label&gt;&lt;input type="radio" name="delivery" value="courier" checked /&gt; Кур'єр&lt;/label&gt;</span>
+<span class="ln">  &lt;label&gt;&lt;input type="radio" name="delivery" value="pickup" /&gt; Самовивіз&lt;/label&gt;</span>
+<span class="ln">&lt;/fieldset&gt;</span>
+<span class="ln"></span>
+<span class="ln cmt">&lt;!-- 4. Підказки для введення (datalist) --&gt;</span>
+<span class="ln">&lt;input list="browsers" name="browser" placeholder="Виберіть браузер..." /&gt;</span>
+<span class="ln">&lt;datalist id="browsers"&gt;</span>
+<span class="ln">  &lt;option value="Chrome"&gt;</span>
+<span class="ln">  &lt;option value="Firefox"&gt;</span>
+<span class="ln">  &lt;option value="Safari"&gt;</span>
+<span class="ln">&lt;/datalist&gt;</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/form" target="_blank" rel="noopener">Form element — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/input" target="_blank" rel="noopener">Input types &amp; attributes — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Відсутність <code>&lt;label&gt;</code> або зв'язку через <code>for/id</code></strong> — користувачі зі скрін-рідерами не знатимуть, що вводити в інпут, а користувачі миші не зможуть клікнути по тексту, щоб активувати поле.</li>
+        <li><strong>Заміна <code>&lt;label&gt;</code> на <code>placeholder</code></strong> — плейсхолдер зникає при введенні тексту і не озвучується багатьма асистивними технологіями як заголовок поля!</li>
+        <li><strong>Відсутність атрибута <code>name</code></strong> — значення інпуту без <code>name</code> взагалі <strong>не буде надіслано</strong> у формі на сервер або у <code>FormData</code>.</li>
+        <li><strong><code>&lt;button&gt;</code> всередині форми без <code>type="button"</code></strong> — за замовчуванням кнопка має <code>type="submit"</code> і при кліку несподівано перезавантажить сторінку та відправить форму!</li>
+        <li><strong>Забутий <code>enctype="multipart/form-data"</code></strong> — при надсиланні файлів без цього атрибута сервер отримає лише текстову назву файлу замість бінарних даних.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи форму зворотного зв'язку з полями: ПІБ, Email, Телефон, Вибір теми (select), Повідомлення (textarea) та чекбокс згоди з умовами.</li>
+        <li>Пов'яжи кожен <code>&lt;input&gt;</code> з відповідним <code>&lt;label&gt;</code> через <code>for</code> та <code>id</code>. Перевір: клік по тексту підпису має ставити курсор в інпут.</li>
+        <li>Створи групу radio-кнопок для вибору тарифу (Basic, Pro, Enterprise) з однаковим атрибутом <code>name="plan"</code>.</li>
+        <li>Додай до форми <code>&lt;input type="file" accept="image/png, image/jpeg"&gt;</code> та переконайся, що у форми стоїть <code>enctype="multipart/form-data"</code>.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Яка поведінка кнопки <code>&lt;button&gt;</code> за замовчуванням усередині форми і чому це часто призводить до багів?</li>
+        <li>У чому різниця між методом <code>GET</code> та <code>POST</code> при відправці форми?</li>
+        <li>Чому <code>placeholder</code> ніколи не замінює повноцінний тег <code>&lt;label&gt;</code>?</li>
+        <li>Як зробити так, щоб у групі radio-кнопок можна було вибрати лише один варіант?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Як правильно зв'язати label з input і чому це важливо?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Поставити текст поруч із інпутом у div».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Використати <code>&lt;label for="id_елемента"&gt;</code> разом з <code>&lt;input id="id_елемента"&gt;</code> або вкласти <code>&lt;input&gt;</code> всередину <code>&lt;label&gt;</code>. Це критично для: (1) Accessibility — скрін-рідер озвучує назву при фокусі; (2) UX — збільшує клікабельну зону (клік по тексту ставить курсор або перемикає чекбокс).</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«У чому різниця між значеннями атрибута type у кнопки (button, submit, reset)?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Вони однакові, тип не має значення».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>submit</code> (дефолт) — відправляє форму і викликає подію submit. <code>button</code> — просто звичайна кнопка без вбудованої поведінки для JS обробників (наприклад, відкрити модалку). <code>reset</code> — скидає всі поля форми до початкових значень.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Атрибут <code>inputmode="numeric"</code> на <code>&lt;input type="text"&gt;</code> відкриває зручну цифрову клавіатуру на iOS/Android без зайвих стрілочок зсуву, які з'являються при <code>type="number"</code> (ідеально для банківських карток та SMS-кодів).</li>
+        <li>Атрибут <code>autocomplete="new-password"</code> або <code>current-password</code> допомагає менеджерам паролів автоматично генерувати та зберігати безпечні паролі.</li>
+        <li>Атрибут <code>form="form-id"</code> дозволяє розмістити інпут або кнопку поза межами тегу <code>&lt;form&gt;</code> у DOM-дереві, і вони все одно належатимуть цій формі.</li>
+      </ul>
+    </section>
+  `,
 };
+
 

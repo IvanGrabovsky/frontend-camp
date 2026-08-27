@@ -311,4 +311,117 @@ export const LESSONS_HTML: Record<string, string> = {
       </ul>
     </section>
   `,
+
+  '03-push-pop': `
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Методи <code>push()</code> та <code>pop()</code> — базові інструменти для роботи з <strong>кінцем масиву</strong>. Вони моделюють поведінку структури даних <strong>Стек (Stack / LIFO — Last In, First Out)</strong>: останній доданий елемент дістається першим.</p>
+      <p>Обидва методи <strong>мутують (змінюють)</strong> оригінальний масив на місці (in-place).</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🥞</span> Аналогія зі стосом млинців</div>
+      <p><code>push()</code> — кухар пече новий гарячий млинець і кладе його на саму гору стосу. <code>pop()</code> — ти береш верхній млинець зі стосу, щоб з'їсти його. Ти завжди взаємодієш тільки з вершиною (кінцем) стосу.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис та значення, що повертаються</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span class="code-block__dots"><span></span><span></span><span></span></span>
+          <button class="copy-btn" data-copy aria-label="Копіювати код"></button>
+        </div>
+        <pre><code><span class="ln cmt">// 1. push() — додає елементи в кінець і ПОВЕРТАЄ НОВУ ДОВЖИНУ МАСИВУ (.length)</span>
+<span class="ln">const tasks = ['верстка', 'стилі'];</span>
+<span class="ln">const newLength = tasks.push('скрипти');</span>
+<span class="ln">console.log(newLength); <span class="cmt">// 3 (число, нова довжина!)</span></span>
+<span class="ln">console.log(tasks);     <span class="cmt">// ['верстка', 'стилі', 'скрипти']</span></span>
+<span class="ln"></span>
+<span class="ln cmt">// Можна додавати кілька елементів за один виклик:</span>
+<span class="ln">tasks.push('тести', 'деплой');</span>
+<span class="ln"></span>
+<span class="ln cmt">// 2. pop() — видаляє ОСТАННІЙ елемент і ПОВЕРТАЄ ЙОГО ЗНАЧЕННЯ</span>
+<span class="ln">const done = tasks.pop();</span>
+<span class="ln">console.log(done);      <span class="cmt">// 'деплой' (видалений елемент!)</span></span>
+<span class="ln">console.log(tasks);     <span class="cmt">// ['верстка', 'стилі', 'скрипти', 'тести']</span></span></code></pre>
+      </div>
+
+      <h2>Параметри та повернені значення</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Метод</th><th>Параметри</th><th>Що повертає?</th><th>Чи мутує масив?</th><th>Складність (Big-O)</th></tr></thead>
+          <tbody>
+            <tr><td><code>array.push(...items)</code></td><td>Один або декілька елементів будь-якого типу</td><td>Нову довжину масиву (<code>number</code>)</td><td>✅ Так (змінює <code>.length</code>)</td><td>⚡ <code>O(1)</code> (амортизована)</td></tr>
+            <tr><td><code>array.pop()</code></td><td>Не приймає параметрів</td><td>Видалений елемент (або <code>undefined</code> якщо масив порожній)</td><td>✅ Так (зменшує <code>.length</code>)</td><td>⚡ <code>O(1)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Чому push/pop такі швидкі (O(1))?</h2>
+      <p>При роботі з кінцем масиву JavaScript не потрібно перераховувати індекси інших елементів. Він просто записує значення в наступну комірку пам'яті або видаляє останню. На відміну від <code>shift/unshift</code>, які змушують зміщувати весь масив (O(n)), <code>push/pop</code> є найшвидшими операціями.</p>
+
+      <div class="doc-links">
+        <h4>Документація MDN</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/push" target="_blank" rel="noopener noreferrer">Array.prototype.push() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/pop" target="_blank" rel="noopener noreferrer">Array.prototype.pop() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Очікування, що <code>push()</code> поверне новий масив</strong> — <code>const res = arr.push('x')</code> запише в <code>res</code> число (довжину), а не оновлений масив!</li>
+        <li><strong>Вкладений масив замість елементів</strong> — <code>arr.push([1, 2])</code> додасть один вкладений масив як один елемент (<code>[['1, 2']]</code>). Якщо потрібно додати всі елементи, використовуйте spread: <code>arr.push(...[1, 2])</code>.</li>
+        <li><strong>Мутація стану в React / Redux</strong> — прямий виклик <code>state.push()</code> порушує незмінність (immutability). У React замість push використовуйте spread: <code>setItems([...items, newItem])</code>.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи масив <code>cart = []</code>. Додай туди послідовно три товари за допомогою <code>push()</code>.</li>
+        <li>Видали останній доданий товар за допомогою <code>pop()</code> і збережи його у змінну <code>cancelledItem</code>. Виведи повідомлення: «Товар [назва] видалено».</li>
+        <li>Об'єднай два масиви <code>a = [1, 2]</code> та <code>b = [3, 4]</code> за допомогою <code>push</code> та spread-оператора <code>...</code>.</li>
+        <li>Перевір, що повертає <code>[].pop()</code> на порожньому масиві. Чи виникає помилка?</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що саме повертає виклик <code>arr.push('тест')</code>? Чому початківці часто помиляються тут?</li>
+        <li>Що поверне <code>arr.pop()</code>, якщо викликати його на порожньому масиві <code>[]</code>?</li>
+        <li>Чому операції <code>push/pop</code> мають швидкість O(1), а <code>shift/unshift</code> — O(n)?</li>
+        <li>Як реалізувати історію дій «Undo / Відміна» у додатку за допомогою <code>push()</code> та <code>pop()</code>?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«У чому різниця між arr.push(item) та arr.concat(item)?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це одне й те саме, обидва додають елемент».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>push()</code> мутує вихідний масив на місці і повертає число (нову довжину). <code>concat()</code> є чистим імутабельним методом — він не змінює вихідний масив, а створює та повертає новий копійований масив з доданими елементами.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Як реалізувати структуру даних Стек (Stack) на JavaScript?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> Писати власний складний клас зі зв'язаними списками без пояснення базових масивів.</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Звичайний масив JS вже є повноцінним Стеком (LIFO) завдяки методам <code>push()</code> (додати на вершину стека) та <code>pop()</code> (зняти з вершини стека). Обидва методи працюють за <code>O(1)</code>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li><code>arr.push.apply(arr1, arr2)</code> — класичний спосіб об'єднання великих масивів до появи ES6 spread оператора.</li>
+        <li>Очистити масив від усіх елементів за один крок можна через <code>arr.length = 0</code>, що працює швидше за цикл з <code>pop()</code>.</li>
+        <li>Метод <code>pop()</code> на масивах з числовими індексами є безпечним для об'єктів-масивоподібних структур: <code>Array.prototype.pop.call(arguments)</code>.</li>
+      </ul>
+    </section>
+  `,
 };
+
