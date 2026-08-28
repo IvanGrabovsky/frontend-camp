@@ -668,6 +668,136 @@ export const LESSONS_HTML: Record<string, string> = {
       </ul>
     </section>
   `,
+
+  '06-rendering': `
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Rendering Pipeline браузера (Critical Rendering Path)</strong> — це послідовність кроків, за допомогою яких браузер перетворює отримані байти HTML, CSS та JavaScript на інтерактивні пікселі на екрані користувача.</p>
+      <p>Розуміння цієї моделі дозволяє оптимізувати показники Web Vitals (FCP, LCP, CLS, INP) і створювати інтерфейси з частотою <strong>60/120 кадрів на секунду (FPS)</strong> без лагів.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🎬</span> Аналогія зі зйомками фільму</div>
+      <p><strong>DOM</strong> — сценарій зі списком акторів та реквізиту. <strong>CSSOM</strong> — костюми, грим і декорації. <strong>Render Tree</strong> — лише ті актори, які зараз перебувають у кадрі. <strong>Layout</strong> — розмітка сцени в метрах (хто де стоїть). <strong>Paint</strong> — нанесення кольорів, тіней і текстур. <strong>Composite</strong> — фінальний монтаж і злиття відеошарів на GPU.</p>
+    </section>
+
+    <section>
+      <h2>Повний ланцюжок рендерингу (6 фаз)</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span></div>
+        <pre><code><span class="ln cmt">// Critical Rendering Path (CRP)</span>
+<span class="ln">Bytes → Characters → Tokens → Nodes → DOM Tree</span>
+<span class="ln">Bytes → Characters → Tokens → Nodes → CSSOM Tree</span>
+<span class="ln">               │</span>
+<span class="ln">               ▼</span>
+<span class="ln">DOM + CSSOM ──▶ Render Tree ──▶ Layout (Reflow) ──▶ Paint (Repaint) ──▶ Composite (GPU)</span></code></pre>
+      </div>
+
+      <h2>Фази пайплайну детально</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Етап</th><th>Що робить браузер</th><th>Особливості та оптимізація</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. DOM</strong></td><td>Парсить HTML-теги у дерево об'єктів DOM.</td><td>Потоковий процес (Streaming): парситься по мірі надходження байтів.</td></tr>
+            <tr><td><strong>2. CSSOM</strong></td><td>Парсить CSS-правила і каскад у дерево CSSOM.</td><td><strong>Render-blocking:</strong> поки CSSOM не готовий, браузер не починає рендер!</td></tr>
+            <tr><td><strong>3. Render Tree</strong></td><td>Об'єднує DOM та CSSOM у дерево видимих елементів.</td><td><strong>Ігнорує</strong> <code>&lt;head&gt;</code>, <code>&lt;script&gt;</code> та елементи з <code>display: none</code>. Елементи з <code>visibility: hidden</code> <strong>входять</strong> у Render Tree!</td></tr>
+            <tr><td><strong>4. Layout (Reflow)</strong></td><td>Обчислює точні геометричні координати, ширину й висоту кожного вузла.</td><td>Залежить від viewport. Зміна ширини викликає перерахунок усього дерева.</td></tr>
+            <tr><td><strong>5. Paint</strong></td><td>Заповнює пікселі: кольори, текст, межі, радіуси, тіні.</td><td>Ділить сторінку на окремі шари (Layers).</td></tr>
+            <tr><td><strong>6. Composite</strong></td><td>GPU об'єднує шари у фінальне зображення на екрані.</td><td>Найшвидша фаза: анімації через <code>transform</code> та <code>opacity</code> відбуваються виключно тут!</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Reflow (Layout) vs Repaint: ціна змін у DOM</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Дія / Властивість</th><th>Що викликає</th><th>Вплив на продуктивність</th></tr></thead>
+          <tbody>
+            <tr><td>Зміна <code>width</code>, <code>height</code>, <code>margin</code>, <code>top</code>, <code>font-size</code></td><td><strong>Layout + Paint + Composite</strong></td><td>🐢 Найповільніше (перераховує геометрію сусідів)</td></tr>
+            <tr><td>Зміна <code>color</code>, <code>background-color</code>, <code>box-shadow</code></td><td><strong>Paint + Composite</strong></td><td>⚠️ Середнє (не чіпає геометрію, але перемальовує пікселі)</td></tr>
+            <tr><td>Зміна <code>transform</code>, <code>opacity</code></td><td><strong>Тільки Composite</strong></td><td>⚡ Блискавично (виконується на GPU без навантаження CPU)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Як скрипти блокують парсинг: async vs defer</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln cmt">&lt;!-- 1. Звичайний script: парсинг HTML зупиняється на час завантаження І виконання --&gt;</span>
+<span class="ln">&lt;script src="app.js"&gt;&lt;/script&gt;</span>
+<span class="ln"></span>
+<span class="ln cmt">&lt;!-- 2. async: завантажується паралельно, але виконується МИТТЄВО по готовності (порядок не гарантовано) --&gt;</span>
+<span class="ln">&lt;script async src="analytics.js"&gt;&lt;/script&gt;</span>
+<span class="ln"></span>
+<span class="ln cmt">&lt;!-- 3. defer: завантажується паралельно, виконується ПІСЛЯ парсингу HTML у строгому порядку (РЕКОМЕНДОВАНО) --&gt;</span>
+<span class="ln">&lt;script defer src="main.js"&gt;&lt;/script&gt;</span></code></pre>
+      </div>
+
+      <div class="doc-links">
+        <h4>Документація та інструменти</h4>
+        <ul>
+          <li><a href="https://web.dev/articles/critical-rendering-path" target="_blank" rel="noopener">Critical Rendering Path — web.dev</a></li>
+          <li><a href="https://csstriggers.com/" target="_blank" rel="noopener">CSS Triggers — які CSS-властивості викликають Layout/Paint</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Layout Thrashing (Forced Synchronous Layout)</strong> — читання розмірів у циклі (<code>element.offsetHeight</code>) одразу після запису стилів змушує браузер миттєво перераховувати Layout на кожній ітерації.</li>
+        <li><strong>Анімація координат <code>top / left</code> замість <code>transform: translate()</code></strong> — призводить до постійних reflow і смикання анімації (drop frames).</li>
+        <li><strong>Зловживання <code>will-change: transform</code></strong> — створення сотень окремих GPU-шарів з'їдає всю оперативну пам'ять мобільних пристроїв.</li>
+        <li><strong>Плутанина <code>display: none</code> та <code>visibility: hidden</code></strong> — перший повністю викидається з Render Tree, другий залишає порожнє місце в Layout.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика в DevTools Performance</div>
+      <ol>
+        <li>Відкрий DevTools → Performance → натисни кнопку запису (Record) → перезавантаж сторінку.</li>
+        <li>Знайди на таймлайні кольорові блоки: синій (Parse HTML), фіолетовий (Layout / Recalculate Style), зелений (Paint / Composite Layers).</li>
+        <li>Відкрий панель «Rendering» (DevTools → More tools → Rendering) та увімкни «Paint Flashing» — браузер підсвічуватиме зеленим зони екрана при кожному перемальовуванні.</li>
+        <li>Увімкни «Layer Borders», щоб візуально побачити окремі композитні GPU-шари.</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Чому CSS є ресурсом, що блокує рендеринг (render-blocking), а тег <code>&lt;img&gt;</code> — ні?</li>
+        <li>У чому різниця між деревом DOM та Render Tree? Наведи приклад елементів, які є в DOM, але відсутні в Render Tree.</li>
+        <li>Чому анімація через <code>transform</code> працює плавніше (60/120 FPS), ніж анімація <code>margin-left</code>?</li>
+        <li>Що таке Layout Thrashing і як його уникнути в JavaScript?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Опиши Critical Rendering Path від HTML до пікселів»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Браузер читає HTML, підключає CSS і показує сторінку».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> (1) Парсинг HTML у DOM; (2) Парсинг CSS у CSSOM; (3) Об'єднання у Render Tree (без display:none); (4) Layout — розрахунок геометрії та позицій у пікселях; (5) Paint — растеризація шарів; (6) Composite — злиття шарів за допомогою GPU.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«У чому різниця між reflow (layout) та repaint?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це просто різні назви оновлення сторінки».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> Reflow (Layout) — це дорогий розрахунок геометрії та розташування елементів. Repaint — це перемальовування пікселів без зміни розмірів (наприклад, колір тексту). Будь-який Reflow завжди тягне за собою Repaint, але Repaint може відбуватися самостійно.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>CSS-властивість <code>content-visibility: auto</code> дозволяє браузеру повністю пропускати Layout та Paint для блоків, які зараз знаходяться за межами екрана (off-screen), значно прискорюючи завантаження довгих сторінок.</li>
+        <li>Використовуйте <code>requestAnimationFrame(() =&gt; {...})</code> для будь-яких прямих змін DOM з JavaScript, щоб синхронізувати їх з частотою оновлення монітора.</li>
+        <li>Директива <code>contain: layout paint</code> ізолює піддерево DOM — будь-які зміни всередині нього не викличуть перерахунок Layout для всієї решти сторінки.</li>
+      </ul>
+    </section>
+  `,
 };
+
 
 

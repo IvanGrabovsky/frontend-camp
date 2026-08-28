@@ -749,6 +749,145 @@ export const LESSONS_HTML: Record<string, string> = {
       </ul>
     </section>
   `,
+
+  '06-validation': `
+    <article class="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Валідація форм (Constraint Validation API)</strong> — це вбудований у браузер механізм перевірки правильності введених користувачем даних перед їхньою відправкою на сервер без написання десятків рядків коду на JavaScript.</p>
+      <p>Браузер автоматично перевіряє обов'язковість полів, формати електронних адрес, довжину рядків, числовий діапазон та регулярні вирази.</p>
+    </article>
+
+    <section class="analogy-block">
+      <div class="analogy-block__title"><span class="analogy-block__icon">🛂</span> Аналогія з паспортним контролем</div>
+      <p>Клієнтська HTML5-валідація — це автоматичний турнікет зі сканером на вході до аеропорту (він швидко підкаже: «Ви забули дату» або «У квитку пропущена літера»). Серверна валідація — це офіцер прикордонної служби, який обов'язково перевіряє дані повторно у закритій базі. Турнікет покращує комфорт (UX), а офіцер гарантує безпеку (Security).</p>
+    </section>
+
+    <section>
+      <h2>Вбудовані атрибути валідації</h2>
+      <div class="syntax-params">
+        <table class="params-table">
+          <thead><tr><th>Атрибут</th><th>Для яких тегів</th><th>Що перевіряє</th><th>Приклад</th></tr></thead>
+          <tbody>
+            <tr><td><code>required</code></td><td>input, select, textarea</td><td>Поле не може бути порожнім</td><td><code>&lt;input required /&gt;</code></td></tr>
+            <tr><td><code>minlength</code> / <code>maxlength</code></td><td>text, password, textarea</td><td>Мінімальна та максимальна кількість символів</td><td><code>&lt;input minlength="8" maxlength="32" /&gt;</code></td></tr>
+            <tr><td><code>min</code> / <code>max</code> / <code>step</code></td><td>number, range, date</td><td>Нижня/верхня межа та крок зміни значення</td><td><code>&lt;input type="number" min="1" max="100" step="5" /&gt;</code></td></tr>
+            <tr><td><code>pattern</code></td><td>text, tel, search, url</td><td>Відповідність регулярному виразу (Regex)</td><td><code>&lt;input pattern="[0-9]{10}" title="10 цифр номера" /&gt;</code></td></tr>
+            <tr><td><code>type="email|url"</code></td><td>input</td><td>Синтаксична валідність URL-адреси або Email</td><td><code>&lt;input type="email" /&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Стилізація стану полів через CSS псевдокласи</h2>
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln cmt">/* 1. Поле обов'язкове до заповнення */</span>
+<span class="ln">input:required {</span>
+<span class="ln">  border-left: 3px solid #6366f1;</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 2. Сучасний псевдоклас :user-invalid (підсвічує помилку ТІЛЬКИ після спроби взаємодії!) */</span>
+<span class="ln">input:user-invalid {</span>
+<span class="ln">  border-color: #ef4444;</span>
+<span class="ln">  background-color: #fef2f2;</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">/* 3. Успішно заповнене валідне поле після вводу */</span>
+<span class="ln">input:user-valid {</span>
+<span class="ln">  border-color: #10b981;</span>
+<span class="ln">}</span></code></pre>
+      </div>
+
+      <h2>JavaScript Constraint Validation API</h2>
+      <p>Браузер надає властивості та методи об'єкта <code>HTMLInputElement</code> для програмного контролю валідації:</p>
+
+      <div class="code-block">
+        <div class="code-block__head"><span class="code-block__dots"><span></span><span></span><span></span></span><button class="copy-btn" data-copy aria-label="Копіювати"></button></div>
+        <pre><code><span class="ln">const input = document.querySelector('#username');</span>
+<span class="ln"></span>
+<span class="ln cmt">// 1. Перевірка валідності (повертає true / false)</span>
+<span class="ln">if (!input.checkValidity()) {</span>
+<span class="ln">  console.log('Поле не пройшло перевірку!');</span>
+<span class="ln">}</span>
+<span class="ln"></span>
+<span class="ln cmt">// 2. Об'єкт validity — деталі причини помилки</span>
+<span class="ln">console.log(input.validity.valueMissing);   <span class="cmt">// true якщо пусте required поле</span></span>
+<span class="ln">console.log(input.validity.typeMismatch);   <span class="cmt">// true якщо не email/url</span></span>
+<span class="ln">console.log(input.validity.patternMismatch);<span class="cmt">// true якщо не збігається з pattern</span></span>
+<span class="ln">console.log(input.validity.tooShort);       <span class="cmt">// true якщо менше minlength</span></span>
+<span class="ln"></span>
+<span class="ln cmt">// 3. Встановлення кастомного повідомлення рідною мовою</span>
+<span class="ln">input.setCustomValidity('Будь ласка, введіть коректне імʼя українською мовою');</span>
+<span class="ln">input.reportValidity(); <span class="cmt">// показує спливаючу підказку браузера</span></span></code></pre>
+      </div>
+
+      <h2>Вимкнення валідації (атрибут novalidate)</h2>
+      <p>Якщо ви створюєте власну систему валідації на React (наприклад, React Hook Form + Zod) і бажаєте вимкнути стандартні спливаючі бульбашки браузера, додайте атрибут <code>novalidate</code> на тег <code>&lt;form novalidate&gt;</code> або <code>formnovalidate</code> на кнопку «Зберегти чернетку».</p>
+
+      <div class="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Learn/Forms/Form_validation" target="_blank" rel="noopener">Form data validation — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Constraint_validation" target="_blank" rel="noopener">Constraint Validation API — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tip-block tip-block--warn">
+      <div class="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Довіра клієнтській валідації</strong> — будь-яку HTML-валідацію можна обійти за 1 секунду в DevTools або через cURL! Клієнтська валідація потрібна для UX, а серверна валідація — єдиний захист безпеки.</li>
+        <li><strong>Використання <code>:invalid</code> замість <code>:user-invalid</code></strong> — псевдоклас <code>:invalid</code> спрацьовує одразу при завантаженні сторінки, через що порожні поля світяться червоним ще до того, як користувач встиг доторкнутися до клавіатури.</li>
+        <li><strong>Забуте скидання <code>setCustomValidity('')</code></strong> — якщо встановити кастомну помилку, поле буде вважатися невалідним <strong>назавжди</strong>, поки ви явно не викличете <code>input.setCustomValidity('')</code> з порожнім рядком.</li>
+        <li><strong>Складний <code>pattern</code> без атрибута <code>title</code></strong> — якщо користувач введе невірний формат за регулярним виразом, браузер покаже підказку саме з тексту атрибута <code>title</code>. Без нього користувач не зрозуміє, що саме пішло не так.</li>
+      </ul>
+    </section>
+
+    <section class="practice-block">
+      <div class="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи поле введення українського номера телефону: <code>&lt;input type="tel" pattern="\+380\d{9}" placeholder="+380XXXXXXXXX" title="Формат: +380 і 9 цифр" required /&gt;</code>.</li>
+        <li>Додай CSS стилі для підсвічування рамок полів за допомогою <code>:user-invalid</code> (червона рамка) та <code>:user-valid</code> (зелена рамка).</li>
+        <li>Створи поле пароля з обмеженням <code>minlength="8"</code> та перевір роботу властивості <code>input.validity.tooShort</code> у консолі.</li>
+        <li>Додай до форми дві кнопки: «Опублікувати» (перевіряє валідацію) та «Зберегти чернетку» з атрибутом <code>formnovalidate</code> (відправляє навіть не заповнену форму).</li>
+      </ol>
+    </section>
+
+    <section class="homework-block">
+      <div class="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Чому селектор <code>:user-invalid</code> значно кращий для UX, ніж класичний <code>:invalid</code>?</li>
+        <li>Які перевірки автоматично виконує об'єкт <code>validity</code> у браузері? Назви 3 прапорці.</li>
+        <li>Як за допомогою атрибута <code>novalidate</code> вимкнути стандартні спливаючі підказки браузера?</li>
+        <li>Чому ніколи не можна покладатися лише на HTML5-валідацію для безпеки бази даних?</li>
+      </ol>
+    </section>
+
+    <section class="hw-review-block">
+      <div class="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div class="hw-review-items">
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«Як влаштована клієнтська валідація в HTML5 і чи достатньо її для проекту?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Достатньо поставити required і pattern на інпути, і форма повністю захищена».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> HTML5 надає потужні вбудовані атрибути (required, pattern, minlength, type) та Constraint Validation API (validity, checkValidity). Проте клієнтська валідація слугує виключно для миттєвого зворотного зв'язку з користувачем (UX). Будь-який зловмисник може легко підробити HTTP-запит в обхід браузера, тому <strong>дублювання валідації на бекенді є абсолютно обов'язковим</strong>.</p>
+        </article>
+        <article class="hw-review-item">
+          <h4 class="hw-review-item__task">«У чому різниця між :valid / :invalid та :user-valid / :user-invalid?»</h4>
+          <p class="hw-review-item__bad"><span class="hw-review-label">❌</span> «Це просто синоніми з різною підтримкою браузерів».</p>
+          <p class="hw-review-item__good"><span class="hw-review-label">✅</span> <code>:invalid</code> активний негайно при завантаженні сторінки, що лякає користувача червоними рамками на ще не заповнених полях. <code>:user-invalid</code> спрацьовує тільки після того, як користувач почав взаємодіяти з полем (ввів текст і перейшов до іншого інпуту або спробував відправити форму), забезпечуючи набагато кращий UX.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pro-tips-block">
+      <div class="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Подія <code>invalid</code> на інпуті спрацьовує, коли форма не проходить валідацію. Можна викликати <code>e.preventDefault()</code>, щоб замінити стандартну бульбашку браузера на гарний кастомний тост чи повідомлення.</li>
+        <li>Атрибут <code>pattern=".*\S.*"</code> гарантує, що користувач не зможе відправити форму, ввівши лише пробіли в текстове поле.</li>
+        <li>Для інпутів типу <code>type="file"</code> атрибут <code>accept=".pdf,image/*"</code> обмежує вибір розширень файлів у системному діалозі ОС.</li>
+      </ul>
+    </section>
+  `,
 };
+
 
 
