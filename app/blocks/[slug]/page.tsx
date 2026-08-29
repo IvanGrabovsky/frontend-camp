@@ -85,7 +85,7 @@ export default async function BlockPage({ params }: BlockPageProps) {
 
           <section aria-labelledby="topics-title" className="mb-24">
             <h2 id="topics-title" className="text-3xl font-bold mb-8">Теми блоку</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
               {block.lessons.map((lesson) => (
                 <LessonCard key={lesson.slug} courseSlug={block.courseSlug || block.slug} {...lesson} />
               ))}

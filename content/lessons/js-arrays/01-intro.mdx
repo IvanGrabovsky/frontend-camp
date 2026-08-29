@@ -1,0 +1,163 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Масив</strong> — це впорядкований список значень, які зберігаються під однією назвою. Замість того щоб створювати десять окремих змінних для десяти товарів, ми складаємо їх в один масив.</p>
+      <p>Кожен елемент масиву має свій <strong>індекс</strong> — порядковий номер, за яким до нього можна звернутися. Масив може містити будь-який тип даних: рядки, числа, булеві значення, обʼєкти й навіть інші масиви.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🛒</span> Аналогія з життя</div>
+      <p>Масив — це як <strong>список покупок</strong> у супермаркеті. Ти пишеш на аркуші: молоко, хліб, яйця. Список має порядок, і кожен товар займає свою позицію: молоко — перше, хліб — друге, яйця — третє. Саме так працює масив, тільки рахунок позицій починається з нуля.</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис</h2>
+      <p>Найчастіше масив створюють через квадратні дужки (літеральний синтаксис):</p>
+
+      
+
+```javascript
+// Літеральний масив — найпоширеніший спосіб
+const fruits = ['яблуко', 'банан', 'апельсин'];
+
+// Порожній масив, який заповнимо пізніше
+const empty = [];
+
+// Через конструктор (використовується рідше)
+const nums = new Array(1, 2, 3);
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Параметри та властивості</h4>
+        <table className="params-table">
+          <thead><tr><th>Елемент</th><th>Тип</th><th>Опис</th></tr></thead>
+          <tbody>
+            <tr><td>`[]`</td><td>літерал</td><td>Основний спосіб створення масиву (порожнього або з елементами)</td></tr>
+            <tr><td>`new Array(...)`</td><td>конструктор</td><td>Альтернатива; аргументи необовʼязкові, але без них рідко використовують</td></tr>
+            <tr><td>`.length`</td><td>властивість</td><td>Кількість елементів — не параметр методу</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Офіційна документація (MDN)</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank" rel="noopener noreferrer">Array — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/length" target="_blank" rel="noopener noreferrer">Array.length — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Як це працює</h2>
+      <ol className="steps">
+        <li>Ти оголошуєш масив і кладеш у нього значення через кому.</li>
+        <li>JavaScript автоматично присвоює кожному елементу індекс: першому — `0`, другому — `1` і так далі.</li>
+        <li>Щоб дізнатися, скільки елементів у масиві, використовуй властивість `.length`.</li>
+        <li>Останній елемент завжди має індекс `length - 1`.</li>
+      </ol>
+
+      <h3>Чому індексація з 0?</h3>
+      <p>Індекс — це насправді «відступ від початку». Перший елемент стоїть на самому початку, тому його відступ дорівнює `0`. Спочатку це незвично, але швидко стає природним.</p>
+    </section>
+
+    <section>
+      <h2>Приклади</h2>
+
+      
+
+```javascript
+// Масиви різних типів
+const fruits = ['яблуко', 'банан', 'апельсин'];
+const numbers = [1, 2, 3, 4, 5];
+const mixed = ['текст', 42, true, null];
+console.log(fruits, numbers, mixed);
+```
+
+
+
+      
+
+```javascript
+// Доступ за індексом та довжина
+const fruits = ['яблуко', 'банан', 'апельсин'];
+console.log(fruits[0]);              // 'яблуко' — перший
+console.log(fruits[2]);              // 'апельсин' — третій
+console.log(fruits.length);          // 3 — кількість елементів
+console.log(fruits[fruits.length - 1]); // 'апельсин' — останній
+```
+
+
+
+      
+
+```javascript
+// Масив може містити інші масиви
+const board = [['X', 'O'], ['O', 'X']];
+console.log(board[0]);     // ['X', 'O']
+console.log(board.length); // 2 (два рядки)
+```
+
+
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li>Звернення до неіснуючого індексу повертає `undefined`, а не помилку: `fruits[99]` → `undefined`.</li>
+        <li>Плутанина «довжина vs останній індекс»: якщо `length` дорівнює 3, то останній індекс — `2`, а не 3.</li>
+        <li>Індексація <em>завжди</em> з нуля. `fruits[1]` — це <strong>другий</strong> елемент, а не перший.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Виконай у консолі DevTools або будь-якому JS-середовищі:</p>
+      <ol>
+        <li>Створи масив `fruits = ['яблуко', 'банан', 'апельсин', 'груша']` і виведи його в консоль. <span className="crystal-reward">💎 10</span></li>
+        <li>Для `fruits` виведи перший елемент і значення `fruits.length`. <span className="crystal-reward">💎 10</span></li>
+        <li>Створи порожній масив `cart = []` — виведи його і перевір `cart.length`. <span className="crystal-reward">💎 10</span></li>
+        <li>Створи `mixed = ['текст', 42, true]` — виведи `typeof` для кожного елемента. <span className="crystal-reward">💎 10</span></li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Домашнє завдання</div>
+      <ol>
+        <li>Створи масив `films` із 5 улюблених фільмів і виведи його в консоль. <span className="crystal-reward">💎 15</span></li>
+        <li>Для цього масиву виведи перший елемент і останній — останній знайди через індекс `length - 1`. <span className="crystal-reward">💎 15</span></li>
+        <li>Виведи, скільки фільмів у списку, використовуючи властивість `length`. <span className="crystal-reward">💎 10</span></li>
+      </ol>
+      <p className="crystal-total">Разом за ДЗ: <strong>💎 40</strong></p>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір ДЗ — типові помилки</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Завдання 1 — масив `films`</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Пишуть `films = [...]` без `const`/`let` або забувають вивести масив у консоль.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `const films = ['Inception', 'Interstellar', ...]; console.log(films);` — перевір, що в масиві рівно 5 рядків.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Завдання 2 — перший і останній елемент</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Останній елемент через `films[5]` (індекс «за межами») або `films[films.length]` (завжди `undefined`).</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Перший: `films[0]`. Останній: `films[films.length - 1]` — індекси від 0 до length−1.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Завдання 3 — `length`</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Рахують елементи циклом або пишуть `length()` як функцію.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `console.log(films.length)` — для масиву з 5 фільмів має бути `5`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Порожній масив `[]` уже має `length === 0` — не потрібно нічого додавати.</li>
+        <li>У DevTools можна розгорнути масив у консолі й побачити індекси поруч із значеннями — зручно для перевірки ДЗ.</li>
+        <li>Рядки в масиві завжди в лапках; числа — без. Змішані типи в одному масиві JS дозволяє, але на старті краще один тип.</li>
+      </ul>
+    </section>

@@ -43,7 +43,7 @@ export default function HomePage() {
             Курс будується блоками. Зараз доступний блок <strong className="text-foreground font-semibold">JavaScript масиви</strong>.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
           {ROADMAP_BLOCKS.map((block) => (
             <RoadmapBlockCard key={block.slug} block={block} />
           ))}

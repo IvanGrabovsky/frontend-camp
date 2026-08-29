@@ -1,0 +1,152 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Семантичні теги</strong> — HTML-елементи, назва яких несе змістове навантаження: `<header>`, `<main>`, `<article>`, `<section>`, `<nav>`, `<aside>`, `<footer>`. На відміну від `<div>`, вони повідомляють браузерам, пошуковикам і скрін-рідерам що саме знаходиться в цій частині сторінки.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🏛️</span> Аналогія з газетою</div>
+      <p>`<header>` — шапка з логотипом і датою. `<nav>` — зміст. `<main>` — головна стаття. `<aside>` — бокова колонка з рекламою. `<footer>` — адреса редакції. Без семантики — суцільне море тексту без орієнтирів.</p>
+    </section>
+
+    <section>
+      <h2>Основні семантичні теги</h2>
+
+      
+
+```html
+<!DOCTYPE html>
+<html lang="uk">
+<body>
+
+
+  <header>                  <!-- шапка сайту -->
+    <nav>                   <!-- навігація -->
+      <a href="/">Головна</a>
+    </nav>
+  </header>
+
+
+  <main>                    <!-- основний унікальний контент -->
+    <article>               <!-- самодостатня одиниця: пост, стаття -->
+      <h1>Заголовок статті</h1>
+      <section>             <!-- тематична секція всередині -->
+        <h2>Підрозділ</h2>
+        <p>Текст</p>
+      </section>
+    </article>
+
+
+    <aside>                 <!-- бічний контент: реклама, посилання -->
+      <p>Схожі статті</p>
+    </aside>
+  </main>
+
+
+  <footer>                  <!-- підвал сайту -->
+    <p>&copy; 2026</p>
+  </footer>
+
+
+</body></html>
+```
+
+
+
+      <h2>Порівняння семантичних тегів</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Тег</th><th>Призначення</th><th>Скільки на сторінці?</th></tr></thead>
+          <tbody>
+            <tr><td>`<header>`</td><td>Шапка сайту або розділу</td><td>1 або більше (в кожному article)</td></tr>
+            <tr><td>`<nav>`</td><td>Навігаційні посилання</td><td>1–2 (основна + хлібні крихти)</td></tr>
+            <tr><td>`<main>`</td><td>Основний контент сторінки</td><td>Рівно 1</td></tr>
+            <tr><td>`<article>`</td><td>Самодостатня публікація (пост, картка)</td><td>Скільки завгодно</td></tr>
+            <tr><td>`<section>`</td><td>Тематична секція з заголовком</td><td>Скільки завгодно</td></tr>
+            <tr><td>`<aside>`</td><td>Другорядний контент (сайдбар, реклама)</td><td>1–2</td></tr>
+            <tr><td>`<footer>`</td><td>Підвал сайту або розділу</td><td>1 або більше</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>article vs section vs div</h2>
+      
+
+```html
+<!-- article — можна вирвати з контексту і зміст збережеться -->
+<article>Рецепт борщу</article>
+
+
+<!-- section — логічна частина з заголовком, але не самостійна -->
+<section><h2>Інгредієнти</h2>...</section>
+
+
+<!-- div — суто стилізація, без семантики. Останній варіант -->
+<div className="wrapper">...</div>
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements#content_sectioning" target="_blank" rel="noopener">Content sectioning — MDN</a></li>
+          <li><a href="https://html5doctor.com/" target="_blank" rel="noopener">HTML5 Doctor — семантика</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«div soup»</strong> — вся розмітка в `<div>`. Пошукові системи і скрін-рідери не розуміють структуру.</li>
+        <li><strong>`<section>` без заголовка</strong> — кожна секція повинна мати `<h2>`–`<h6>`, інакше це `<div>`.</li>
+        <li><strong>Кілька `<main>`</strong> — на сторінці тільки один `<main>`.</li>
+        <li><strong>`<article>` для будь-якого блоку</strong> — тільки для самодостатнього контенту.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Відкрий улюблений сайт → DevTools → Elements. Скільки семантичних тегів? Скільки `<div>`?</li>
+        <li>Перемалюй макет улюбленого сайту, замінивши всі `<div>` семантичними тегами де можливо.</li>
+        <li>Встанови розширення «Accessibility Insights» і запусти «Fast Pass» — скільки проблем пов'язано зі структурою?</li>
+        <li>Напиши HTML-сторінку блогу з одним постом, використовуючи лише семантичні теги.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Яка різниця між `<article>` і `<section>`?</li>
+        <li>Скільки разів можна використати `<main>` на сторінці?</li>
+        <li>Чому семантика важлива для SEO і доступності?</li>
+        <li>Коли використовувати `<div>`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке семантична розмітка і навіщо?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це теги типу header і footer» — без пояснення навіщо.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Семантика передає зміст розмітки — пошукові системи краще індексують, скрін-рідери правильно озвучують, код легше читати. Наприклад, `<nav>` сигналізує: тут навігація — доступна з клавіатури і через accessibility дерево.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Коли використовувати article vs section vs div?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Плутанина між ними або «це одне і те ж».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `<article>` — самодостатній (пост, продукт, коментар). `<section>` — тематична частина з заголовком. `<div>` — лише стилізація без семантики.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>DevTools → Accessibility tree (вкладка у Elements) — побачиш як скрін-рідер «бачить» сторінку.</li>
+        <li>`<header>` і `<footer>` можуть бути всередині `<article>` — це заголовок/підвал статті, а не сайту.</li>
+        <li>Google Search Console використовує семантику для featured snippets. `<article>` + `<h1>` + мета-теги = краще ранжування.</li>
+        <li>`<main>` з `id="main"` — стандарт для «skip to main content» посилання доступності.</li>
+      </ul>
+    </section>

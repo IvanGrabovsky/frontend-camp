@@ -1,0 +1,164 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>У <strong>Next.js App Router</strong> отримання даних (Data Fetching) здійснюється безпосередньо всередині асинхронних <strong>Server Components</strong> за допомогою нативного `fetch()` або прямих запитів до бази даних (ORM/SQL) без використання `useEffect`, `useState` чи сторонніх бібліотек.</p>
+      <p>Next.js розширює стандартний Web `fetch()` власними механізмами <strong>кешування</strong>, <strong>ревалідації (ISR)</strong> та <strong>мемоізації запитів (Request Deduplication)</strong>.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🚚</span> Аналогія з доставкою товарів</div>
+      <p><strong>Static Fetch (SSG)</strong> — надруковані рекламні буклети, заготовлені на складі під час збірки (0 мс затримки, віддаються з CDN). <strong>ISR (Revalidate)</strong> — свіжі свіжоспечені круасани з таймером (склад оновлює партію кожні 60 секунд). <strong>Dynamic Fetch (SSR)</strong> — персоналізована страва на замовлення гостя в реальному часі (готується на кожен клік).</p>
+    </section>
+
+    <section>
+      <h2>Стратегії отримання даних у fetch()</h2>
+      
+
+```text
+// 1. Статичне кешування (за замовчуванням у Next.js / SSG)
+const res1 = await fetch('https://api.example.com/posts');
+
+// 2. Часова ревалідація (ISR) — оновлювати кеш не частіше ніж раз на 1 годину (3600с)
+const res2 = await fetch('https://api.example.com/products', {
+  next: { revalidate: 3600 }
+});
+
+// 3. Динамічний запит без кешу (SSR) — завжди свіжі дані на кожен запит користувача
+const res3 = await fetch('https://api.example.com/live-stock', {
+  cache: 'no-store'
+});
+
+// 4. Тегована ревалідація на вимогу (On-demand Revalidation)
+const res4 = await fetch('https://api.example.com/articles', {
+  next: { tags: ['articles-list'] }
+});
+```
+
+
+
+      <h2>Паралельний Data Fetching vs Waterfall</h2>
+      <p>Коли ви викликаєте кілька `await` послідовно, другий запит чекає завершення першого (Waterfall). Завжди використовуйте `Promise.all()` для паралельних незалежних запитів:</p>
+
+      
+
+```javascript
+// ❌ Погано: Waterfall (час = 500ms + 500ms = 1000ms)
+const user = await getUser(userId);
+const posts = await getPosts(userId);
+
+// ✅ Добре: Паралельно (час = max(500ms, 500ms) = 500ms)
+const [user, posts] = await Promise.all([
+  getUser(userId),
+  getPosts(userId)
+]);
+```
+
+
+
+      <h2>Потоковий рендеринг (Streaming) зі Suspense</h2>
+      <p>Замість того, щоб змушувати користувача чекати повільного бекенду перед показом сторінки, обгорніть повільний компонент у `<Suspense>`:</p>
+
+      
+
+```javascript
+import { Suspense } from 'react';
+import { FastHeader } from './FastHeader';
+import { SlowComments } from './SlowComments'; // запит триває 2 секунди
+
+export default function PostPage() {
+  return (
+    <main>
+      <FastHeader /> <!-- Рендериться миттєво -->
+      <Suspense fallback={<p>Завантаження коментарів...</p>}>
+        <SlowComments /> <!-- Підвантажується потоково без блокування шапки -->
+      </Suspense>
+    </main>
+  );
+}
+```
+
+
+
+      <h2>Оновлення даних через Server Actions</h2>
+      
+
+```javascript
+// app/actions.ts — Server Action для мутацій
+'use server';
+
+import { revalidateTag, revalidatePath } from 'next/cache';
+
+export async function createPost(formData: FormData) {
+  const title = formData.get('title');
+  await db.post.create({ data: { title } });
+
+  // Миттєво інвалідує кеш сторінки блогу
+  revalidateTag('articles-list');
+  revalidatePath('/blog');
+}
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating" target="_blank" rel="noopener">Fetching &amp; Caching — Next.js Docs</a></li>
+          <li><a href="https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations" target="_blank" rel="noopener">Server Actions &amp; Mutations — Next.js</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використання `useEffect` + `fetch()` для первинного завантаження</strong> — призводить до "порожнього білого екрана", погіршує SEO та збільшує розмір клієнтського JS. У Next.js App Router завантажуйте дані на сервері в async Server Components.</li>
+        <li><strong>Створення штучного Waterfall</strong> — послідовні виклики `await getA(); await getB();`, які не залежать один від одного. Завжди об'єднуйте їх у `Promise.all()`.</li>
+        <li><strong>Забута ревалідація після мутації</strong> — якщо після додавання товару не викликати `revalidatePath()` чи `revalidateTag()`, користувач продовжить бачити закешований старий список.</li>
+        <li><strong>Дублювання однакових fetch-запитів</strong> — у Next.js запити з однаковим URL автоматично мемоізуються (Request Deduplication), тому не бійтеся викликати `fetchUser()` у Layout і в Page одночасно.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи сторінку зі списком публікацій, що отримує дані через `await fetch('https://jsonplaceholder.typicode.com/posts', { next: { revalidate: 60 } })`.</li>
+        <li>Об'єднай два незалежні запити (пости та користувачі) за допомогою `Promise.all()`.</li>
+        <li>Створи окремий компонент відгуків з штучною затримкою у 2 секунди та обгорни його в `<Suspense fallback={<Skeleton />}>`.</li>
+        <li>Напиши Server Action для додавання коментаря та виклику `revalidatePath('/posts/[id]')`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>У чому різниця між Time-based Revalidation (`next: { revalidate: N }`) та On-demand Revalidation (`revalidateTag`)?</li>
+        <li>Що таке Request Memoization / Deduplication у Next.js і як вона оптимізує дерево компонентів?</li>
+        <li>Як за допомогою `Promise.all()` та `Suspense` усунути ефект Waterfall при завантаженні даних?</li>
+        <li>Чому використання Server Actions безпечніше за традиційні відкриті REST API ендпоінти для простих мутацій?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як працює кешування та ревалідація у Next.js App Router?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Кеш налаштовується в браузері через заголовки Cache-Control».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Next.js має багаторівневу систему кешування: (1) Request Memoization (дедуплікація однакових fetch в межах одного рендеру); (2) Data Cache (персистентний серверний кеш між запитами); (3) Full Route Cache (кешування відрендереного HTML та RSC на сервері); (4) Router Cache (клієнтський кеш переходів у браузері). Ревалідація здійснюється за часом (`revalidate: N`) або на вимогу через `revalidateTag` / `revalidatePath`.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як боротися з повільними API-запитами, щоб сторінка не зависала?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Перенести всі запити на клієнт у useEffect».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Використовувати Streaming SSR за допомогою React `<Suspense>`: швидкі частини сторінки (наприклад, макет, шапка, основний контент) віддаються браузеру миттєво, а повільний блок рендериться у фоновому потоці і підміняє фолбек (скелетон) по мірі надходження даних без перезавантаження сторінки.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Якщо ви робите прямі запити до БД через Prisma/ORM замість `fetch`, скористайтеся утилітою `unstable_cache` від Next.js, щоб увімкнути для них кешування та теговану ревалідацію.</li>
+        <li>Директива `export const dynamic = 'force-dynamic'` на рівні сторінки або layout примусово вмикає динамічний SSR для всіх вкладених компонентів.</li>
+        <li>Файл `loading.tsx` у папці маршруту автоматично загортає сусідній `page.tsx` у `<Suspense>` без жодного рядка бойлерплейту.</li>
+      </ul>
+    </section>

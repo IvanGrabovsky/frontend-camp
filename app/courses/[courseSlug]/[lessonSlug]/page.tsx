@@ -95,11 +95,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
       </header>
 
       {/* Lesson Content */}
-      <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline prose-code:font-mono prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none mb-16">
+      <div className="prose dark:prose-invert max-w-none mb-16">
         {mdxSource ? (
           <MDXRemote source={mdxSource} components={components} />
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml }} />
+          <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml || '' }} />
         )}
       </div>
 

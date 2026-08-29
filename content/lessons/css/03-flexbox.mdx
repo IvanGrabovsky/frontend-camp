@@ -1,0 +1,124 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Flexbox</strong> (Flexible Box Layout) — одновимірна модель розкладки CSS для розміщення елементів у рядку або стовпці. Ідеальна для навігацій, карток, центрування вмісту та будь-яких компонентів, де потрібно розподілити простір між елементами.</p>
+      <p>Ключова ідея: контейнер з `display: flex` керує розміщенням своїх прямих нащадків (flex-items).</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🚄</span> Аналогія з вагонами поїзда</div>
+      <p>Уяви поїзд на рейках. Flex-контейнер — це рейки, flex-items — вагони. Ти можеш вирішити: рівномірно розставити вагони (`space-between`), зрушити всі до початку (`flex-start`), або до центру (`center`). Вагони можуть також «розтягуватись» щоб заповнити місце (`flex-grow`).</p>
+    </section>
+
+    <section>
+      <h2>Основні властивості контейнера</h2>
+      
+
+```css
+.container {
+  display: flex;               /* вмикає flexbox */
+  flex-direction: row;         /* row | column | row-reverse | column-reverse */
+  justify-content: flex-start; /* вісь: start|center|end|space-between|space-around|space-evenly */
+  align-items: stretch;        /* поперечна вісь: stretch|center|flex-start|flex-end|baseline */
+  flex-wrap: nowrap;           /* nowrap | wrap | wrap-reverse */
+  gap: 16px;                   /* відстань між елементами (row-gap column-gap) */
+}
+```
+
+
+
+      <h2>Властивості flex-item</h2>
+      
+
+```css
+.item {
+  flex-grow: 0;    /* наскільки може розрости (0 — не росте) */
+  flex-shrink: 1;  /* наскільки може стиснутись */
+  flex-basis: auto;/* базовий розмір перед grow/shrink */
+  flex: 1;         /* shorthand: grow=1, shrink=1, basis=0 */
+  align-self: auto;/* перевизначає align-items для цього item */
+  order: 0;        /* порядок (default 0, менше = першим) */
+}
+```
+
+
+
+      <h2>Практичні патерни</h2>
+      
+
+```css
+/* Центрування по обох осях */
+.centered { display: flex; justify-content: center; align-items: center; }
+
+/* Навігація: лого вліво, посилання вправо */
+.nav { display: flex; align-items: center; }
+.nav__logo { margin-right: auto; } /* auto «відштовхує» решту вправо */
+
+/* Картки однакової висоти рядками */
+.cards { display: flex; flex-wrap: wrap; gap: 16px; }
+.card  { flex: 1 1 280px; } /* мін. 280px, розтягується */
+
+/* Footer «прилипає» до низу */
+body   { display: flex; flex-direction: column; min-height: 100vh; }
+main   { flex: 1; } /* займає весь вільний простір */
+```
+
+
+
+      <div className="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout" target="_blank" rel="noopener noreferrer">CSS Flexbox — MDN</a></li>
+          <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" rel="noopener noreferrer">A Complete Guide to Flexbox — CSS-Tricks</a></li>
+          <li><a href="https://flexboxfroggy.com/#uk" target="_blank" rel="noopener noreferrer">Flexbox Froggy (гра для практики)</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Плутати main axis і cross axis</strong>: `justify-content` керує основною віссю (горизонтально за замовчуванням), `align-items` — поперечною.</li><li><strong>Не задавати висоту контейнеру</strong> для вертикального центрування: `align-items: center` не центрує якщо контейнер не має висоти.</li><li><strong>Плутати `flex: 1` з `width: 100%`</strong>: `flex: 1` розтягує рівномірно між іншими flex-items, `width: 100%` ігнорує інші items.</li><li><strong>Забувати `flex-wrap: wrap`</strong> — без нього всі items стискаються в один рядок і можуть вийти за межі.</li><li><strong>Зловживати `margin` замість `gap`</strong>: `gap` додає відступ тільки між items, не на краях контейнера.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Зроби навігацію: лого ліворуч, посилання праворуч через `margin-right: auto` на лого.</li><li>Зроби три картки однакової висоти в рядок, що переносяться на наступний рядок при малій ширині (`flex-wrap: wrap`).</li><li>Відцентруй елемент по горизонталі і вертикалі у блоці 400×300px.</li><li>Зроби `<body>` flex-колонкою так, щоб footer завжди «прилипав» до низу сторінки.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між `justify-content` і `align-items`?</li><li>Що означає `flex: 1 1 200px`?</li><li>Як зробити щоб flex-items переносились на наступний рядок?</li><li>Чим відрізняється `align-items` від `align-self`?</li><li>Як відцентрувати один елемент по вертикалі і горизонталі за допомогою flexbox?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Яка різниця між justify-content і align-items?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Обидва центрують елементи» — невірно без уточнення осей.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `justify-content` керує розподілом уздовж <em>основної осі</em> (за замовчуванням горизонтальна). `align-items` — уздовж <em>поперечної осі</em> (за замовчуванням вертикальна). При `flex-direction: column` осі міняються місцями.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Як зробити footer, що завжди внизу?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> `position: fixed; bottom: 0` — footer перекриє контент.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `body { display: flex; flex-direction: column; min-height: 100vh; }` та `main { flex: 1; }` — main займає весь вільний простір, footer залишається знизу.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке flex: 1?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Ширина 100%» — неточно.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `flex: 1` — скорочення для `flex-grow: 1; flex-shrink: 1; flex-basis: 0`. Елемент рівномірно ділить вільний простір з іншими items, що теж мають `flex: 1`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`gap` замість `margin` між flex-items — чистіший код: відступи не потрапляють на краї контейнера.</li><li>`margin: auto` на flex-item «поглинає» весь вільний простір на цьому боці — класика для «відштовхування» елемента.</li><li><a href='https://flexboxfroggy.com/#uk' target='_blank' rel='noopener'>Flexbox Froggy</a> — гра для практики в браузері, 24 рівні за 30 хвилин.</li><li>Chrome DevTools → вкладка Elements → значок flex у Styles → візуальний редактор flexbox властивостей прямо в браузері.</li>
+      </ul>
+    </section>

@@ -7,6 +7,7 @@
     --font-heading: var(--font-sans);
   }
   :root {
+    color-scheme: light;
     --background: 0 0% 100%;          /* #FFFFFF */
     --foreground: 224 71% 4%;         /* #020817 - Rich crisp text */
     --card: 0 0% 100%;
@@ -30,6 +31,7 @@
   }
   .dark,
   [data-theme='dark'] {
+    color-scheme: dark;
     /* Soft slate palette tuned for reading comfort without glare */
     --background: 222 18% 11.5%;      /* #151821 - Deep comfortable slate */
     --foreground: 215 18% 88%;        /* #DCE1EB - Soft off-white text (prevents eye strain) */
@@ -57,20 +59,40 @@
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-primary/25 selection:text-foreground;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 /* ─── Lesson Content Typography & Blocks ─────────────────────────────────────── */
 
 .lesson-card {
-  @apply rounded-xl border border-border bg-card p-6 shadow-sm mb-6 border-l-4 border-l-primary transition-colors;
+  @apply rounded-xl border border-border bg-slate-50/80 dark:bg-card p-6 shadow-sm mb-6 border-l-4 border-l-primary transition-colors;
+}
+
+.lesson-card h2,
+.lesson-card h3 {
+  @apply mt-0 mb-3 text-foreground font-bold;
 }
 
 .analogy-block {
-  @apply rounded-xl border border-violet-500/20 bg-violet-500/5 dark:border-violet-400/25 dark:bg-violet-500/10 p-6 mb-6 transition-colors;
+  @apply rounded-xl border border-violet-200/90 bg-violet-50/80 dark:border-violet-400/25 dark:bg-violet-500/10 p-6 my-6 transition-colors border-l-4 border-l-violet-600 dark:border-l-violet-400;
 }
 
 .analogy-block__title {
-  @apply font-bold text-base text-violet-700 dark:text-violet-300 flex items-center gap-2 mb-2;
+  @apply font-bold text-base text-violet-900 dark:text-violet-300 flex items-center gap-2 mb-3 mt-0;
+}
+
+.analogy-block p {
+  @apply text-slate-800 dark:text-foreground/90 leading-relaxed;
 }
 
 .analogy-block__icon {
@@ -78,50 +100,62 @@
 }
 
 .tip-block {
-  @apply rounded-xl border border-primary/20 bg-primary/5 dark:border-primary/25 dark:bg-primary/10 p-6 my-6 transition-colors border-l-4 border-l-primary;
+  @apply rounded-xl border border-indigo-200/90 bg-indigo-50/70 dark:border-primary/25 dark:bg-primary/10 p-6 my-6 transition-colors border-l-4 border-l-primary;
+}
+
+.tip-block p {
+  @apply text-slate-800 dark:text-foreground/90 leading-relaxed;
 }
 
 .tip-block--warn {
-  @apply border-amber-500/30 bg-amber-500/5 dark:border-amber-400/25 dark:bg-amber-500/10 border-l-amber-500 dark:border-l-amber-400;
+  @apply border-amber-200/90 bg-amber-50/80 dark:border-amber-400/25 dark:bg-amber-500/10 border-l-4 border-l-amber-500 dark:border-l-amber-400;
 }
 
 .tip-block__title {
-  @apply font-bold text-base text-amber-700 dark:text-amber-300 flex items-center gap-2 mb-3;
+  @apply font-bold text-base text-amber-900 dark:text-amber-300 flex items-center gap-2 mb-3 mt-0;
 }
 
 .practice-block {
-  @apply rounded-xl border border-teal-500/30 bg-teal-500/5 dark:border-teal-400/25 dark:bg-teal-500/10 p-6 my-6 transition-colors border-l-4 border-l-teal-600 dark:border-l-teal-400;
+  @apply rounded-xl border border-teal-200/90 bg-teal-50/80 dark:border-teal-400/25 dark:bg-teal-500/10 p-6 my-6 transition-colors border-l-4 border-l-teal-600 dark:border-l-teal-400;
 }
 
 .practice-block__title {
-  @apply font-bold text-base text-teal-700 dark:text-teal-300 flex items-center gap-2 mb-3;
+  @apply font-bold text-base text-teal-900 dark:text-teal-300 flex items-center gap-2 mb-3 mt-0;
+}
+
+.practice-block p {
+  @apply text-slate-800 dark:text-foreground/90 leading-relaxed;
 }
 
 .homework-block {
-  @apply rounded-xl border border-amber-500/30 bg-amber-500/5 dark:border-amber-400/25 dark:bg-amber-500/10 p-6 my-6 transition-colors border-l-4 border-l-amber-500 dark:border-l-amber-400;
+  @apply rounded-xl border border-amber-200/90 bg-amber-50/80 dark:border-amber-400/25 dark:bg-amber-500/10 p-6 my-6 transition-colors border-l-4 border-l-amber-500 dark:border-l-amber-400;
 }
 
 .homework-block__title {
-  @apply font-bold text-base text-amber-700 dark:text-amber-300 flex items-center gap-2 mb-3;
+  @apply font-bold text-base text-amber-900 dark:text-amber-300 flex items-center gap-2 mb-3 mt-0;
+}
+
+.homework-block p {
+  @apply text-slate-800 dark:text-foreground/90 leading-relaxed;
 }
 
 .homework-block ol,
 .practice-block ol {
-  @apply pl-5 space-y-2 text-foreground/90;
+  @apply pl-5 space-y-2 text-slate-800 dark:text-foreground/90 my-3;
 }
 
 .homework-block li,
 .practice-block li,
 .tip-block li {
-  @apply leading-relaxed;
+  @apply leading-relaxed text-slate-800 dark:text-foreground/90;
 }
 
 .hw-review-block {
-  @apply rounded-xl border border-indigo-500/20 bg-indigo-500/5 dark:border-indigo-400/25 dark:bg-indigo-500/10 p-6 my-6 transition-colors;
+  @apply rounded-xl border border-indigo-200/90 bg-indigo-50/70 dark:border-indigo-400/25 dark:bg-indigo-500/10 p-6 my-6 transition-colors;
 }
 
 .hw-review-block__title {
-  @apply font-bold text-base text-indigo-700 dark:text-indigo-300 flex items-center gap-2 mb-4;
+  @apply font-bold text-base text-indigo-900 dark:text-indigo-300 flex items-center gap-2 mb-4 mt-0;
 }
 
 .hw-review-items {
@@ -129,7 +163,7 @@
 }
 
 .hw-review-item {
-  @apply rounded-lg border border-border bg-card p-4 space-y-2 shadow-sm;
+  @apply rounded-lg border border-border bg-white dark:bg-card p-4 space-y-2 shadow-sm;
 }
 
 .hw-review-item__task {
@@ -137,11 +171,11 @@
 }
 
 .hw-review-item__bad {
-  @apply text-xs sm:text-sm text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-md p-2.5 leading-relaxed;
+  @apply text-xs sm:text-sm text-rose-800 dark:text-rose-300 bg-rose-50/90 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-md p-2.5 leading-relaxed;
 }
 
 .hw-review-item__good {
-  @apply text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-md p-2.5 leading-relaxed;
+  @apply text-xs sm:text-sm text-emerald-900 dark:text-emerald-300 bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-md p-2.5 leading-relaxed;
 }
 
 .hw-review-label {
@@ -149,15 +183,15 @@
 }
 
 .pro-tips-block {
-  @apply rounded-xl border border-emerald-500/25 bg-emerald-500/5 dark:border-emerald-400/25 dark:bg-emerald-500/10 p-6 my-6 text-foreground border-l-4 border-l-emerald-600 dark:border-l-emerald-400 transition-colors;
+  @apply rounded-xl border border-emerald-200/90 bg-emerald-50/80 dark:border-emerald-400/25 dark:bg-emerald-500/10 p-6 my-6 text-foreground border-l-4 border-l-emerald-600 dark:border-l-emerald-400 transition-colors;
 }
 
 .pro-tips-block__title {
-  @apply font-bold text-base text-emerald-700 dark:text-emerald-300 flex items-center gap-2 mb-3;
+  @apply font-bold text-base text-emerald-900 dark:text-emerald-300 flex items-center gap-2 mb-3 mt-0;
 }
 
 .pro-tips-block ul {
-  @apply pl-5 space-y-2 text-foreground/90;
+  @apply pl-5 space-y-2 text-slate-800 dark:text-foreground/90 my-3;
 }
 
 .pro-tips-block li {
@@ -165,7 +199,7 @@
 }
 
 .doc-links {
-  @apply rounded-xl border border-border bg-muted/40 dark:bg-muted/30 p-5 my-6;
+  @apply rounded-xl border border-border bg-slate-50/80 dark:bg-muted/30 p-5 my-6;
 }
 
 .doc-links h4 {
@@ -218,17 +252,17 @@
 
 .params-table,
 .comparison-table {
-  @apply w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-border shadow-sm bg-card;
+  @apply w-full text-left text-xs sm:text-sm border-collapse rounded-xl overflow-hidden border border-border shadow-sm bg-white dark:bg-card;
 }
 
 .params-table th,
 .comparison-table th {
-  @apply bg-muted/80 dark:bg-muted/60 font-semibold p-3.5 border-b border-border text-foreground tracking-tight whitespace-nowrap;
+  @apply bg-slate-100 dark:bg-muted/60 font-semibold p-3.5 border-b border-border text-foreground tracking-tight whitespace-nowrap;
 }
 
 .params-table td,
 .comparison-table td {
-  @apply p-3.5 border-b border-border/60 text-foreground/80 align-top leading-relaxed;
+  @apply p-3.5 border-b border-border/60 text-slate-800 dark:text-foreground/80 align-top leading-relaxed;
 }
 
 .params-table tbody tr:last-child td,
@@ -238,10 +272,41 @@
 
 .params-table tbody tr:hover,
 .comparison-table tbody tr:hover {
-  @apply bg-muted/30 transition-colors;
+  @apply bg-slate-50 dark:bg-muted/30 transition-colors;
 }
 
-/* ─── Prose Overrides for Dark Mode Reading Comfort ─────────────────────────── */
+/* ─── Prose Overrides for High-Contrast Light & Dark Mode ─────────────────────── */
+
+.prose {
+  --tw-prose-body: hsl(222 47% 11%);
+  --tw-prose-headings: hsl(224 71% 4%);
+  --tw-prose-lead: hsl(215 16% 35%);
+  --tw-prose-links: hsl(262 83% 52%);
+  --tw-prose-bold: hsl(224 71% 4%);
+  --tw-prose-counters: hsl(215 14% 45%);
+  --tw-prose-bullets: hsl(215 14% 50%);
+  --tw-prose-hr: hsl(220 13% 90%);
+  --tw-prose-quotes: hsl(224 71% 10%);
+  --tw-prose-quote-borders: hsl(262 83% 58%);
+  --tw-prose-captions: hsl(215 14% 45%);
+  --tw-prose-code: hsl(262 83% 42%);
+  --tw-prose-pre-code: hsl(215 20% 90%);
+  --tw-prose-pre-bg: #0f172a;
+  --tw-prose-th-borders: hsl(220 13% 85%);
+  --tw-prose-td-borders: hsl(220 13% 90%);
+}
+
+.prose code:not(pre code) {
+  @apply font-mono text-xs sm:text-sm font-semibold text-primary bg-slate-100 dark:bg-muted/80 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-border/60 before:content-none after:content-none;
+}
+
+.prose pre {
+  @apply rounded-xl border border-slate-800 bg-slate-950 text-slate-100 shadow-sm overflow-x-auto;
+}
+
+.prose pre code {
+  @apply bg-transparent border-0 p-0 text-slate-200 text-xs sm:text-sm font-mono leading-relaxed;
+}
 
 .dark .prose {
   --tw-prose-body: hsl(215 18% 88%);

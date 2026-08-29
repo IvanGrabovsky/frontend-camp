@@ -1,0 +1,128 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Кожного разу</strong>, коли ти вводиш адресу в браузер і натискаєш Enter, запускається складний ланцюжок подій — від перетворення доменного імені на IP-адресу до малювання пікселів на екрані.</p>
+      <p>Це питання — одне з найпопулярніших на <strong>технічних співбесідах</strong>. Відповідь показує наскільки глибоко ти розумієш веб.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📬</span> Аналогія з листом</div>
+      <p>Ти пишеш на конверті адресу (URL). Пошта (DNS) знаходить будинок. Листоноша (TCP) доставляє з підтвердженням. Лист у спецконверті (TLS) — зашифрований. Друг розпаковує (парсинг HTML) і читає (рендеринг).</p>
+    </section>
+
+    <section>
+      <h2>Повний шлях — 9 кроків</h2>
+
+      
+
+```text
+// Крок 1 — Парсинг URL
+https://example.com:443/about?lang=ua
+│       │           │   │     └─ query string
+│       │           │   └─ path
+│       │           └─ port
+│       └─ host (домен)
+└─ scheme (протокол)
+```
+
+
+
+      <ol className="steps">
+        <li><strong>Парсинг URL</strong> — браузер розбиває рядок на scheme, host, port, path, query, fragment.</li>
+        <li><strong>Перевірка кешу</strong> — браузер → кеш ОС → файл `/etc/hosts`.</li>
+        <li><strong>DNS-запит</strong> — резолвер → Root → TLD (.com) → Authoritative → IP-адреса.</li>
+        <li><strong>TCP Handshake</strong> — SYN → SYN-ACK → ACK (трьохстороннє рукостискання).</li>
+        <li><strong>TLS Handshake</strong> (HTTPS) — обмін сертифікатами, узгодження ключів.</li>
+        <li><strong>HTTP-запит</strong> — GET/POST + заголовки (Host, User-Agent, Accept, Cookie).</li>
+        <li><strong>Відповідь сервера</strong> — статус-код + заголовки + тіло (HTML).</li>
+        <li><strong>Rendering pipeline</strong> — HTML→DOM, CSS→CSSOM, Render Tree → Layout → Paint → Composite.</li>
+        <li><strong>Додаткові ресурси</strong> — CSS, JS, зображення, шрифти завантажуються паралельно.</li>
+      </ol>
+
+      
+
+```text
+// Rendering pipeline
+HTML → DOM
+CSS  → CSSOM
+        ↓
+DOM + CSSOM → Render Tree → Layout → Paint → Composite
+```
+
+
+
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Метрика</th><th>Що вимірює</th><th>Орієнтир</th></tr></thead>
+          <tbody>
+            <tr><td>`TTFB`</td><td>Time to First Byte</td><td>&lt; 200ms</td></tr>
+            <tr><td>`FCP`</td><td>First Contentful Paint</td><td>&lt; 1.8s</td></tr>
+            <tr><td>`LCP`</td><td>Largest Contentful Paint</td><td>&lt; 2.5s</td></tr>
+            <tr><td>`CLS`</td><td>Layout Shift</td><td>&lt; 0.1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Додаткові ресурси</h4>
+        <ul>
+          <li><a href="https://developer.chrome.com/docs/devtools/network/" target="_blank" rel="noopener">Chrome DevTools: Network panel</a></li>
+          <li><a href="https://web.dev/articles/navigation-and-resource-timing" target="_blank" rel="noopener">Navigation Timing API — web.dev</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«Браузер робить один запит»</strong> — ні. Типова сторінка: 50–200 запитів.</li>
+        <li><strong>«DNS відбувається кожного разу»</strong> — ні. Відповіді кешуються (TTL).</li>
+        <li><strong>«CSS не впливає на швидкість»</strong> — CSS є render-blocking ресурсом.</li>
+        <li><strong>«HTTPS — інший протокол»</strong> — ні, це HTTP + TLS шифрування.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика в DevTools</div>
+      <ol>
+        <li>Відкрий DevTools → Network → перезавантаж сторінку. Знайди перший HTML-запит, подивись заголовки та TTFB у Timing.</li>
+        <li>Знайди загальну кількість запитів і розмір даних. Порівняй Google.com і YouTube.com.</li>
+        <li>У консолі: `performance.getEntriesByType('navigation')[0]` — порахуй TTFB: `responseStart - requestStart`.</li>
+        <li>DevTools → Performance → запиши завантаження, знайди FCP і LCP на таймлайні.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Назви 9 кроків від введення URL до рендеру сторінки.</li>
+        <li>Що таке 3-way handshake і навіщо він?</li>
+        <li>Чому CSS є render-blocking ресурсом, а зображення — ні?</li>
+        <li>Яка різниця між DOM і Render Tree?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що відбувається коли вводиш URL?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Браузер надсилає запит на сервер» — занадто поверхнево.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> URL → кеш → DNS → TCP → TLS → HTTP-запит → відповідь → парсинг → рендеринг. Не забудь про паралельне завантаження ресурсів.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке Critical Rendering Path?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Плутають DOM і Render Tree.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> HTML→DOM, CSS→CSSOM → Render Tree (без `display:none`) → Layout → Paint → Composite.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>DevTools → Security: деталі TLS-з'єднання (версія, алгоритм, сертифікат).</li>
+        <li>`dig example.com +trace` у терміналі показує повний DNS-ланцюжок.</li>
+        <li>HTTP/2 мультиплексування: кілька запитів через одне TCP-з'єднання.</li>
+        <li>`<link rel="preconnect">` — DNS+TCP+TLS заздалегідь, до того як браузер знайде ресурс у HTML.</li>
+      </ul>
+    </section>

@@ -1,0 +1,130 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Адаптивна верстка</strong> (responsive design) — підхід, коли сторінка виглядає коректно на будь-якому розмірі екрана: від мобільного телефону до широкого монітора. Головні інструменти: media queries, відносні одиниці та сучасні функції `clamp()` і container queries.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">💧</span> Аналогія з рідиною</div>
+      <p>Адаптивний дизайн — як вода: займає форму того контейнера, в який її наливають. Контент «тече» і перебудовується залежно від розміру екрана, а не просто масштабується.</p>
+    </section>
+
+    <section>
+      <h2>Media Queries</h2>
+      
+
+```css
+/* Mobile-first: базовий стиль для мобільних, потім розширюємо */
+.card { padding: 16px; font-size: 14px; }
+
+@media (min-width: 768px) {  /* tablet */
+  .card { padding: 24px; font-size: 16px; }
+}
+@media (min-width: 1200px) { /* desktop */
+  .card { padding: 32px; font-size: 18px; }
+}
+
+/* Інші умови */
+@media (prefers-color-scheme: dark) { ... }   /* темна тема OS */
+@media (prefers-reduced-motion: reduce) { ... } /* вимкнути анімації */
+@media (orientation: landscape) { ... }        /* горизонтальна орієнтація */
+@media print { ... }                            /* для друку */
+```
+
+
+
+      <h2>`clamp()` — fluid typography без media queries</h2>
+      
+
+```css
+/* clamp(мін, ідеал, макс) */
+h1 { font-size: clamp(24px, 5vw, 48px); }  /* від 24px до 48px плавно */
+.container { width: clamp(320px, 90%, 1200px); margin: 0 auto; }
+.card { padding: clamp(16px, 3vw, 32px); }
+
+/* min() і max() */
+.sidebar { width: min(300px, 30vw); }  /* менше з двох */
+.content  { width: max(200px, 60%); }  /* більше з двох */
+```
+
+
+
+      <h2>Container Queries (CSS 2023)</h2>
+      
+
+```css
+/* Компонент адаптується до свого контейнера, а не вікна */
+.card-wrapper { container-type: inline-size; }
+
+@container (min-width: 400px) {
+  .card { display: flex; gap: 16px; }  /* горизонтальне розташування */
+}
+@container (max-width: 399px) {
+  .card { display: block; }            /* вертикальне */
+}
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Відносні одиниці</h4>
+        <table className="params-table">
+          <thead><tr><th>Одиниця</th><th>Відносно</th><th>Типове застосування</th></tr></thead>
+          <tbody>
+            <tr><td>`%`</td><td>батьківського елемента</td><td>ширини, відступи</td></tr>
+            <tr><td>`em`</td><td>font-size поточного елемента</td><td>padding, margin</td></tr>
+            <tr><td>`rem`</td><td>font-size кореневого елемента (html)</td><td>шрифти, розміри</td></tr>
+            <tr><td>`vw`</td><td>ширини вікна (1% = 1vw)</td><td>fluid typography</td></tr>
+            <tr><td>`vh`</td><td>висоти вікна (1% = 1vh)</td><td>hero sections</td></tr>
+            <tr><td>`dvh`</td><td>динамічна висота вікна (враховує mobile UI)</td><td>замість vh на мобільних</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries" target="_blank" rel="noopener noreferrer">CSS Media Queries — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/clamp" target="_blank" rel="noopener noreferrer">clamp() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries" target="_blank" rel="noopener noreferrer">Container Queries — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul><li><strong>Desktop-first замість mobile-first</strong>: `max-width` у media queries складніше підтримувати. Починай з мобільного базового стилю і розширюй через `min-width`.</li><li><strong>Використовувати `px` замість `rem`</strong> для шрифтів — ламає налаштування розміру тексту в браузері, що важливо для accessibility.</li><li><strong>Забувати `meta viewport`</strong> у `<head>` — без нього mobile viewport буде 980px, і media queries не спрацюють.</li><li><strong>Використовувати `vh` на мобільних</strong> — адресний рядок мобільного браузера змінює висоту. Замість `height: 100vh` використовуй `height: 100dvh`.</li><li><strong>Ігнорувати `prefers-reduced-motion`</strong> — частина користувачів має вестибулярні порушення і важкі анімації викликають дискомфорт.</li></ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol><li>Зроби навігацію: на мобільному — стовпець, на планшеті та десктопі — рядок. Використовуй mobile-first підхід.</li><li>Задай заголовку `font-size: clamp(20px, 5vw, 48px)` — спостерігай як розмір плавно змінюється при ресайзі вікна.</li><li>Зроби картку що змінює вигляд (stack vs side-by-side) залежно від розміру <em>контейнера</em> (container queries).</li><li>Додай `@media (prefers-color-scheme: dark)` з темними кольорами для своєї сторінки.</li></ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol><li>Що таке mobile-first підхід і чому він кращий за desktop-first?</li><li>В чому різниця між `em` і `rem`?</li><li>Що робить `clamp(20px, 5vw, 48px)`?</li><li>Чим container queries відрізняються від media queries?</li><li>Чому `vh` може не працювати коректно на мобільних?</li></ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items"><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке responsive design?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це коли сайт виглядає добре на мобільному» — надто загально.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Responsive design — підхід, коли інтерфейс адаптується до будь-якого розміру екрана через fluid layouts (відносні одиниці, Grid/Flexbox), media/container queries та гнучкі зображення. Ключові принципи: mobile-first, breakpoints, відносні одиниці.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Яка різниця між em і rem?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Обидва відносні до шрифту» — без уточнення різниці.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `em` відносний до `font-size` поточного елемента — може накопичуватись при вкладенні. `rem` відносний до `font-size` кореневого `<html>` — стабільний і передбачуваний. Для шрифтів і відступів краще `rem`.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке container queries?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Не знаю» або «те саме що media queries».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Container queries дозволяють елементу адаптуватись до розміру свого <em>контейнера</em>, а не вікна браузера. Корисно для компонентів, що використовуються в різних частинах сторінки (сайдбар vs main). Підтримується у всіх сучасних браузерах з 2023р.</p>
+        </article></div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul><li>`dvh` (dynamic viewport height) вирішує проблему адресного рядка мобільного браузера — завжди використовуй замість `vh` для full-screen секцій.</li><li>Breakpoints краще задавати в `rem`, а не `px`: якщо користувач збільшив розмір шрифту браузера — лейаут теж адаптується.</li><li><a href='https://utopia.fyi/' target='_blank' rel='noopener'>Utopia.fyi</a> — генератор fluid type scale та space scale через `clamp()`. Один раз задав — шрифти адаптуються без media queries.</li><li>Chrome DevTools → значок телефону → інструмент «Responsive» — одразу бачиш сайт при різних розмірах екрана та device presets.</li></ul>
+    </section>

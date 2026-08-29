@@ -1,0 +1,123 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>CSS Grid</strong> — двовимірна система розкладки: одночасно керує рядками і стовпцями. Flexbox чудовий для одновимірних компонентів (рядки або стовпці), Grid — ідеальний для сторінкових лейаутів і складних двовимірних сіток.</p>
+      <p>Думай про Grid як про «Excel-таблицю» для CSS: ти задаєш розміри рядків і стовпців, а потім розміщуєш елементи в конкретні клітинки.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🗺️</span> Аналогія з картою міста</div>
+      <p>Уяви план міста: вулиці по горизонталі — це рядки, вулиці по вертикалі — стовпці. Будівля може займати одну «квартальну одиницю» або кілька (span). Grid Lines — це вулиці, Grid Areas — квартали.</p>
+    </section>
+
+    <section>
+      <h2>Основні властивості контейнера</h2>
+      
+
+```css
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;    /* три стовпці: 25% 50% 25% */
+  grid-template-rows: auto 1fr auto;     /* три рядки */
+  gap: 16px;                              /* row-gap і column-gap */
+  column-gap: 24px; row-gap: 16px;       /* окремо */
+}
+
+/* auto-fill vs auto-fit — адаптивна сітка без media queries */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+```
+
+
+
+      <h2>Розміщення елементів</h2>
+      
+
+```css
+/* Span — елемент займає кілька клітинок */
+.item { grid-column: 1 / 3; }  /* від лінії 1 до лінії 3 (2 стовпці) */
+.item { grid-column: span 2; } /* займає 2 стовпці */
+.item { grid-row: 1 / -1; }   /* від першого до останнього рядка */
+
+/* Named areas — для сторінкового лейауту */
+.layout {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+.header  { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main    { grid-area: main; }
+.footer  { grid-area: footer; }
+```
+
+
+
+      <div className="syntax-params">
+        <h4>fr — fractional unit</h4>
+        <table className="params-table">
+          <thead><tr><th>Запис</th><th>Результат</th></tr></thead>
+          <tbody>
+            <tr><td>`1fr 1fr 1fr`</td><td>Три рівні стовпці (по 33%)</td></tr>
+            <tr><td>`1fr 2fr`</td><td>1:2 — другий вдвічі ширший</td></tr>
+            <tr><td>`200px 1fr`</td><td>Фіксований сайдбар, решта — гнучка</td></tr>
+            <tr><td>`minmax(200px, 1fr)`</td><td>Від 200px до 1fr</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout" target="_blank" rel="noopener noreferrer">CSS Grid Layout — MDN</a></li>
+          <li><a href="https://cssgridgarden.com/#uk" target="_blank" rel="noopener noreferrer">Grid Garden (гра для практики)</a></li>
+          <li><a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank" rel="noopener noreferrer">Complete Guide to Grid — CSS-Tricks</a></li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul><li><strong>Плутати Grid і Flexbox</strong>: Grid — двовимірний (рядки + стовпці), Flexbox — одновимірний. Використовуй Grid для лейауту сторінки, Flexbox — для компонентів.</li><li><strong>Забувати про `minmax()`</strong> в адаптивних сітках — `repeat(auto-fill, 200px)` не адаптується, `repeat(auto-fill, minmax(200px, 1fr))` — так.</li><li><strong>Плутати `auto-fill` і `auto-fit`</strong>: `auto-fill` залишає порожні стовпці, `auto-fit` стискає їх — при малій кількості items вони займуть весь простір.</li><li><strong>Нумерація Grid Lines з 1</strong>, не з 0. `grid-column: 1 / 3` — від першої лінії до третьої (тобто 2 стовпці).</li><li><strong>Забувати `grid-template-areas`</strong> при зміні лейауту — замість переписувати координати, просто змінюй ASCII-схему.</li></ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol><li>Зроби адаптивну сітку карток: мінімум 280px шириною, автоматична кількість стовпців через `auto-fill` + `minmax`.</li><li>Зроби класичний сторінковий лейаут: header, sidebar, main content, footer через `grid-template-areas`.</li><li>Зроби «featured» картку, що займає 2 стовпці через `grid-column: span 2`.</li><li>Порівняй результат `auto-fill` і `auto-fit` коли в сітці лише 2 картки.</li></ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol><li>В чому різниця між Grid і Flexbox? Коли використовувати кожен?</li><li>Що означає `1fr` і як воно рахується?</li><li>Яка різниця між `auto-fill` і `auto-fit`?</li><li>Як зробити елемент що займає всю ширину сітки (`span all columns`)?</li><li>Що таке `grid-template-areas` і яка перевага над координатами?</li></ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items"><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Grid чи Flexbox — що вибрати?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Grid завжди краще» або «Flexbox складніший» — спрощення.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Grid — для двовимірних лейаутів (сторінки, таблиці, галереї). Flexbox — для одновимірних компонентів (навігація, рядок кнопок, картка). Часто поєднують: Grid для сторінки, Flexbox всередині компонентів.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Як зробити адаптивну сітку без media queries?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Не знаю, завжди використовую media queries».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))` — автоматично визначає кількість стовпців залежно від ширини контейнера. Ніяких media queries не потрібно.</p>
+        </article><article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке fr?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це відсотки».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `fr` (fractional unit) — частка вільного простору після відрахування фіксованих розмірів. `1fr 2fr` ділить простір у відношенні 1:2. Відсотки не враховують gap, fr — враховує.</p>
+        </article></div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul><li><a href='https://cssgridgarden.com/#uk' target='_blank' rel='noopener'>Grid Garden</a> — 28 рівнів практики Grid в браузері.</li><li>Chrome DevTools → Elements → іконка grid → візуальний оверлей що показує лінії і номери трек прямо на сторінці.</li><li>`subgrid` (CSS 2023) — дозволяє вкладеним grid-items вирівнюватись по треках батька. Підтримується у всіх сучасних браузерах.</li><li>`place-items: center` — скорочення для `align-items: center; justify-items: center`. Миттєве центрування всіх items у grid-клітинках.</li></ul>
+    </section>

@@ -1,0 +1,164 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>HTML-форми (`<form>`)</strong> — це фундамент інтерактивності вебу: авторизація, реєстрація, пошукові рядки, фільтри товарів, оформлення замовлень та зворотний зв'язок. Вони збирають дані користувача і відправляють їх на сервер або передають у JavaScript.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📋</span> Аналогія з бланком анкети</div>
+      <p>`<form>` — це паперова папка з анкетою. `<label>` — це надрукований підпис поля («Введіть ваше ім'я:»). `<input>` — пусте поле для запису. `<select>` — список варіантів із галочкою. `<button type="submit">` — кнопка «Здати анкету адміністратору».</p>
+    </section>
+
+    <section>
+      <h2>Анатомія форми (тег `<form>`)</h2>
+      
+
+```html
+<form action="/api/login" method="POST" autocomplete="on">
+  <!-- 1. Явний зв'язок label та input через id і for -->
+  <div className="form-group">
+    <label htmlFor="user-email">Електронна пошта:</label>
+    <input type="email" id="user-email" name="email" required placeholder="name@example.com" />
+  </div>
+
+  <div className="form-group">
+    <label htmlFor="user-pass">Пароль:</label>
+    <input type="password" id="user-pass" name="password" required minlength="8" />
+  </div>
+
+  <button type="submit">Увійти в кабінет</button>
+</form>
+```
+
+
+
+      <h2>Головні атрибути форми</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Атрибут</th><th>Значення</th><th>Призначення</th></tr></thead>
+          <tbody>
+            <tr><td>`action`</td><td>URL ендпоінту</td><td>Куди надсилати дані форми. У React/Next.js часто опускається або замінюється на Server Actions.</td></tr>
+            <tr><td>`method`</td><td>`GET` або `POST`</td><td>`GET` — додає поля у рядок URL (пошук, фільтри). `POST` — надсилає дані в тілі запиту (паролі, реєстрація).</td></tr>
+            <tr><td>`enctype`</td><td>`multipart/form-data`</td><td><strong>Обов'язковий</strong> при завантаженні файлів через `<input type="file">`. За замовчуванням: `application/x-www-form-urlencoded`.</td></tr>
+            <tr><td>`name`</td><td>Рядок ідентифікатора</td><td>Ключ, під яким значення інпуту надсилається на сервер (`email=ivan%40dev.ua`).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Типи інпутів (HTML5 Input Types)</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>type</th><th>Вигляд і поведінка</th><th>Мобільна клавіатура / Валідація</th></tr></thead>
+          <tbody>
+            <tr><td>`text`</td><td>Звичайний однорядковий текст</td><td>Стандартна буквена клавіатура</td></tr>
+            <tr><td>`email`</td><td>Пошта з перевіркою @ і домену</td><td>Клавіатура зі знаками `@` та `.`</td></tr>
+            <tr><td>`password`</td><td>Приховані символи (крапки/зірочки)</td><td>Безпечний режим введення</td></tr>
+            <tr><td>`number`</td><td>Числове поле (зі стрілками min/max/step)</td><td>Цифрова клавіатура</td></tr>
+            <tr><td>`tel`</td><td>Телефонний номер</td><td>Клавіатура набору номера телефону (NumPad)</td></tr>
+            <tr><td>`checkbox`</td><td>Прапорець незалежного вибору [v]</td><td>Кілька одночасно активних опцій</td></tr>
+            <tr><td>`radio`</td><td>Перемикач єдиного вибору (•)</td><td>Лише одна опція в групі з однаковим `name`</td></tr>
+            <tr><td>`file`</td><td>Діалог завантаження файлу</td><td>Атрибути `accept="image/*"` та `multiple`</td></tr>
+            <tr><td>`range`</td><td>Повзунок вибору значення</td><td>Атрибути `min="0" max="100" step="5"`</td></tr>
+            <tr><td>`hidden`</td><td>Приховане поле</td><td>Передача службових токенів (CSRF token, user_id)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Інші ключові елементи форми</h2>
+      
+
+```html
+<!-- 1. Багаторядкове поле (textarea) -->
+<label htmlFor="bio">Про себе:</label>
+<textarea id="bio" name="bio" rows="4" cols="50" placeholder="Розкажіть про свій досвід..."></textarea>
+
+<!-- 2. Випадаючий список (select + option + optgroup) -->
+<label htmlFor="country">Країна:</label>
+<select id="country" name="country">
+  <optgroup label="Європа">
+    <option value="ua" selected>Україна</option>
+    <option value="pl">Польща</option>
+  </optgroup>
+</select>
+
+<!-- 3. Групування блоків (fieldset + legend) -->
+<fieldset>
+  <legend>Спосіб доставки</legend>
+  <label><input type="radio" name="delivery" value="courier" checked /> Кур'єр</label>
+  <label><input type="radio" name="delivery" value="pickup" /> Самовивіз</label>
+</fieldset>
+
+<!-- 4. Підказки для введення (datalist) -->
+<input list="browsers" name="browser" placeholder="Виберіть браузер..." />
+<datalist id="browsers">
+  <option value="Chrome">
+  <option value="Firefox">
+  <option value="Safari">
+</datalist>
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/form" target="_blank" rel="noopener">Form element — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/input" target="_blank" rel="noopener">Input types &amp; attributes — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Відсутність `<label>` або зв'язку через `for/id`</strong> — користувачі зі скрін-рідерами не знатимуть, що вводити в інпут, а користувачі миші не зможуть клікнути по тексту, щоб активувати поле.</li>
+        <li><strong>Заміна `<label>` на `placeholder`</strong> — плейсхолдер зникає при введенні тексту і не озвучується багатьма асистивними технологіями як заголовок поля!</li>
+        <li><strong>Відсутність атрибута `name`</strong> — значення інпуту без `name` взагалі <strong>не буде надіслано</strong> у формі на сервер або у `FormData`.</li>
+        <li><strong>`<button>` всередині форми без `type="button"`</strong> — за замовчуванням кнопка має `type="submit"` і при кліку несподівано перезавантажить сторінку та відправить форму!</li>
+        <li><strong>Забутий `enctype="multipart/form-data"`</strong> — при надсиланні файлів без цього атрибута сервер отримає лише текстову назву файлу замість бінарних даних.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи форму зворотного зв'язку з полями: ПІБ, Email, Телефон, Вибір теми (select), Повідомлення (textarea) та чекбокс згоди з умовами.</li>
+        <li>Пов'яжи кожен `<input>` з відповідним `<label>` через `for` та `id`. Перевір: клік по тексту підпису має ставити курсор в інпут.</li>
+        <li>Створи групу radio-кнопок для вибору тарифу (Basic, Pro, Enterprise) з однаковим атрибутом `name="plan"`.</li>
+        <li>Додай до форми `<input type="file" accept="image/png, image/jpeg">` та переконайся, що у форми стоїть `enctype="multipart/form-data"`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Яка поведінка кнопки `<button>` за замовчуванням усередині форми і чому це часто призводить до багів?</li>
+        <li>У чому різниця між методом `GET` та `POST` при відправці форми?</li>
+        <li>Чому `placeholder` ніколи не замінює повноцінний тег `<label>`?</li>
+        <li>Як зробити так, щоб у групі radio-кнопок можна було вибрати лише один варіант?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як правильно зв'язати label з input і чому це важливо?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Поставити текст поруч із інпутом у div».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Використати `<label for="id_елемента">` разом з `<input id="id_елемента">` або вкласти `<input>` всередину `<label>`. Це критично для: (1) Accessibility — скрін-рідер озвучує назву при фокусі; (2) UX — збільшує клікабельну зону (клік по тексту ставить курсор або перемикає чекбокс).</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«У чому різниця між значеннями атрибута type у кнопки (button, submit, reset)?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Вони однакові, тип не має значення».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `submit` (дефолт) — відправляє форму і викликає подію submit. `button` — просто звичайна кнопка без вбудованої поведінки для JS обробників (наприклад, відкрити модалку). `reset` — скидає всі поля форми до початкових значень.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Атрибут `inputmode="numeric"` на `<input type="text">` відкриває зручну цифрову клавіатуру на iOS/Android без зайвих стрілочок зсуву, які з'являються при `type="number"` (ідеально для банківських карток та SMS-кодів).</li>
+        <li>Атрибут `autocomplete="new-password"` або `current-password` допомагає менеджерам паролів автоматично генерувати та зберігати безпечні паролі.</li>
+        <li>Атрибут `form="form-id"` дозволяє розмістити інпут або кнопку поза межами тегу `<form>` у DOM-дереві, і вони все одно належатимуть цій формі.</li>
+      </ul>
+    </section>

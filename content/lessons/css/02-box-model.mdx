@@ -1,0 +1,151 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Box model</strong> — фундаментальна концепція CSS: кожен HTML-елемент є прямокутною коробкою з чотирма шарами: content → padding → border → margin. Розуміння box model пояснює чому елементи мають несподіваний розмір і чому вони «розсуваються».</p>
+      <p><strong>Позиціювання</strong> визначає де саме розміщується елемент на сторінці і як він взаємодіє з потоком документа.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Аналогія з подарунком</div>
+      <p><strong>Content</strong> — сам подарунок. <strong>Padding</strong> — захисна пінопластова обкладка всередині коробки. <strong>Border</strong> — стінки коробки. <strong>Margin</strong> — відстань між коробками на полиці.</p>
+    </section>
+
+    <section>
+      <h2>Box Model — схема</h2>
+
+      
+
+```css
+/* Повний синтаксис */
+.box {
+  width: 200px;           /* ширина контенту */
+  height: 100px;          /* висота контенту */
+  padding: 16px 24px;     /* верх/низ | ліво/право */
+  border: 2px solid #333; /* товщина стиль колір */
+  margin: 0 auto;         /* верх/низ | auto = центрування */
+}
+/* Реальна ширина без box-sizing: border-box */
+/* = 200 + 24*2 + 2*2 = 252px */
+```
+
+
+
+      <h2>box-sizing — найважливіша властивість</h2>
+      
+
+```css
+/* content-box (за замовчуванням) */
+/* width = тільки контент. Padding і border додаються ЗВЕРХУ */
+.box { width: 200px; padding: 20px; } /* фактично 240px */
+
+
+/* border-box (рекомендовано) */
+/* width = контент + padding + border. ВСЕ в одному числі */
+*, *::before, *::after { box-sizing: border-box; }
+.box { width: 200px; padding: 20px; } /* завжди 200px */
+```
+
+
+
+      <h2>Position: 5 значень</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Value</th><th>В потоці?</th><th>Зсув від</th><th>Типовий usecase</th></tr></thead>
+          <tbody>
+            <tr><td>`static`</td><td>✅ Так</td><td>—</td><td>За замовчуванням</td></tr>
+            <tr><td>`relative`</td><td>✅ Так (місце збережено)</td><td>Власного місця</td><td>Контейнер для absolute дітей</td></tr>
+            <tr><td>`absolute`</td><td>❌ Ні</td><td>Найближчого non-static предка</td><td>Tooltip, badge, dropdown</td></tr>
+            <tr><td>`fixed`</td><td>❌ Ні</td><td>Viewport</td><td>Sticky header, cookie banner</td></tr>
+            <tr><td>`sticky`</td><td>✅ Так (поки в межах предка)</td><td>Viewport (після порогу)</td><td>Sticky nav, table header</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
+```css
+/* Класичний паттерн: absolute всередині relative */
+.card {
+  position: relative; /* контейнер */
+}
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;        /* кут картки */
+}
+
+
+/* sticky: прилипає при скролі */
+.nav {
+  position: sticky;
+  top: 0;             /* поріг прилипання */
+  z-index: 100;
+}
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_model/Introduction_to_the_CSS_box_model" target="_blank" rel="noopener">Box model — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position" target="_blank" rel="noopener">position — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Забув `box-sizing: border-box`</strong> — елемент більший ніж очікувано. Завжди додавай глобальний reset.</li>
+        <li><strong>`absolute` без `relative` предка</strong> — елемент позиціонується від `<html>`, не від батька.</li>
+        <li><strong>Margin collapse</strong> — вертикальні margin сусідніх блоків зливаються (більший поглинає менший). Padding не зливається!</li>
+        <li><strong>`z-index` без position</strong> — z-index працює тільки на елементах з `position` ≠ static (або flex/grid дітях).</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>DevTools → Elements → вибери будь-який елемент → вкладка Computed → внизу діаграма Box Model. Перевір значення padding, border, margin.</li>
+        <li>Створи `.box` шириною 200px, padding 20px. Порівняй фактичну ширину з `content-box` і `border-box`.</li>
+        <li>Зроби картку з badge у правому верхньому куті через `position: absolute`.</li>
+        <li>Додай sticky шапку: при скролі вона прилипає зверху.</li>
+        <li>Поясни що станеться якщо двом блокам дати `margin-bottom: 20px` і `margin-top: 30px` — яка відстань між ними?</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Яка різниця між `content-box` і `border-box`?</li>
+        <li>Що таке margin collapse і коли він не відбувається?</li>
+        <li>Елемент `position: absolute` — від чого він позиціонується?</li>
+        <li>Коли використовувати `fixed` vs `sticky`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Поясни Box Model»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це padding, margin і border» — без пояснення порядку і взаємодії.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Чотири шари зсередини: content → padding (внутрішній відступ) → border (рамка) → margin (зовнішній відступ). За замовчуванням `width` задає тільки content. `border-box` включає padding і border — зручніше для верстки.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке position sticky?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це як fixed» — не розкрита ключова різниця.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Спочатку поводиться як `relative` (в потоці). При досягненні порогу (наприклад `top: 0`) прилипає як `fixed`. Але прокручується разом з батьком, коли той виходить з viewport — на відміну від `fixed`, який завжди у viewport.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>DevTools: наведи на елемент в Elements панелі — у viewport з'явиться кольорова overlay з box model (синій=content, зелений=padding, помаранчевий=margin).</li>
+        <li>`outline` на відміну від `border` не займає місця в box model — корисно для дебагу без зміщення.</li>
+        <li>Margin collapse не відбувається у flex/grid контейнерах, при наявності padding/border у батька, або якщо батько має `overflow` ≠ visible.</li>
+        <li>`inset: 0` — shorthand для `top: 0; right: 0; bottom: 0; left: 0`. Зручно для absolute overlay.</li>
+      </ul>
+    </section>

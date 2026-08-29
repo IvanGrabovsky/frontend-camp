@@ -1,61 +1,153 @@
-<Card className="p-6 mb-6">
-  ## Що це таке?
-  **Селектор** — шаблон, яким CSS вибирає HTML-елементи. **Специфічність** — система підрахунку «ваги» правил. При конфлікті двох правил виграє те з вищою специфічністю. Розуміння позбавляє від хаотичних `!important`.
-</Card>
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Селектор</strong> — шаблон, яким CSS вибирає HTML-елементи. <strong>Специфічність</strong> — система підрахунку «ваги» правил. При конфлікті двох правил виграє те з вищою специфічністю. Розуміння позбавляє від хаотичних `!important`.</p>
+    </article>
 
-<Alert className="mb-6 bg-blue-50/50 border-blue-200">
-  <span className="text-xl mr-2">🎯</span>
-  <div className="flex flex-col">
-    <strong>Аналогія зі знижками</strong>
-    <p>Кожне правило — знижкова картка. Специфічність — рівень: золота бʼє срібну, срібна — бронзову. При однаковому рівні виграє <em>пізніша</em> в файлі (каскад). `!important` — VIP-картка.</p>
-  </div>
-</Alert>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🎯</span> Аналогія зі знижками</div>
+      <p>Кожне правило — знижкова картка. Специфічність — рівень: золота бʼє срібну, срібна — бронзову. При однаковому рівні виграє <em>пізніша</em> в файлі (каскад). `!important` — VIP-картка.</p>
+    </section>
 
-## Типи селекторів
+    <section>
+      <h2>Типи селекторів</h2>
 
-<div className="code-block my-4">
-  <div className="code-block__head"><span className="code-block__dots"><span></span><span></span><span></span></span></div>
-  ```css
-  /* Тег — 0-0-1 */
-  p { color: gray; }
+      
 
-  /* Клас — 0-1-0 */
-  .btn { padding: 8px 16px; }
+```css
+/* Тег — 0-0-1 */
+p { color: gray; }
 
-  /* ID — 1-0-0 */
-  #header { position: sticky; top: 0; }
+/* Клас — 0-1-0 */
+.btn { padding: 8px 16px; }
 
-  /* Атрибут — 0-1-0 */
-  input[type="text"] { border: 1px solid #ccc; }
+/* ID — 1-0-0 */
+#header { position: sticky; top: 0; }
 
-  /* Псевдоклас — 0-1-0 */
-  a:hover { text-decoration: underline; }
-  li:first-child { font-weight: bold; }
+/* Атрибут — 0-1-0 */
+input[type="text"] { border: 1px solid #ccc; }
 
-  /* Псевдоелемент — 0-0-1 */
-  .btn::after { content: " →"; }
+/* Псевдоклас — 0-1-0 */
+a:hover { text-decoration: underline; }
+li:first-child { font-weight: bold; }
 
-  /* Комбінатори (не додають специфічності) */
-  .nav > li   { display: inline-block; }  /* прямий нащадок */
-  .card + .card { margin-top: 1rem; }    /* суміжний брат */
-  ```
-</div>
+/* Псевдоелемент — 0-0-1 */
+.btn::after { content: " →"; }
 
-<Alert variant="destructive" className="my-6">
-  <span className="text-xl mr-2">⚠️</span>
-  <div className="flex flex-col">
-    <strong>Типові помилки</strong>
-    <ul className="list-disc ml-4 mt-2">
-      <li><strong>Стилізація по ID:</strong> ID важко перевизначити. Краще використовувати класи.</li>
-      <li><strong>Надмірна вкладеність:</strong> `.nav ul li a` — повільно і важко підтримувати. Краще `.nav-link`.</li>
-      <li><strong>Зловживання `!important`:</strong> Це вбиває каскад. Використовуй тільки для утиліт (наприклад, `.hidden`).</li>
-    </ul>
-  </div>
-</Alert>
+/* Комбінатори (не додають специфічності) */
+.nav > li   { display: inline-block; }  /* прямий нащадок */
+.card + .card { margin-top: 1rem; }    /* суміжний брат */
+```
 
-## Практика
 
-1. Знайди елемент `<button id="submit" class="btn primary">`. Напиши селектор, що змінить його колір.
-2. Що виграє: `#app .text` чи `div.container p.text`?
 
-<Badge variant="outline" className="mt-4">Спробуй самостійно!</Badge>
+      <h2>Специфічність — (A, B, C)</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Тип</th><th>A</th><th>B</th><th>C</th></tr></thead>
+          <tbody>
+            <tr><td>Inline style</td><td>1</td><td>0</td><td>0</td></tr>
+            <tr><td>ID</td><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>Клас / псевдоклас / атрибут</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><td>Тег / псевдоелемент</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><td>`*` / комбінатори</td><td>0</td><td>0</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
+```css
+/* Порахуй специфічність */
+p              /* 0-0-1 */
+.text          /* 0-1-0 — перемагає над p */
+#main p        /* 1-0-1 */
+#main .link    /* 1-1-0 — перемагає над #main p */
+```
+
+
+
+      <h2>Сучасні інструменти</h2>
+      
+
+```css
+/* :is() — групування, бере специфічність найважчого аргументу */
+:is(header, main, footer) a { color: blue; }
+
+/* :where() — те саме, але специфічність 0-0-0 */
+:where(h1, h2, h3) { margin-top: 0; }
+
+/* :not() — виключення */
+.list li:not(:last-child) { border-bottom: 1px solid #eee; }
+
+/* :has() — «батьківський» селектор (CSS 2023) */
+.card:has(img) { padding: 0; }
+form:has(input:invalid) { border-color: red; }
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity" target="_blank" rel="noopener">Specificity — MDN</a></li>
+          <li><a href="https://specificity.keegan.st/" target="_blank" rel="noopener">Specificity Calculator</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Зловживання ID</strong> — 1-0-0 дуже важко перебити. Для стилів — завжди класи.</li>
+        <li><strong>`!important` як «рішення»</strong> — симптом, не ліки. Веде до більших конфліктів.</li>
+        <li><strong>Довгі селектори</strong> — `.sidebar .nav ul li a.active` важко перебити. Дай елементу власний клас.</li>
+        <li><strong>`:is(#id, p)` має специфічність 1-0-0</strong> — навіть коли застосовується до `p`.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Є `<button className="btn" id="submit">`. Три правила: для тегу, класу, ID — різні кольори. Яке перемагає? Чи змінить порядок результат?</li>
+        <li>Напиши `p { color: blue; }` і `.text { color: red; }`. Елемент `<p className="text">` — якого кольору? Тепер додай `!important` до `p`.</li>
+        <li>Перепиши `header a, main a, footer a` через `:is()`.</li>
+        <li>Стилізуй всі `<li>` крім останнього через `:not(:last-child)`.</li>
+        <li>Порахуй специфічність: <code>div.wrapper > p:first-child::before</code>. Перевір на <a href="https://specificity.keegan.st/" target="_blank" rel="noopener">specificity.keegan.st</a>.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Яка специфічність у `.nav ul li.active a`?</li>
+        <li>Що таке каскад і як вирішуються конфлікти при однаковій специфічності?</li>
+        <li>Різниця між `:is()` і `:where()`?</li>
+        <li>Навіщо уникати ID в CSS?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке специфічність CSS?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «ID важливіший за клас» — без механізму.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Три числа (A, B, C): A — ID, B — клас/псевдоклас/атрибут, C — тег/псевдоелемент. При конфлікті — порівнюємо зліва. Inline style: (1,0,0,0).</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що нового в CSS-селекторах?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Мовчання.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `:is()` і `:where()` для групування (різна специфічність), `:has()` — батьківський селектор (CSS 2023), нативний CSS Nesting.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>DevTools → Elements → Styles: Chrome 121+ показує специфічність при наведенні на селектор.</li>
+        <li>CSS Nesting нативно: `.card { & .title { color: red; } }` — без SCSS.</li>
+        <li>`:where()` з нульовою специфічністю ідеальний для reset-стилів.</li>
+        <li>`:focus-visible` — outline тільки при навігації клавіатурою, не при кліку.</li>
+      </ul>
+    </section>

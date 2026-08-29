@@ -1,0 +1,168 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Браузер — це найбільш атакована програма на вашому комп'ютері. Він щодня виконує код із тисяч різних сайтів і при цьому повинен захищати ваші паролі, банківські дані та приватне листування. Для цього в браузерах вбудовано багатошарову модель безпеки.</p>
+      <p>Розуміння цієї моделі критично важливе для кожного веброзробника — і для того щоб не зламати захист користувача у власному коді, і для того щоб захистити свій застосунок від атак ззовні.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🏦</span> Браузер — як банк</div>
+      <p>Уяви браузер як банківський офіс, де кожен клієнт (сайт) сидить у своїй окремій кабінці зі звуконепроникними стінками. Касир (браузер) передає гроші (дані) між кабінками тільки якщо обидві сторони явно підписали дозвіл. А служба безпеки (Permissions API) питає тебе щоразу, перш ніж дозволити комусь зайти до іншої кабінки.</p>
+    </section>
+
+    <section>
+      <h2>Same-Origin Policy (SOP) — фундамент ізоляції</h2>
+      <p>Це правило: скрипт, завантажений з одного «джерела» (origin = схема + домен + порт), <strong>не може</strong> читати дані з іншого джерела без явного дозволу.</p>
+
+      
+
+```text
+// Origin = scheme + host + port
+https://example.com:443  ← ці два — РІЗНІ origins
+https://api.example.com:443
+
+// Дозволено: запит на той самий origin
+fetch('/api/data')  // той самий домен — ОК
+
+// Заблоковано: cross-origin без CORS-заголовків
+fetch('https://api.other-site.com/data')  // ❌ CORS error
+```
+
+
+
+      <h2>CORS — контрольований кросс-доменний доступ</h2>
+      
+
+```text
+// Сервер явно дозволяє доступ через HTTP-заголовки:
+Access-Control-Allow-Origin: https://my-app.com
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Headers: Content-Type, Authorization
+
+// Wildcard — дозволяє всім (небезпечно для приватних API)
+Access-Control-Allow-Origin: *  // ⚠️ тільки для публічних ресурсів
+```
+
+
+
+      <h2>Content Security Policy (CSP) — захист від XSS</h2>
+      <p>CSP — заголовок (або meta-тег), що вказує браузеру <em>звідки</em> можна завантажувати ресурси. Це унеможливлює виконання впровадженого зловмисниками коду.</p>
+      
+
+```text
+# HTTP-заголовок на сервері
+Content-Security-Policy:
+  default-src 'self';          /* лише свій домен */
+  script-src 'self' cdn.example.com;  /* скрипти тільки звідси */
+  img-src *;                   /* зображення — будь-де */
+  style-src 'self' 'unsafe-inline'; /* стилі + inline */
+  object-src 'none';           /* Flash та plugins — заблоковано */
+```
+
+
+
+      <h2>Permissions API — явна згода користувача</h2>
+      <p>Сучасні браузерні API, що мають доступ до чутливих ресурсів (<strong>камера, мікрофон, геолокація, буфер обміну</strong>), вимагають явного дозволу користувача. Без нього API просто не працює.</p>
+      
+
+```text
+// Перевірка поточного стану дозволу
+const result = await navigator.permissions.query({ name: 'clipboard-read' });
+console.log(result.state); // 'granted' | 'denied' | 'prompt'
+
+// Запит дозволу (спрацьовує тільки в відповідь на дію користувача)
+document.querySelector('#btn').addEventListener('click', async () => {
+  const text = await navigator.clipboard.readText(); // покаже діалог
+});
+```
+
+
+
+      <h2>Нова категорія загроз: «безпечні» API як вектори атак</h2>
+      <p>Протягом останніх 5 років у браузери додали десятки нових API для покращення UX. <strong>Кожен з них відкрив нові, несподівані вектори атак.</strong> У наступних уроках ми розглянемо 10 таких API та конкретні способи їх зловживання.</p>
+
+      <div className="syntax-params">
+        <h4>Категорії загроз, які ми вивчимо</h4>
+        <table className="params-table">
+          <thead><tr><th>Категорія</th><th>API</th><th>Тип загрози</th></tr></thead>
+          <tbody>
+            <tr><td>APIs дозволів</td><td>Web Locks, Web Share, Clipboard</td><td>DoS, соціальна інженерія, pastejacking</td></tr>
+            <tr><td>Device APIs</td><td>Vibration, Wake Lock, EyeDropper, PiP</td><td>Фінгерпринтинг, UI spoofing, pixel stealing</td></tr>
+            <tr><td>CSS & Пасивні</td><td>env(), lazy-loading, smooth scroll</td><td>Side-channel, JS-free tracking</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Офіційна документація та ресурси</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy" target="_blank" rel="noopener noreferrer">Same-Origin Policy — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener noreferrer">CORS — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP" target="_blank" rel="noopener noreferrer">Content Security Policy — MDN</a></li>
+          <li><a href="https://web.dev/articles/permissions-api" target="_blank" rel="noopener noreferrer">Permissions API — web.dev</a></li>
+          <li><a href="https://www.w3.org/TR/permissions/" target="_blank" rel="noopener noreferrer">Permissions API — W3C Specification</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Важливі принципи</div>
+      <ul>
+        <li><strong>HTTPS — обов'язковий</strong>: більшість чутливих API (геолокація, камера, clipboard, wake lock) недоступні на HTTP. Браузер блокує їх навіть без помилки в коді.</li>
+        <li><strong>Дозволи — тільки за дією користувача</strong>: запит дозволу поза обробником кліку (або іншої user gesture) автоматично відхиляється браузером.</li>
+        <li><strong>SOP не захищає від всього</strong>: CSRF-атаки (Cross-Site Request Forgery) можливі навіть при SOP — для захисту потрібні CSRF-токени та `SameSite` cookies.</li>
+        <li><strong>CSP — не срібна куля</strong>: `'unsafe-inline'` повністю нівелює захист CSP від XSS. Якщо є такий рядок — CSP фактично не захищає.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Практичні завдання для закріплення матеріалу:</p>
+      <ol>
+        <li>Відкрий DevTools (F12) → вкладка Application → Storage. Порівняй що бачать скрипти з різних origin на сторінці з iframe.</li>
+        <li>Переглянь заголовки відповіді будь-якого великого сайту (google.com, github.com) у DevTools → Network → будь-який запит → Response Headers. Знайди `Content-Security-Policy`.</li>
+        <li>Перевір стан дозволів у браузері: `chrome://settings/content` — які сайти мають доступ до чого?</li>
+        <li>Запусти `navigator.permissions.query({ name: 'geolocation' })` у консолі. Що повертає `state`?</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Що таке «origin» в контексті SOP? Із чого він складається?</li>
+        <li>Яка різниця між CORS і CSP? Що кожен захищає?</li>
+        <li>Чому більшість чутливих API вимагають HTTPS і user gesture?</li>
+        <li>Що таке CSRF-атака і чому SOP її не зупиняє?</li>
+        <li>Що означає `Access-Control-Allow-Origin: *` і коли це небезпечно?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке CORS і навіщо він?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «CORS — це помилка яку треба вимкнути» або «ставлю `Access-Control-Allow-Origin: *` і все працює».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> CORS — механізм, що дозволяє серверу контролювати які сторонні сайти можуть робити cross-origin запити. `*` підходить для публічних CDN, але для API що повертає дані користувача — треба вказувати конкретні дозволені origins.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке XSS і як захиститись?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Екранувати всі спецсимволи» — необхідно, але недостатньо.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> XSS — впровадження шкідливого скрипту на сторінку. Захист: (1) екранування виводу (HTML entity encoding), (2) CSP-заголовок що блокує inline-скрипти та сторонні джерела, (3) `HttpOnly` cookies щоб JS не міг вкрасти сесію.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Чому браузер блокує запит до API?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Не знаю, disabled CORS у браузері через розширення».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Браузер блокує cross-origin запити без відповідних CORS-заголовків на сервері. Рішення: налаштувати CORS на сервері, не в браузері. Вимкнення CORS у браузері — тільки для локальної розробки і ніколи в продакшені.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` відкривають доступ до `SharedArrayBuffer` і вищоточних таймерів — але повністю ізолюють вкладку від сторонніх iframe.</li>
+        <li><strong>Spectre (2018)</strong> — вразливість CPU, що дозволяла JavaScript зчитувати пам'ять інших вкладок. Саме через це браузери знизили точність `performance.now()` і обмежили `SharedArrayBuffer`.</li>
+        <li><a href="https://securityheaders.com/" target="_blank" rel="noopener">securityheaders.com</a> — вставте URL і отримайте оцінку налаштування HTTP-заголовків безпеки вашого сайту за 30 секунд.</li>
+        <li>Chrome DevTools → вкладка Security → показує деталі TLS-з'єднання, сертифікату і попередження про mixed content прямо для поточної сторінки.</li>
+      </ul>
+    </section>

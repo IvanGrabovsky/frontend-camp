@@ -1,0 +1,172 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>HTTP (HyperText Transfer Protocol)</strong> — протокол прикладного рівня без збереження стану (stateless), за яким клієнт (браузер) і сервер спілкуються текстовими або бінарними повідомленнями за моделлю «запит — відповідь» (Request — Response).</p>
+      <p><strong>HTTPS</strong> — це той самий HTTP, але загорнутий у криптографічний шар TLS/SSL (порт 443), що захищає трафік від перехоплення та модифікації.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🍽️</span> Аналогія з рестораном</div>
+      <p>Клієнт — відвідувач, що передає офіціанту бланк замовлення (HTTP Request: метод «Принести», назва страви, побажання). Офіціант повертає страву з чеком (HTTP Response: статус `200 OK` або `404 Немає в меню`). HTTPS — це офіціант у броньованому сейфі, щоб шпигуни не підгледіли номер вашої картки.</p>
+    </section>
+
+    <section>
+      <h2>Анатомія HTTP-запиту (Request)</h2>
+      
+
+```text
+// 1. Стартовий рядок (Request Line): Метод · Шлях · Версія протоколу
+POST /api/v1/users HTTP/1.1
+// 2. Заголовки (Headers): Ключ-значення метаінформації
+Host: api.example.com
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+Content-Length: 48
+Authorization: Bearer eyJhbGciOi...
+// 3. Порожній рядок (обов'язковий розділювач)
+
+// 4. Тіло запиту (Body) — опціонально для POST/PUT/PATCH
+{"name": "Олександр", "email": "alex@dev.ua"}
+```
+
+
+
+      <h2>Анатомія HTTP-відповіді (Response)</h2>
+      
+
+```text
+// 1. Статусний рядок (Status Line): Версія · Код статусу · Пояснення
+HTTP/1.1 201 Created
+// 2. Заголовки відповіді (Response Headers)
+Date: Sun, 23 Aug 2026 18:30:00 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 64
+Set-Cookie: session_id=abc123xyz; HttpOnly; Secure; SameSite=Strict
+Cache-Control: no-store
+Access-Control-Allow-Origin: https://myfrontend.com
+
+// 3. Тіло відповіді (Response Body)
+{"id": 42, "name": "Олександр", "status": "active"}
+```
+
+
+
+      <h2>Основні методи HTTP</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Метод</th><th>Призначення (CRUD)</th><th>Безпечний (Safe)?</th><th>Ідемпотентний?</th><th>Тіло (Body)</th></tr></thead>
+          <tbody>
+            <tr><td>`GET`</td><td>Отримання ресурсу (Read)</td><td>✅ Так (не змінює стан)</td><td>✅ Так</td><td>❌ Немає</td></tr>
+            <tr><td>`POST`</td><td>Створення нового ресурсу (Create)</td><td>❌ Ні</td><td>❌ Ні (дублює записи)</td><td>✅ Так</td></tr>
+            <tr><td>`PUT`</td><td>Повна заміна ресурсу (Update/Replace)</td><td>❌ Ні</td><td>✅ Так</td><td>✅ Так</td></tr>
+            <tr><td>`PATCH`</td><td>Часткове оновлення (Update/Modify)</td><td>❌ Ні</td><td>❌ Зазвичай ні</td><td>✅ Так</td></tr>
+            <tr><td>`DELETE`</td><td>Видалення ресурсу (Delete)</td><td>❌ Ні</td><td>✅ Так</td><td>Опціонально</td></tr>
+            <tr><td>`HEAD`</td><td>Як GET, але повертає лише заголовки</td><td>✅ Так</td><td>✅ Так</td><td>❌ Немає</td></tr>
+            <tr><td>`OPTIONS`</td><td>Перевірка підтримуваних методів (CORS Preflight)</td><td>✅ Так</td><td>✅ Так</td><td>❌ Немає</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Статус-коди HTTP: класи та найважливіші коди</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Діапазон</th><th>Класифікація</th><th>Ключові статус-коди</th></tr></thead>
+          <tbody>
+            <tr><td>`1xx`</td><td>Інформаційні</td><td>`101 Switching Protocols` (апгрейд до WebSocket)</td></tr>
+            <tr><td>`2xx`</td><td>Успіх (Success)</td><td>`200 OK` (успішний GET/POST), `201 Created` (створено новий ресурс), `204 No Content` (виконано без тіла відповіді)</td></tr>
+            <tr><td>`3xx`</td><td>Перенаправлення (Redirection)</td><td>`301 Moved Permanently` (постійний редирект), `302 Found` / `307 Temporary Redirect`, `304 Not Modified` (контент у кеші)</td></tr>
+            <tr><td>`4xx`</td><td>Помилки клієнта (Client Error)</td><td>`400 Bad Request`, `401 Unauthorized` (не залогінений), `403 Forbidden` (немає прав), `404 Not Found`, `405 Method Not Allowed`, `409 Conflict`, `422 Unprocessable Entity`, `429 Too Many Requests` (rate limit)</td></tr>
+            <tr><td>`5xx`</td><td>Помилки сервера (Server Error)</td><td>`500 Internal Server Error`, `502 Bad Gateway` (збій проксі/апстріму), `503 Service Unavailable` (перевантаження), `504 Gateway Timeout`</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Важливі HTTP-заголовки</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Заголовок</th><th>Тип</th><th>Призначення</th></tr></thead>
+          <tbody>
+            <tr><td>`Content-Type`</td><td>Запит / Відповідь</td><td>MIME-тип тіла повідомлення: `application/json`, `text/html`, `multipart/form-data`.</td></tr>
+            <tr><td>`Authorization`</td><td>Запит</td><td>Облікові дані для доступу: `Bearer <token>` або `Basic <base64>`.</td></tr>
+            <tr><td>`Set-Cookie`</td><td>Відповідь</td><td>Встановлює куку: атрибути `HttpOnly` (захист від XSS), `Secure` (тільки по HTTPS), `SameSite` (захист від CSRF).</td></tr>
+            <tr><td>`Cache-Control`</td><td>Запит / Відповідь</td><td>Директиви кешування: `max-age=3600`, `no-cache`, `no-store`, `immutable`.</td></tr>
+            <tr><td>`Access-Control-Allow-Origin`</td><td>Відповідь</td><td>CORS — визначає, які джерела (origins) мають право читати відповідь у браузері.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Еволюція: HTTP/1.1 vs HTTP/2 vs HTTP/3</h2>
+      
+
+```text
+// HTTP/1.1 — Текстовий протокол, 1 TCP-з'єднання = 1 запит одночасно (Head-of-Line blocking на рівні HTTP)
+// HTTP/2   — Бінарний, мультиплексування (сотні запитів через 1 TCP-з'єднання), HPACK стиснення заголовків
+// HTTP/3   — Базується на QUIC (поверх UDP), усуває Head-of-Line blocking на рівні TCP, 0-RTT відновлення
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація та інструменти</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTTP" target="_blank" rel="noopener">HTTP Overview — MDN</a></li>
+          <li><a href="https://httpstatusdogs.com/" target="_blank" rel="noopener">HTTP Status Dogs</a> / <a href="https://http.cat/" target="_blank" rel="noopener">HTTP Cats</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Плутанина `401 Unauthorized` та `403 Forbidden`</strong> — 401 означає «хто ти такий? увійди в систему», 403 означає «я знаю хто ти, але тобі сюди заборонено».</li>
+        <li><strong>Передача конфіденційних даних у GET-запиті</strong> — параметри URL (query string) зберігаються в історії браузера, логах провайдера та серверних логах! Завжди використовуйте POST з шифруванням HTTPS.</li>
+        <li><strong>Плутанина `PUT` та `PATCH`</strong> — PUT замінює сутність повністю (якщо не передали поле, воно занулюється), а PATCH точково змінює лише вказані поля.</li>
+        <li><strong>Ігнорування прапорців безпеки в Cookies</strong> — відсутність `HttpOnly` робить куку вразливою до викрадення через JS (XSS).</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика з cURL та DevTools</div>
+      <ol>
+        <li>Виконай у терміналі `curl -I https://httpbin.org/status/200` — переглянь заголовки відповіді та статус.</li>
+        <li>Відішли POST-запит з JSON: `curl -X POST https://httpbin.org/post -H "Content-Type: application/json" -d '{"framework":"nextjs"}'`.</li>
+        <li>Відкрий DevTools → Network, зроби будь-яку дію на сайті, клікни на запит і знайди: Request Headers, Response Headers, Payload (Body) та Status Code.</li>
+        <li>Знайди у фільтрі Network типи протоколів (h2, h3, http/1.1) для різних сервісів.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що означає поняття «ідемпотентність» методу? Які методи є ідемпотентними, а які — ні?</li>
+        <li>У чому різниця між статусами `301 Moved Permanently` та `302 Found` з точки зору кешування та SEO?</li>
+        <li>Які атрибути заголовка `Set-Cookie` обов'язкові для захищеної аутентифікації і чому?</li>
+        <li>Чому протокол HTTP називають протоколом «без стану» (stateless)? Як веб-додатки зберігають стан користувача?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«У чому різниця між 401 та 403 кодами відповіді?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це обидва коди помилки доступу».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `401 Unauthorized` — проблема автентифікації: користувач не надав валідні креденшали (токен/сесію). `403 Forbidden` — проблема авторизації (прав доступу): користувач успішно залогінений, але його роль (наприклад, звичайний юзер) не дозволяє виконувати адмінські дії.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке ідемпотентність HTTP-методів?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це коли метод працює швидко і без помилок».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Ідемпотентність означає, що багаторазове виконання одного й того ж запиту призводить до однакового стану системи на сервері, що й один запит. GET, PUT, DELETE, HEAD — ідемпотентні (навіть якщо DELETE повертає 404 після першого разу, ресурсу на сервері більше немає). POST — неідемпотентний, оскільки N запитів створять N нових записів.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Статус `304 Not Modified` дозволяє не передавати тіло відповіді заново, якщо хеш ресурсу (ETag) у браузера збігається з серверним.</li>
+        <li>Заголовок `Strict-Transport-Security` (HSTS) змушує браузер спілкуватися з сайтом виключно по HTTPS навіть якщо користувач ввів `http://`.</li>
+        <li>У вкладці Network можна скопіювати будь-який запит як готовий cURL або `fetch()` код (Right click → Copy → Copy as fetch).</li>
+        <li>Заголовок `Sec-CH-UA` у сучасних браузерах поступово замінює громіздкий та застарілий `User-Agent` для Client Hints.</li>
+      </ul>
+    </section>

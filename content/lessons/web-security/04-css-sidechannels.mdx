@@ -1,0 +1,234 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Side-channel атаки</strong> — це спосіб отримати інформацію не прямим доступом до даних, а через вимірювання побічних ефектів: часу виконання, трафіку мережі, фізичних характеристик. У вебі це означає витік даних через <em>невидимі механізми</em> CSS та HTML без жодного рядка JavaScript.</p>
+      <p>Ці атаки особливо підступні: блокування JavaScript через NoScript або CSP <strong>не захищає</strong> від CSS-only вразливостей.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🕵️</span> Аналогія: слідкування через тінь</div>
+      <p>Side-channel — як стежити за кимось не дивлячись прямо на нього, а відслідковуючи його тінь на стіні. Ти не маєш прямого доступу до даних, але непрямі сигнали розкривають секрети.</p>
+    </section>
+
+    <section>
+      <h2>🌐 1. CSS Environment Variables (`env()` та Viewport Segments)</h2>
+      <p>CSS-функція `env()` дає доступ до фізичних розмірів екрана: вирізу камери (notch), сейф-зон, сегментів гнучкого екрана. Ці дані <strong>унікальні для кожної моделі пристрою</strong>.</p>
+
+      
+
+```text
+/* Легітимне використання — safe area для iPhone notch */
+.container {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ⚠️ CSS-only Fingerprinting без JavaScript */
+/* Різні пристрої мають різні значення safe-area-inset */
+/* Зловмисник використовує умовні CSS-правила: */
+@supports (padding: env(safe-area-inset-top)) {
+  .tracker {
+    /* Якщо notch = 44px — це iPhone 14 Pro */
+    /* Завантажуємо фонове зображення-маяк */
+    background-image: url('/track?notch=44px&model=iphone14pro');
+  }
+}
+
+/* Це відправить HTTP-запит на сервер зловмисника
+   навіть якщо JavaScript повністю вимкнений! */
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Доступні env() змінні для fingerprinting</h4>
+        <table className="params-table">
+          <thead><tr><th>Змінна</th><th>Що розкриває</th><th>Точність ідентифікації</th></tr></thead>
+          <tbody>
+            <tr><td>`safe-area-inset-top`</td><td>Висота notch/Dynamic Island</td><td>Висока — унікальна для моделі</td></tr>
+            <tr><td>`safe-area-inset-bottom`</td><td>Висота home indicator</td><td>Середня</td></tr>
+            <tr><td>`viewport-segment-*`</td><td>Конфігурація складаного екрана</td><td>Дуже висока — складані пристрої рідкісні</td></tr>
+            <tr><td>`titlebar-area-*`</td><td>PWA titlebar розміри</td><td>Низька сама по собі</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Браузери обмежують точність env() значень (rounding) — але характеристичні відмінності між моделями залишаються</li>
+          <li>Блокувальники реклами та Privacy Badger перехоплюють підозрілі background-image запити</li>
+          <li>Firefox Resist Fingerprinting рандомізує деякі viewport значення</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>🖼️ 2. Native Lazy-Loading (`loading="lazy"`)</h2>
+      <p>Браузер завантажує lazy-зображення тільки коли вони <em>наближаються</em> до viewport. Момент завантаження можна виміряти через мережевий запит — і це розкриває інформацію про структуру сторінки та поведінку користувача.</p>
+
+      
+
+```text
+<!-- Легітимне використання -->
+<img src="photo.jpg" loading="lazy" alt="Фото" />
+
+<!-- ⚠️ CSS History Sniffing Attack -->
+<!-- Крок 1: Створюємо посилання на сайт що перевіряємо -->
+<a href="https://sensitive-site.com" id="link">...</a>
+
+/* Крок 2: CSS :visited збільшує розмір елемента */
+#link:visited { height: 500px; } /* відвіданий — великий */
+#link          { height: 0; }    /* не відвіданий — невидимий */
+
+<!-- Крок 3: Lazy-зображення розміщено після посилання -->
+<img src="https://tracker.com/pixel.gif" loading="lazy" />
+
+<!-- Якщо :visited = true → блок збільшується → pixel.gif
+     входить у viewport → браузер завантажує → сервер зловмисника
+     отримує запит → знає що користувач відвідував sensitive-site! -->
+```
+
+
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Браузери вже обмежили що CSS може робити для `:visited` — дозволено лише зміну кольорів, не розміру. Але дослідники постійно знаходять обходи</li>
+          <li><a href="https://github.com/nicowillis/sniffly" target="_blank" rel="noopener">Sniffly</a> — відома PoC демонстрація CSS history sniffing (виправлено в сучасних браузерах)</li>
+          <li>Firefox і Chrome постійно посилюють ізоляцію `:visited` після знаходження нових векторів</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>📜 3. CSS Smooth Scroll (`scroll-behavior: smooth`)</h2>
+      <p>Плавний скролинг уповільнює перехід між позиціями. За допомогою вимірювання часу через `IntersectionObserver` можна дізнатись про розмір та наявність прихованого вмісту.</p>
+
+      
+
+```text
+/* Легітимне використання */
+html { scroll-behavior: smooth; }
+
+/* ⚠️ Timing Attack через IntersectionObserver */
+// Якщо smooth scroll активний, час до появи елемента
+// пропорційний відстані скролу → можна виміряти висоту контенту
+const observer = new IntersectionObserver((entries) => {
+  const timeTaken = Date.now() - scrollStart;
+  // timeTaken розкриває розмір сторінки
+  // Якщо блок рекламного трекера заблокований ad-blocker'ом
+  // → він має висоту 0 → скрол швидший → виявляємо ad-blocker
+});
+
+/* ⚠️ Scroll-jacking — утримання на фішинговій сторінці */
+window.addEventListener('scroll', (e) => {
+  // Примусово повертаємо скрол до початку сторінки
+  // Користувач не може «втекти» скролом
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+```
+
+
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Захист</div>
+        <ul>
+          <li>Браузери зменшили точність `Date.now()` і `performance.now()` (до 1ms) — це ускладнює timing attacks але не унеможливлює їх</li>
+          <li>Scroll-jacking порушує UX-принципи і WCAG — правильний захист: ніколи не перехоплюй нативний scroll без явного UX-обгрунтування</li>
+          <li>Для свого сайту: `overscroll-behavior: contain` замість JS-scroll override</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>🔬 Підсумок: ключові теми курсу</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Категорія</th><th>API</th><th>Вектор загрози</th><th>Без JavaScript?</th></tr></thead>
+          <tbody>
+            <tr><td>Permission APIs</td><td>Web Locks</td><td>DoS, Cross-Origin Tracking</td><td>❌</td></tr>
+            <tr><td>Permission APIs</td><td>Web Share</td><td>Payload Distribution, Соціальна інженерія</td><td>❌</td></tr>
+            <tr><td>Permission APIs</td><td>Clipboard</td><td>Pastejacking, Data stealing</td><td>❌</td></tr>
+            <tr><td>Device APIs</td><td>Vibration</td><td>Hardware Fingerprinting, Scareware</td><td>❌</td></tr>
+            <tr><td>Device APIs</td><td>Wake Lock</td><td>Фізична безпека, Resource DoS</td><td>❌</td></tr>
+            <tr><td>Device APIs</td><td>EyeDropper</td><td>Pixel Stealing, Autofill bypass</td><td>❌</td></tr>
+            <tr><td>Device APIs</td><td>PiP</td><td>UI Spoofing, Фішинг</td><td>❌</td></tr>
+            <tr><td>CSS & Passive</td><td>CSS env()</td><td>JS-free Fingerprinting</td><td>✅</td></tr>
+            <tr><td>CSS & Passive</td><td>Lazy Loading</td><td>History Sniffing</td><td>✅</td></tr>
+            <tr><td>CSS & Passive</td><td>Smooth Scroll</td><td>Timing Attack, Scroll-jacking</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>📚 Джерела та ресурси</h2>
+      <p>Матеріал базується на аналізі специфікацій W3C, безпекових досліджень та реальних CVE-записів:</p>
+      <div className="doc-links">
+        <ul>
+          <li><a href="https://www.w3.org/TR/permissions/" target="_blank" rel="noopener noreferrer">W3C Permissions API Specification</a></li>
+          <li><a href="https://web.dev/articles/security-attacks" target="_blank" rel="noopener noreferrer">Browser Security Attacks — web.dev</a></li>
+          <li><a href="https://owasp.org/www-community/attacks/Clickjacking" target="_blank" rel="noopener noreferrer">Clickjacking — OWASP</a></li>
+          <li><a href="https://developer.chrome.com/blog/eyedropper" target="_blank" rel="noopener noreferrer">EyeDropper API — Chrome Blog</a></li>
+          <li><a href="https://coveryourtracks.eff.org/" target="_blank" rel="noopener noreferrer">Cover Your Tracks — EFF (тест fingerprinting)</a></li>
+          <li><a href="https://securityheaders.com/" target="_blank" rel="noopener noreferrer">Security Headers — перевірка HTTP-заголовків вашого сайту</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«CSS не може бути небезпечним»</strong>: CSS здатен відправляти мережеві запити (background-image), вимірювати час (через JS + IntersectionObserver), змінювати розміри елементів залежно від стану сторінки.</li>
+        <li><strong>«NoScript захищає від всього»</strong>: CSS-only атаки (env() fingerprinting, lazy loading timing) не потребують JavaScript взагалі.</li>
+        <li><strong>Ігнорування side-channel в code review</strong>: запитання «чи цей код може розкрити інформацію через побічні ефекти?» має бути частиною security review.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Завдання для закріплення матеріалу:</p>
+      <ol>
+        <li>Відкрий <a href="https://coveryourtracks.eff.org/" target="_blank" rel="noopener">coveryourtracks.eff.org</a> і подивись свій fingerprint. Яка його унікальність?</li>
+        <li>Перевір свій сайт (або будь-який сайт) на <a href="https://securityheaders.com/" target="_blank" rel="noopener">securityheaders.com</a>. Яка оцінка? Які заголовки відсутні?</li>
+        <li>Знайди у DevTools Network вкладці запити на `background-image` що завантажуються з зовнішніх доменів — це потенційні tracking пікселі.</li>
+        <li>Вимкни JS у DevTools (Settings → Debugger → Disable JavaScript) і перевір чи блокується відстеження на youtube.com або twitter.com.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Що таке side-channel атака і чим вона відрізняється від прямого доступу до даних?</li>
+        <li>Яким чином CSS env() може відстежувати користувача без JavaScript?</li>
+        <li>Поясни механізм History Sniffing через lazy-loading та CSS :visited.</li>
+        <li>Що таке scroll-jacking і як він порушує UX та безпеку?</li>
+        <li>Яка спільна риса CSS-only атак, що робить їх особливо небезпечними?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Які є CSS-only вразливості?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «CSS не може бути вразливим, він тільки для стилів».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> CSS може: (1) відправляти мережеві запити через `background-image: url()` — що дозволяє JS-free tracking через `env()` fingerprinting; (2) зміняти розміри залежно від стану (:visited, :checked) і цим впливати на те які lazy-resources завантажуються; (3) Timing attacks через smooth scroll і IntersectionObserver.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що перевіряти в security review фронтенду?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Тільки XSS і CSRF» — неповна відповідь.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Чеклист: (1) CSP-заголовок — блокує XSS, (2) CORS — тільки дозволені origins, (3) SameSite cookies — проти CSRF, (4) Subresource Integrity для CDN-скриптів, (5) зовнішні `background-image` запити — tracking пікселі, (6) дозволи браузера — які запитуємо і навіщо, (7) HTTP Security Headers — `securityheaders.com` дасть оцінку.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Специфікація <strong>CSS Containment</strong> (`contain: content`) ізолює елемент від зовнішнього layout впливу — це зменшує деякі side-channel витоки що залежать від розміру елементів.</li>
+        <li><strong>Privacy Budget</strong> — пропозиція W3C: браузер відстежує скільки "приватної інформації" вже розкрито скриптами та CSS, і блокує нові запити що перевищують ліміт.</li>
+        <li>Двофакторна автентифікація робить useless крадіжку паролів через pastejacking або clipboard reading — навіть якщо пароль вкрадено, аккаунт залишається захищеним.</li>
+        <li>Chrome <strong>Privacy Sandbox</strong> та <strong>Topics API</strong> — спроба Google замінити cross-site tracking на less invasive альтернативи з вбудованим privacy budget.</li>
+      </ul>
+    </section>

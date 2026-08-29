@@ -1,0 +1,109 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Методи `unshift()` та `shift()` призначені для роботи з <strong>початком (нульовим індексом) масиву</strong>. Вони є дзеркальними аналогами до `push()` та `pop()`, але працюють з протилежного кінця.</p>
+      <p>У комбінації `push()` + `shift()` вони утворюють класичну структуру даних <strong>Черга (Queue / FIFO — First In, First Out)</strong>: перший прийшов — перший пішов.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🎫</span> Аналогія з чергою до каси</div>
+      <p>`unshift()` — позачерговий відвідувач стає на самий початок черги перед усіма, змушуючи кожного зробити крок назад. `shift()` — перша людина в черзі купує квиток і виходить, а вся черга робить крок уперед (всі індекси зміщуються).</p>
+    </section>
+
+    <section>
+      <h2>Синтаксис та поведінка</h2>
+      
+
+```javascript
+// 1. unshift() — додає елементи на ПОЧАТОК масиву і ПОВЕРТАЄ НОВУ ДОВЖИНУ
+const queue = ['Ольга', 'Тарас'];
+const len = queue.unshift('VIP-Гість');
+console.log(len);   // 3 (число, нова довжина)
+console.log(queue); // ['VIP-Гість', 'Ольга', 'Тарас']
+
+// Можна передати кілька елементів одразу (вони вставляються блоком):
+queue.unshift('Гість 1', 'Гість 2');
+
+// 2. shift() — видаляє ПЕРШИЙ елемент (з індексом 0) і ПОВЕРТАЄ ЙОГО
+const served = queue.shift();
+console.log(served); // 'Гість 1' (видалене значення)
+console.log(queue);  // ['Гість 2', 'VIP-Гість', 'Ольга', 'Тарас']
+```
+
+
+
+      <h2>Параметри та Big-O продуктивність</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Метод</th><th>Дія</th><th>Що повертає?</th><th>Чи мутує масив?</th><th>Складність (Big-O)</th></tr></thead>
+          <tbody>
+            <tr><td>`array.unshift(...items)`</td><td>Вставляє на початок (індекс 0)</td><td>Нову довжину (`number`)</td><td>✅ Так</td><td>🐢 `O(n)` (повільно)</td></tr>
+            <tr><td>`array.shift()`</td><td>Видаляє перший елемент (індекс 0)</td><td>Видалений елемент (або `undefined`)</td><td>✅ Так</td><td>🐢 `O(n)` (повільно)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Чому shift/unshift значно повільніші за push/pop?</h2>
+      <p>Масиви в пам'яті зберігаються як послідовний блок індексів. Коли ви видаляєте або додаєте елемент на початок масиву розміром 100 000 елементів, JavaScript змушений <strong>пересунути кожен окремий елемент на один індекс у пам'яті ($O(n)$ операцій)</strong>. Саме тому на великих масивах завжди надають перевагу роботі з кінцем (`push/pop`).</p>
+
+      <div className="doc-links">
+        <h4>Документація MDN</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift" target="_blank" rel="noopener noreferrer">Array.prototype.unshift() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/shift" target="_blank" rel="noopener noreferrer">Array.prototype.shift() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Порядок при роздільному виклику unshift</strong> — `arr.unshift('A'); arr.unshift('B');` дасть `['B', 'A']`! Якщо викликати разом: `arr.unshift('A', 'B')`, порядок збережеться: `['A', 'B']`.</li>
+        <li><strong>Використання `shift()` для перебору великого масиву</strong> — цикл `while(arr.length) { arr.shift(); }` має квадратичну складність $O(n^2)$ і «повісить» вкладку на великих даних. Використовуйте звичайний `for` або `for...of`.</li>
+        <li><strong>Мутація стану в React</strong> — ніколи не робіть `state.unshift(item)`. Використовуйте новий масив: `setItems([newItem, ...items])`.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи чергу друку документів: `const printQueue = ['doc1.pdf', 'photo.png']`.</li>
+        <li>Додай новий терміновий документ на початок черги за допомогою `unshift()`.</li>
+        <li>Обслугуй документ за допомогою `shift()`: виведи повідомлення «Друкується [назва]».</li>
+        <li>Напиши імутабельний еквівалент для додавання на початок без мутації вихідного масиву через spread-синтаксис: `const newArr = [newItem, ...oldArr]`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>У чому фундаментальна різниця між структурами даних Стек (LIFO) та Черга (FIFO)?</li>
+        <li>Чому `shift()` має часову складність $O(n)$, тоді як `pop()` працює за $O(1)$?</li>
+        <li>Що станеться, якщо викликати `arr.shift()` на порожньому масиві?</li>
+        <li>Як додати елемент на початок масиву в React, не порушуючи принцип незмінності стану (immutability)?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Чому shift/unshift повільніші за push/pop і яка їхня асимптотична складність?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Вони працюють однаково швидко, різниці немає».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `push/pop` мають складність $O(1)$, оскільки змінюють лише останню комірку і властивість `length`. `shift/unshift` мають складність $O(n)$, тому що при зміні нульового індексу V8 двигун повинен зсунути всі наступні $N$ елементів масиву в пам'яті на одну позицію ліворуч чи праворуч.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як реалізувати Чергу (Queue) в JavaScript?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Через unshift + pop».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Черга працює за принципом FIFO (First In, First Out). Реалізується парою методів `push()` (додати в кінець черги) + `shift()` (взяти з початку черги). Для високонавантажених систем із мільйонами елементів замість масиву використовують двозв'язні списки або кільцеві буфери (Ring Buffer), щоб уникнути $O(n)$ оверхеду від `shift()`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>`[first, ...rest] = arr` — деструктуризація масиву дозволяє отримати перший елемент і залишок без мутації вихідного масиву.</li>
+        <li>Якщо передати в `unshift(1, 2, 3)` кілька аргументів, вони вставляться строго у вказаному порядку: `[1, 2, 3, ...старі_елементи]`.</li>
+        <li>Метод `arr.slice(1)` є чистою (імутабельною) заміною `shift()`, яка повертає новий масив без першого елемента.</li>
+      </ul>
+    </section>

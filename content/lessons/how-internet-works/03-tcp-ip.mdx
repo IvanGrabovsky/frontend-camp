@@ -1,0 +1,140 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>TCP/IP</strong> — набір протоколів, на якому базується весь інтернет. TCP (Transmission Control Protocol) забезпечує надійну доставку даних: кожен пакет підтверджується, втрачені — перепосилаються. IP (Internet Protocol) адресує й маршрутизує пакети між мережами.</p>
+      <p>Модель <strong>OSI</strong> — теоретична семирівнева модель мережевих комунікацій. TCP/IP — практична реалізація, де рівні об'єднані.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Аналогія з поштою</div>
+      <p>IP — це адреса на конверті (знає куди доставити). TCP — це кур'єрська служба з підтвердженням: отримувач підписує квитанцію за кожен пакет. Якщо пакет загубився — кур'єр привезе знову.</p>
+    </section>
+
+    <section>
+      <h2>Трьохстороннє рукостискання (3-way handshake)</h2>
+
+      
+
+```text
+// TCP з'єднання між клієнтом і сервером
+Клієнт                    Сервер
+  │──── SYN ────────────────▶│  (1) «Хочу з'єднатися»
+  │◀─── SYN-ACK ────────────│  (2) «Окей, підтверджую, теж хочу»
+  │──── ACK ────────────────▶│  (3) «Підтверджую твоє підтвердження»
+  │                          │
+  │═══════ Дані ════════════▶│  З'єднання встановлено
+```
+
+
+
+      <h2>Модель OSI vs TCP/IP</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>OSI рівень</th><th>TCP/IP рівень</th><th>Протоколи / приклади</th></tr></thead>
+          <tbody>
+            <tr><td>7. Прикладний</td><td rowspan="3">Прикладний</td><td>HTTP, HTTPS, DNS, FTP, WebSocket</td></tr>
+            <tr><td>6. Представлення</td><td>TLS/SSL, JSON, XML</td></tr>
+            <tr><td>5. Сесійний</td><td>TLS (частково), cookies</td></tr>
+            <tr><td>4. Транспортний</td><td>Транспортний</td><td>TCP, UDP — порти 0–65535</td></tr>
+            <tr><td>3. Мережевий</td><td>Інтернет</td><td>IP (IPv4/IPv6), ICMP, роутери</td></tr>
+            <tr><td>2. Канальний</td><td rowspan="2">Мережевий доступ</td><td>Ethernet, Wi-Fi, MAC-адреси</td></tr>
+            <tr><td>1. Фізичний</td><td>Кабелі, сигнали, радіохвилі</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>TCP vs UDP</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Характеристика</th><th>TCP</th><th>UDP</th></tr></thead>
+          <tbody>
+            <tr><td>Надійність</td><td>✅ Гарантована доставка</td><td>❌ «Вистрілив і забув»</td></tr>
+            <tr><td>Порядок пакетів</td><td>✅ Збережений</td><td>❌ Довільний</td></tr>
+            <tr><td>Швидкість</td><td>⚠️ Повільніший (overhead)</td><td>✅ Швидший</td></tr>
+            <tr><td>З'єднання</td><td>Так (handshake)</td><td>Ні (connectionless)</td></tr>
+            <tr><td>Використання</td><td>HTTP, email, файли</td><td>DNS, відео-стрімінг, ігри</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Порти</h2>
+      
+
+```text
+// Стандартні порти
+HTTP   → 80      HTTPS   → 443
+DNS    → 53      SSH     → 22
+FTP    → 21      SMTP    → 25
+MySQL  → 3306    PostgreSQL → 5432
+Redis  → 6379    MongoDB → 27017
+// Діапазони
+0–1023   — системні (Well-known)
+1024–49151 — зареєстровані (Registered)
+49152–65535 — динамічні / приватні
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Glossary/TCP" target="_blank" rel="noopener">TCP — MDN Glossary</a></li>
+          <li><a href="https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/" target="_blank" rel="noopener">OSI Model — Cloudflare</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«TCP і IP — одне і те ж»</strong> — ні. IP маршрутизує пакети, TCP забезпечує надійність. Вони на різних рівнях.</li>
+        <li><strong>«HTTP/3 використовує TCP»</strong> — ні. HTTP/3 побудований на QUIC (поверх UDP) для зменшення затримок.</li>
+        <li><strong>«Порт == IP-адреса»</strong> — порт ідентифікує процес на хості, IP — сам хост.</li>
+        <li><strong>«OSI використовується на практиці»</strong> — OSI лише концептуальна модель. Реально використовується TCP/IP стек.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>DevTools → Network → вибери будь-який запит → вкладка Timing. Знайди «Initial connection» — це TCP handshake.</li>
+        <li>Термінал: `netstat -an | grep ESTABLISHED` — побачиш активні TCP-з'єднання з портами.</li>
+        <li>Термінал: <code>curl -v https://example.com 2>&amp;1 | head -30</code> — побач «Connected to» і «SSL handshake».</li>
+        <li>Поясни колезі: чому YouTube використовує UDP для відео, але TCP для завантаження файлів.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Поясни TCP 3-way handshake покроково.</li>
+        <li>Яка різниця між TCP і UDP? Коли який вибирати?</li>
+        <li>Що таке порт і навіщо він потрібен?</li>
+        <li>Назви 7 рівнів OSI і відповідний рівень у TCP/IP моделі.</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Поясни TCP handshake»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Клієнт підключається до сервера» — занадто абстрактно.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Три кроки: SYN (клієнт ініціює), SYN-ACK (сервер підтверджує і відповідає), ACK (клієнт підтверджує). Після цього з'єднання встановлено і можна передавати дані.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Чому HTTP/3 швидший за HTTP/2?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Він новіший» — не розкрито причину.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> HTTP/2 над TCP страждає від head-of-line blocking: втрата одного пакета блокує всі стріми. HTTP/3 над QUIC (UDP) вирішує це — кожен стрім незалежний, втрата пакета в одному не блокує інші.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>`tcpdump -i any port 80` — перехоплення HTTP-пакетів у реальному часі (потребує sudo).</li>
+        <li>Wireshark — графічний аналізатор пакетів. Можна побачити кожен SYN, SYN-ACK, ACK наочно.</li>
+        <li>HTTP/3 і QUIC: Chrome DevTools → Network → фільтр «h3» — запити через HTTP/3.</li>
+        <li>`ss -tulnp` (Linux) або `lsof -i` (Mac) — які процеси слухають які порти.</li>
+      </ul>
+    </section>

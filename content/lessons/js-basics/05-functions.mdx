@@ -1,0 +1,109 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Функція</strong> — іменований блок коду що виконує певну задачу. JavaScript має кілька синтаксисів: function declaration, function expression, та <strong>arrow functions</strong> (ES6). Концепція <strong>замикання</strong> (closure) — одна з найважливіших в JS.</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">⚙️</span> Аналогія: рецепт</div>
+      <p>Функція — як рецепт: приймає інгредієнти (параметри), виконує кроки (тіло) і повертає результат. Замикання — як кухар що «пам'ятає» секретний інгредієнт навіть коли виходить з кухні.</p>
+    </section>
+    <section>
+      <h2>Синтаксис функцій</h2>
+      
+
+```javascript
+// Function declaration (hoisting — можна викликати до оголошення)
+function greet(name) {
+  return `Привіт, ${name}!`;
+}
+
+// Function expression (змінна — немає hoisting)
+const greet = function(name) { return `Привіт, ${name}!`; };
+
+// Arrow function (ES6) — коротший синтаксис
+const greet = (name) => `Привіт, ${name}!`;
+const add = (a, b) => a + b;   // неявний return
+const double = n => n * 2;      // один параметр — без дужок
+```
+
+
+
+      <h2>Параметри та значення за замовчуванням</h2>
+      
+
+```javascript
+// Default parameters
+function createUser(name, role = 'user', active = true) {
+  return { name, role, active };
+}
+createUser('Іван');          // { name:'Іван', role:'user', active:true }
+createUser('Марія', 'admin'); // { name:'Марія', role:'admin', active:true }
+
+// Rest параметри — збирають залишкові аргументи
+function sum(...nums) { return nums.reduce((a, b) => a + b, 0); }
+sum(1, 2, 3, 4, 5); // 15
+```
+
+
+
+      <h2>Замикання (Closure)</h2>
+      
+
+```javascript
+// Внутрішня функція "пам'ятає" зовнішні змінні
+function createCounter(start = 0) {
+  let count = start;           // приватна змінна
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    value:     () => count,
+  };
+}
+const counter = createCounter(10);
+counter.increment(); // 11
+counter.increment(); // 12
+counter.value();     // 12
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/function-basics" target="_blank" rel="noopener noreferrer">Functions — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" target="_blank" rel="noopener noreferrer">Closures — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Arrow functions і `this`</strong>: стрілочні функції не мають власного `this` — вони беруть `this` з оточуючого контексту. У методах об'єкта — використовуй звичайну функцію.</li>
+        <li><strong>Забути `return`</strong>: функція без `return` повертає `undefined`.</li>
+        <li><strong>Побічні ефекти в «чистих» функціях</strong>: функція що мутує зовнішні дані важко тестується. Прагни до чистих функцій.</li>
+      </ul>
+    </section>
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Напиши arrow function `multiply(a, b)` і протестуй у консолі.</li>
+        <li>Створи функцію `createMultiplier(factor)` що повертає функцію-множник (замикання).</li>
+        <li>Напиши `debounce(fn, delay)` — функцію що відкладає виклик `fn` на `delay`ms.</li>
+      </ol>
+    </section>
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>В чому різниця між function declaration і arrow function щодо `this`?</li>
+        <li>Що таке замикання (closure)?</li>
+        <li>Що таке «чиста функція» і чому це важливо?</li>
+        <li>Що таке hoisting функцій?</li>
+      </ol>
+    </section>
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>IIFE (Immediately Invoked Function Expression): <code>((x) => x * 2)(5)</code> — функція що одразу виконується.</li>
+        <li>Currying: <code>const add = a => b => a + b</code>. Тепер `add(2)(3)` → 5. Дозволяє часткове застосування.</li>
+        <li>Функції першого класу в JS: функції можна передавати як аргументи, повертати як значення, зберігати в змінних.</li>
+      </ul>
+    </section>

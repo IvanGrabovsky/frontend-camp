@@ -1,0 +1,187 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>CSS Transitions</strong> плавно змінюють одне значення властивості в інше при зміні стану (наприклад, `:hover`). <strong>CSS Animations</strong> (`@keyframes`) дозволяють створювати складні багатокрокові анімації що запускаються автоматично або за допомогою класу.</p>
+      <p>`will-change` підказує браузеру заздалегідь оптимізувати рендеринг елемента, що буде анімуватись — але зловживання ним шкодить продуктивності.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🎬</span> Аналогія з кіно</div>
+      <p>Transition — це плавний перехід між двома кадрами (A → B). Animation (@keyframes) — це цілий фільм зі сценарієм: ключові кадри 0%, 50%, 100%, де на кожному щось відбувається.</p>
+    </section>
+
+    <section>
+      <h2>transition — плавні переходи</h2>
+      
+
+```css
+/* transition: властивість тривалість функція затримка */
+.btn {
+  background: #6366f1;
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  transition: background 0.2s ease,
+              transform  0.2s ease,
+              box-shadow 0.2s ease;
+}
+.btn:hover {
+  background: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99,102,241,.4);
+}
+
+/* Easing functions */
+transition-timing-function: ease;              /* за замовч. */
+transition-timing-function: ease-in-out;       /* плавніше */
+transition-timing-function: cubic-bezier(.34,1.56,.64,1); /* spring */
+transition-timing-function: linear(0,1);       /* CSS 2023 */
+```
+
+
+
+      <h2>@keyframes — складні анімації</h2>
+      
+
+```css
+/* Оголошення keyframes */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+/* Застосування */
+.card {
+  animation: fadeInUp 0.4s ease both;   /* both = зберігає кінцевий стан */
+}
+.badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* animation shorthand */
+/* name duration timing-fn delay iteration direction fill-mode */
+animation: fadeInUp 0.4s ease 0.1s 1 normal both;
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Властивості animation</h4>
+        <table className="params-table">
+          <thead><tr><th>Властивість</th><th>Значення</th><th>Що робить</th></tr></thead>
+          <tbody>
+            <tr><td>`animation-duration`</td><td>`0.3s`, `1s`</td><td>Тривалість одного циклу</td></tr>
+            <tr><td>`animation-iteration-count`</td><td>`1`, `infinite`</td><td>Кількість повторень</td></tr>
+            <tr><td>`animation-direction`</td><td>`normal`, `reverse`, `alternate`</td><td>Напрямок відтворення</td></tr>
+            <tr><td>`animation-fill-mode`</td><td>`none`, `both`, `forwards`</td><td>Стан до/після анімації</td></tr>
+            <tr><td>`animation-play-state`</td><td>`running`, `paused`</td><td>Пауза через JS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>`will-change` та GPU-шар</h2>
+      
+
+```css
+/* will-change: підказує браузеру виділити GPU-шар заздалегідь */
+.modal { will-change: transform, opacity; }
+
+/* ⚠️ Не зловживай: GPU-шари займають VRAM */
+/* Додавай only перед анімацією, прибирай після */
+el.addEventListener('mouseenter', () => el.style.willChange = 'transform');
+el.addEventListener('animationend', () => el.style.willChange = 'auto');
+
+/* Анімуй тільки: opacity, transform, filter — вони не тригерять reflow */
+/* Ніколи не анімуй: width, height, top, left — дорогий repaint */
+```
+
+
+
+      <h2>Поважай налаштування користувача</h2>
+      
+
+```css
+/* Вимикай анімації якщо користувач вибрав "Зменшити рух" в OS */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+
+
+      <div className="doc-links">
+        <h4>Офіційна документація та інструменти</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations" target="_blank" rel="noopener noreferrer">CSS Animations — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/transition" target="_blank" rel="noopener noreferrer">transition — MDN</a></li>
+          <li><a href="https://easings.net/" target="_blank" rel="noopener noreferrer">easings.net — каталог easing функцій з демо</a></li>
+          <li><a href="https://cubic-bezier.com/" target="_blank" rel="noopener noreferrer">cubic-bezier.com — візуальний редактор кривих</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Анімувати властивості що тригерять reflow</strong>: `width`, `height`, `top`, `left` — браузер перераховує весь лейаут. Завжди використовуй `transform` та `opacity`.</li>
+        <li><strong>Забути `prefers-reduced-motion`</strong>: частина користувачів має вестибулярні порушення, важкі анімації викликають фізичний дискомфорт.</li>
+        <li><strong>Зловживати `will-change`</strong>: додавання на всі елементи займає VRAM і може уповільнити рендеринг.</li>
+        <li><strong>Не використовувати `animation-fill-mode: both`</strong>: без нього елемент «стрибає» на початкову позицію після анімації.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Зроби кнопку з 3 різними transition властивостями (колір, transform, box-shadow) при `:hover`.</li>
+        <li>Анімуй появу картки через `@keyframes fadeInUp` з затримкою у 0.1s.</li>
+        <li>Зроби безкінечно пульсуючу індикаторну крапку (як "typing..." у месенджері).</li>
+        <li>Додай `@media (prefers-reduced-motion: reduce)` і перевір у DevTools → Rendering → Emulate CSS media feature.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між `transition` і `animation`?</li>
+        <li>Чому варто анімувати `transform` замість `width/height`?</li>
+        <li>Що таке `animation-fill-mode: both` і коли це потрібно?</li>
+        <li>Навіщо `will-change` і чому не можна ставити його всюди?</li>
+        <li>Що таке `prefers-reduced-motion` і хто ним користується?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Як зробити плавну анімацію без "стрибків"?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Збільшити duration» або «використати JavaScript».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Анімувати тільки `transform` та `opacity` — вони не тригерять reflow/repaint, виконуються на GPU. Для «стрибків» після анімації — `animation-fill-mode: both`. Для плавності — `will-change: transform` до початку анімації.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що перевіряєш після додавання анімацій?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Нічого, якщо виглядає добре — ОК».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> (1) `prefers-reduced-motion` — чи вимикається для тих хто чутливий. (2) Performance tab у DevTools — чи є jank (frames > 16ms). (3) Mobile — менш потужне залізо, складні анімації можуть гальмувати.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`linear()` (CSS 2023) — дозволяє задати довільну криву через набір точок, без `cubic-bezier`. Ідеально для spring-анімацій.</li>
+        <li>Chrome DevTools → More tools → Animations — записує всі CSS-анімації на сторінці, дозволяє уповільнити і відтворити покадрово.</li>
+        <li>`animation-timeline: scroll()` (CSS Scroll-driven Animations, 2023) — анімація залежно від позиції скролу, без JavaScript.</li>
+        <li><a href="https://easings.net/" target="_blank" rel="noopener">easings.net</a> — каталог кривих з копіпастним кодом і живим демо.</li>
+      </ul>
+    </section>

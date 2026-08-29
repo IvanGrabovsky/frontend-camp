@@ -1,0 +1,167 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Посилання (`<a>`) та зображення (`<img>`, `<picture>`)</strong> — основа Всесвітньої павутини. Посилання з'єднують документи у гіпертекстову мережу, а оптимізовані зображення забезпечують швидке завантаження та візуальний контакт без шкоди для швидкодії сайту.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🚪</span> Аналогія з порталами та вікнами</div>
+      <p>Посилання (`<a>`) — це двері й портали у будь-яку кімнату інтернету або іншу частину цієї ж кімнати (якір). Зображення (`<img>`) — це вікно, розміри якого треба заздалегідь підготувати будівельникам (width/height), щоб стіна не стрибала перед очима мешканця під час доставки рами.</p>
+    </section>
+
+    <section>
+      <h2>Анатомія посилання (тег `<a>`)</h2>
+      <p>Атрибут `href` визначає призначення переходу. Без `href` елемент `<a>` є лише плейсхолдером і не фокусується з клавіатури.</p>
+
+      
+
+```html
+<!-- 1. Зовнішнє посилання у новій вкладці (БЕЗПЕЧНО) -->
+<a href="https://google.com" target="_blank" rel="noopener noreferrer">Google</a>
+
+<!-- 2. Внутрішній якір на ідентифікатор секції -->
+<a href="#contacts">Перейти до контактів</a>
+
+<!-- 3. Спеціальні протоколи: email, телефон, завантаження файлу -->
+<a href="mailto:support@example.com?subject=Питання">Написати листа</a>
+<a href="tel:+380991234567">Зателефонувати</a>
+<a href="/files/roadmap.pdf" download="frontend-roadmap-2026.pdf">Завантажити PDF</a>
+```
+
+
+
+      <h2>Безпека та SEO для посилань (атрибут `rel`)</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Значення rel</th><th>Призначення та ефект</th></tr></thead>
+          <tbody>
+            <tr><td>`noopener`</td><td>Запобігає вразливості tabnabbing: нова вкладка не отримує доступ до `window.opener`.</td></tr>
+            <tr><td>`noreferrer`</td><td>Приховує Referer заголовок — цільовий сайт не знає, звідки прийшов користувач. Включає в себе noopener.</td></tr>
+            <tr><td>`nofollow`</td><td>Вказує пошуковим роботам не передавати PageRank і не асоціювати сайт з цільовим посиланням.</td></tr>
+            <tr><td>`sponsored` / `ugc`</td><td>Для платних/рекламних посилань (sponsored) та посилань користувачів у коментарях (ugc).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Зображення (тег `<img>`) та запобігання CLS</h2>
+      <p>Тег `<img>` — це порожній самозакривний рядково-блочний елемент. Завжди вказуйте `width`, `height` та `alt`!</p>
+
+      
+
+```html
+<img
+  src="/images/hero-banner.webp"
+  alt="Студенти вивчають фронтенд на лекції"
+  width="1200"
+  height="630"
+  loading="lazy"
+  decoding="async"
+/>
+```
+
+
+
+      <h2>Атрибути тегу img</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Атрибут</th><th>Обов'язковий?</th><th>Опис і найкращі практики</th></tr></thead>
+          <tbody>
+            <tr><td>`src`</td><td>Так</td><td>Шлях до файлу зображення (відносний або абсолютний URL).</td></tr>
+            <tr><td>`alt`</td><td>Так</td><td>Текстовий опис для скрін-рідерів та при збої завантаження. Для декоративних іконок ставте `alt=""`.</td></tr>
+            <tr><td>`width` / `height`</td><td>Рекомендовано</td><td>Оригінальні розміри в пікселях. Браузер резервує місце (aspect-ratio) і уникає зсуву макета (CLS = 0).</td></tr>
+            <tr><td>`loading="lazy"`</td><td>Ні</td><td>Відкладає завантаження картинки до наближення до viewport. Не ставте на Hero зображення!</td></tr>
+            <tr><td>`decoding="async"`</td><td>Ні</td><td>Декодує графіку поза головним потоком браузера, запобігаючи лагам інтерфейсу.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Адаптивні зображення: srcset, sizes та тег picture</h2>
+      
+
+```html
+<!-- 1. Роздільна здатність під різні екрани (Retina 1x vs 2x) -->
+<img src="logo.png" srcset="logo.png 1x, logo@2x.png 2x" alt="Логотип компанії" />
+
+<!-- 2. Розміри під ширину в'юпорту браузера -->
+<img
+  src="photo-800.jpg"
+  srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1200.jpg 1200w"
+  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 800px"
+  alt="Гірський пейзаж на сході сонця"
+/>
+
+<!-- 3. Сучасні формати (AVIF/WebP) з фолбеком через <picture> -->
+<picture>
+  <source srcset="photo.avif" type="image/avif" />
+  <source srcset="photo.webp" type="image/webp" />
+  <img src="photo.jpg" alt="Панорама міста" width="800" height="500" loading="lazy" />
+</picture>
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/a" target="_blank" rel="noopener">Anchor element &lt;a&gt; — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Element/img" target="_blank" rel="noopener">Image element &lt;img&gt; — MDN</a></li>
+          <li><a href="https://web.dev/articles/serve-responsive-images" target="_blank" rel="noopener">Responsive Images Guide — web.dev</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Відсутність `alt` у `<img>`</strong> — скрін-рідери прочитають повний шлях до файлу (наприклад, «IMG_2026_08_final_v2.png»), що повністю ламає a11y.</li>
+        <li><strong>Текст «зображення» або «фото» всередині `alt`</strong> — скрін-рідер і так повідомляє «графіка/зображення», пишіть суто опис змісту.</li>
+        <li><strong>Відсутність `width` і `height`</strong> — призводить до зсуву контенту при завантаженні (Layout Shift / поганий показник CLS у Web Vitals).</li>
+        <li><strong>`target="_blank"` без захисту</strong> — стара вразливість дозволяє сторонній сторінці перенаправити вихідну вкладку через `window.opener.location`.</li>
+        <li><strong>`loading="lazy"` для зображень у першому екрані (Hero/LCP)</strong> — це відкладає завантаження головного банера і погіршує швидкість LCP!</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи навігаційне меню з якірними посиланнями (`#about`, `#services`, `#footer`) з плавним скролом (`scroll-behavior: smooth`).</li>
+        <li>Оформи посилання на соціальні мережі, що відкриваються у новій вкладці з правильними `rel` атрибутами.</li>
+        <li>Створи адаптивний блок з `<picture>`, який завантажує AVIF для сучасних браузерів та JPG як fallback.</li>
+        <li>Перевір у DevTools → Network (вкладка Img), яке саме зображення вибирає браузер при зміні ширини вікна з `srcset` та `sizes`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Чому важливо вказувати `width` та `height` в HTML для `<img>` навіть якщо CSS перезаписує ширину (`width: 100%; height: auto`)?</li>
+        <li>Яка різниця між `alt=""` та повною відсутністю атрибута `alt`?</li>
+        <li>Як `rel="noopener noreferrer"` захищає від атаки tabnabbing?</li>
+        <li>У яких випадках слід використовувати `<picture>`, а в яких достатньо `srcset` на `<img>`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як оптимізувати завантаження зображень на веб-сторінці?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Стиснути в фотошопі і все».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Комплексний підхід: сучасні формати (AVIF/WebP), адаптивні розміри через `srcset`/`sizes`, вказування `width`/`height` для усунення CLS, `loading="lazy"` для зображень нижче першого екрана та пріоритет (`fetchpriority="high"`) для LCP зображення.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«У чому небезпека target="_blank" і як її усунути?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Ніякої небезпеки немає, це просто відкриття нової вкладки».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Сторінка, що відкрилася, отримує доступ до об'єкта `window.opener` оригінальної сторінки і може виконати фішингове перенаправлення на шкідливий сайт. Захист — атрибут `rel="noopener noreferrer"`. Сучасні браузери роблять це за замовчуванням, але явне вказування обов'язкове для стабільнішої сумісності.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Атрибут `fetchpriority="high"` на `<img>` дає сигнал браузеру завантажити банер найпершим серед усіх ресурсів.</li>
+        <li>SVG можна вставляти через `<img src="icon.svg">` (ізольований) або напряму інлайн `<svg>` для зміни кольорів через CSS `currentColor`.</li>
+        <li>Для телефонних номерів використовуйте міжнародний формат у `href="tel:+380..."`, навіть якщо на екрані текст відформатований з дужками та пробілами.</li>
+        <li>CSS властивість `aspect-ratio` автоматично обчислюється браузером з атрибутів `width` та `height` в HTML.</li>
+      </ul>
+    </section>

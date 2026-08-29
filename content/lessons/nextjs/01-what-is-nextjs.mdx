@@ -1,0 +1,193 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Next.js</strong> — це React-фреймворк від Vercel, який додає до React все необхідне для production: маршрутизацію, рендеринг на сервері, оптимізацію зображень, збирання, деплой. Якщо React — це двигун, то Next.js — це повноцінний автомобіль.</p>
+      <p>Він вирішує головні проблеми «голого» React: відсутність маршрутизації «з коробки», погана SEO через клієнтський рендеринг, складне налаштування збирання.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🏗️</span> Аналогія з будівництвом</div>
+      <p>React — це будівельні матеріали (цегла, бетон, дерево). Next.js — це будівельна компанія, яка вже знає як з'єднувати ці матеріали, прокладати комунікації та здавати об'єкт «під ключ».</p>
+    </section>
+
+    <section>
+      <h2>Режими рендерингу — ключова перевага</h2>
+      <p>Next.js підтримує кілька стратегій рендерингу в межах одного проекту:</p>
+
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Режим</th><th>Коли рендерить</th><th>Де виконується</th><th>Підходить для</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>CSR</strong><br/><em>Client-Side Rendering</em></td>
+              <td>В браузері, після завантаження JS</td>
+              <td>Клієнт</td>
+              <td>SPA, дашборди, контент за авторизацією</td>
+            </tr>
+            <tr>
+              <td><strong>SSR</strong><br/><em>Server-Side Rendering</em></td>
+              <td>На кожен запит, на сервері</td>
+              <td>Сервер</td>
+              <td>Персоналізований контент, реальний час</td>
+            </tr>
+            <tr>
+              <td><strong>SSG</strong><br/><em>Static Site Generation</em></td>
+              <td>Під час збирання (build time)</td>
+              <td>Сервер → CDN</td>
+              <td>Блоги, документація, маркетинг</td>
+            </tr>
+            <tr>
+              <td><strong>ISR</strong><br/><em>Incremental Static Regeneration</em></td>
+              <td>При першому запиті + через N секунд</td>
+              <td>Сервер → кеш</td>
+              <td>E-commerce, новини (свіжий кеш)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
+```text
+// SSG — статична генерація (за замовчуванням у Next.js)
+export default async function Page() {
+  const data = await fetch('https://api.example.com/posts'); // кешується
+  return <PostList posts={await data.json()} />;
+}
+
+// SSR — на кожен запит (динамічний)
+export const dynamic = 'force-dynamic';
+export default async function Page() { ... }
+
+// ISR — оновлення кожні 60 секунд
+const data = await fetch('...', { next: { revalidate: 60 } });
+```
+
+
+
+      <h2>Що входить «з коробки»</h2>
+
+      
+
+```javascript
+// Структура Next.js App Router проекту
+my-app/
+├─ app/
+│  ├─ layout.tsx        ← кореневий layout (html, body, шрифти)
+│  ├─ page.tsx          ← головна сторінка "/"
+│  ├─ about/
+│  │  └─ page.tsx       ← сторінка "/about"
+│  └─ blog/[slug]/
+│     └─ page.tsx       ← динамічний маршрут "/blog/:slug"
+├─ public/              ← статичні файли (зображення, fonts)
+├─ components/          ← React-компоненти
+└─ next.config.ts       ← конфігурація
+```
+
+
+
+      <h2>Чому Next.js а не «голий» React?</h2>
+
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Задача</th><th>Голий React</th><th>Next.js</th></tr></thead>
+          <tbody>
+            <tr><td>Маршрутизація</td><td>Треба React Router або інше</td><td>Файлова, вбудована</td></tr>
+            <tr><td>SEO</td><td>Погане (CSR — порожній HTML)</td><td>Відмінне (SSR/SSG)</td></tr>
+            <tr><td>Збирання</td><td>Webpack/Vite налаштовуй сам</td><td>Турбопак, вбудовано</td></tr>
+            <tr><td>Зображення</td><td>Звичайний `<img>`</td><td>`<Image>` з lazy/webp/resize</td></tr>
+            <tr><td>Шрифти</td><td>Вручну</td><td>`next/font` — zero layout shift</td></tr>
+            <tr><td>API</td><td>Окремий сервер</td><td>Route Handlers в тому ж репо</td></tr>
+            <tr><td>Деплой</td><td>Налаштовуй сам</td><td>1 кліком на Vercel</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Швидкий старт</h2>
+      
+
+```text
+# Створити новий проект
+npx create-next-app@latest my-app
+cd my-app
+npm run dev   # http://localhost:3000
+
+# Або з налаштуваннями без підказок
+npx create-next-app@latest my-app 
+  --typescript --tailwind --app --no-src-dir
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://nextjs.org/docs" target="_blank" rel="noopener">Next.js Docs (офіційна)</a></li>
+          <li><a href="https://nextjs.org/learn" target="_blank" rel="noopener">Next.js Learn — інтерактивний курс</a></li>
+          <li><a href="https://react.dev" target="_blank" rel="noopener">React Docs</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«Next.js = React»</strong> — ні. Next.js є надбудовою над React. Без знання React Next.js незрозумілий.</li>
+        <li><strong>«SSR завжди кращий»</strong> — ні. SSG і ISR швидші для контенту що рідко змінюється. SSR — тільки для справді динамічного контенту.</li>
+        <li><strong>Плутати Pages Router і App Router</strong> — це дві різні системи. App Router (з Next.js 13+) — поточний стандарт. Pages Router — легасі, підтримується але не рекомендується для нових проектів.</li>
+        <li><strong>«use client» скрізь</strong> — Server Components рендеряться на сервері і не надсилають JS клієнту. Маркуй як Client тільки те що реально потребує браузерних API або стану.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи новий Next.js проект: `npx create-next-app@latest my-first-nextjs`. Запусти `npm run dev`, відкрий http://localhost:3000.</li>
+        <li>Відкрий `app/page.tsx` — змін текст заголовку. Перевір hot reload у браузері.</li>
+        <li>Створи файл `app/about/page.tsx` з довільним вмістом. Перейди на `/about` — сторінка з'явилась без жодного роутера!</li>
+        <li>Відкрий DevTools → Network → перезавантаж. Порівняй як виглядає HTML у Next.js (SSG) проти звичайного React CRA (CSR) — у Next.js текст вже в HTML-відповіді.</li>
+        <li>Прочитай `next.config.ts` свого поточного проекту. Знайди `output: 'export'` — що це означає?</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Назви чотири режими рендерингу Next.js і коли кожен використовується.</li>
+        <li>Чим App Router відрізняється від Pages Router?</li>
+        <li>Що означає «Server Component»? Чим він відрізняється від Client Component?</li>
+        <li>Навіщо `next/image` замість звичайного `<img>`?</li>
+        <li>Що відбувається при `npm run build` в Next.js проекті з `output: 'export'`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Навіщо Next.js якщо є React?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Це те саме що React» або «Так прийнято».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Next.js додає маршрутизацію, SSR/SSG для SEO, оптимізацію зображень і шрифтів, Route Handlers для API, готовий CI/CD деплой на Vercel — все з коробки.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке SSR і чим він кращий за CSR?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «SSR рендерить на сервері» — правильно, але без розуміння трейдофів.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> SSR рендерить HTML на сервері для кожного запиту → Google отримує готовий HTML (SEO), користувач бачить контент до завантаження JS (FCP). Мінус — повільніший TTFB ніж у CDN-кешованого SSG.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Коли використовувати Server, а коли Client Component?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Не знаю різниці» або «use client скрізь».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Server — за замовчуванням, не надсилає JS клієнту, може читати БД/env, не має стану. Client (`"use client"`) — для useState, useEffect, обробників подій, браузерних API (localStorage, navigator). Правило: push to the leaves — Client якомога глибше в дереві.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li><strong>Turbopack</strong> — наступник Webpack від Vercel, написаний на Rust. З Next.js 15 стабільний за замовчуванням — cold start в 10x швидший.</li>
+        <li>`next/font` автоматично завантажує шрифти з нульовим layout shift — ніяких FOUT/FOIT.</li>
+        <li>`next dev --turbopack` або просто `next dev` в Next.js 15 — Turbopack увімкнено за замовчуванням.</li>
+        <li>Partial Prerendering (PPR) — нова фіча: статична оболонка + динамічні «дірки» стрімляться окремо. Найкраще з SSG і SSR.</li>
+        <li>React Server Actions (`"use server"`) — функції що виконуються на сервері, викликаються з Client Component. Замінюють прості POST-запити без Route Handler.</li>
+      </ul>
+    </section>

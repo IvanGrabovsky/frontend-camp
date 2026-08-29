@@ -1,0 +1,185 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Сучасний CSS</strong> — це потужні функції що з'явились в 2022–2024 роках і вже підтримуються у всіх сучасних браузерах. Вони суттєво спрощують код, усувають потребу в JavaScript та препроцесорах для багатьох задач.</p>
+      <p>Ключові нові інструменти: `:has()`, `@layer`, `@scope`, нативний CSS nesting та container queries.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🚀</span> CSS 2024 — як нова версія мови</div>
+      <p>Якщо CSS 2010 був як калькулятор, то CSS 2024 — як повноцінна мова програмування для стилів: умови, вкладеність, ізоляція областей видимості. Те що раніше вимагало SCSS або JavaScript тепер вбудовано нативно.</p>
+    </section>
+
+    <section>
+      <h2>`:has()` — «батьківський» селектор</h2>
+      <p>До 2022 року CSS не мав батьківського селектора — це була найдовше очікувана фіча. `:has()` вибирає елемент <em>що містить</em> певних нащадків.</p>
+      
+
+```css
+/* Картка що має зображення — без padding зверху */
+.card:has(img) { padding-top: 0; }
+
+/* Форма з невалідним полем — показати повідомлення */
+form:has(input:invalid) .error-msg { display: block; }
+
+/* Навігація що має відкрите меню */
+nav:has(.menu:not([hidden])) { background: rgba(0,0,0,.5); }
+
+/* li що НЕ є останнім і містить вкладений ul */
+li:not(:last-child):has(ul) { border-bottom: 1px solid; }
+
+/* Раніше це потребувало JavaScript! */
+```
+
+
+
+      <h2>`@layer` — каскадні шари</h2>
+      <p>`@layer` дозволяє явно керувати пріоритетом CSS-правил, не залежачи від специфічності. Стилі у пізнішому шарі перемагають ранніший незалежно від специфічності.</p>
+      
+
+```css
+/* Оголошення порядку шарів (від найнижчого до найвищого) */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  * { box-sizing: border-box; margin: 0; }
+}
+@layer base {
+  body { font-family: Inter, sans-serif; }
+}
+@layer components {
+  .btn { padding: 8px 16px; background: var(--color-primary); }
+}
+@layer utilities {
+  /* utilities завжди перемагають components, навіть з нижчою специфічністю */
+  .mt-4 { margin-top: 16px; }
+}
+```
+
+
+
+      <h2>Нативний CSS Nesting</h2>
+      <p>Тепер можна вкладати CSS-правила одне в одне — без SCSS!</p>
+      
+
+```css
+/* Нативний nesting (без SCSS) */
+.card {
+  padding: 16px;
+  border-radius: 8px;
+
+  & .title { font-size: 1.25rem; font-weight: 600; }
+  & .body   { color: var(--text-muted); }
+
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+
+
+      <h2>`@scope` — ізоляція стилів компонента</h2>
+      
+
+```css
+/* Стилі застосовуються тільки всередині .card */
+@scope (.card) {
+  .title { font-size: 1.25rem; }  /* тільки .title в .card */
+  img    { border-radius: 8px; }  /* тільки img в .card */
+}
+
+/* @scope з виключенням вкладеного компонента */
+@scope (.card) to (.nested-card) {
+  /* не зачіпає .nested-card всередині .card */
+  .title { color: var(--color-primary); }
+}
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Підтримка браузерами (2024)</h4>
+        <table className="params-table">
+          <thead><tr><th>Функція</th><th>Chrome</th><th>Firefox</th><th>Safari</th></tr></thead>
+          <tbody>
+            <tr><td>`:has()`</td><td>105+</td><td>121+</td><td>15.4+</td></tr>
+            <tr><td>`@layer`</td><td>99+</td><td>97+</td><td>15.4+</td></tr>
+            <tr><td>CSS Nesting</td><td>112+</td><td>117+</td><td>17.2+</td></tr>
+            <tr><td>`@scope`</td><td>118+</td><td>—</td><td>17.4+</td></tr>
+            <tr><td>Container Queries</td><td>105+</td><td>110+</td><td>16+</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Офіційна документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:has" target="_blank" rel="noopener noreferrer">:has() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@layer" target="_blank" rel="noopener noreferrer">@layer — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting" target="_blank" rel="noopener noreferrer">CSS Nesting — MDN</a></li>
+          <li><a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer">caniuse.com — перевірка підтримки браузерами</a></li>
+          <li><a href="https://web.dev/blog/css-wrapped-2023" target="_blank" rel="noopener noreferrer">CSS Wrapped 2023 — web.dev</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Не перевіряти підтримку браузерами</strong>: `@scope` ще не підтримується Firefox. Для продакшену перевіряй <a href="https://caniuse.com/" target="_blank" rel="noopener">caniuse.com</a>.</li>
+        <li><strong>Плутати `:has()` зі специфічністю `:is()`</strong>: `:has(#id)` має специфічність 1-0-0 через аргумент.</li>
+        <li><strong>Оголошення `@layer` без порядку</strong>: якщо не оголосити `@layer a, b, c` на початку, порядок визначається першим входженням — це може здивувати.</li>
+        <li><strong>Вкладати медіа-запити в nesting на старих проектах</strong>: nesting підтримується з Chrome 112, перевіряй БД підтримки якщо потрібна сумісність зі старішими браузерами.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a> або VS Code і виконай:</p>
+      <ol>
+        <li>Використай `:has()` щоб приховати порожній стан списку: `ul:not(:has(li)) + .empty-msg { display: block; }`.</li>
+        <li>Перепиши будь-який вкладений SCSS (або довгі CSS-правила) в нативний CSS Nesting.</li>
+        <li>Організуй стилі проекту в `@layer` шари: reset, base, components, utilities.</li>
+        <li>Зроби компонент картки із `@scope` — стилі всередині не впливають на зовнішній документ.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Що таке `:has()` і наведи 3 практичних приклади де він замінює JavaScript.</li>
+        <li>Як `@layer` вирішує проблему конфліктів специфічності?</li>
+        <li>Яка різниця між CSS Nesting і SCSS nesting?</li>
+        <li>Що таке `@scope` і яку проблему він вирішує?</li>
+        <li>Як перевірити підтримку нової CSS-функції перед використанням у продакшені?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Що нового в CSS за останні 2 роки?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Нічого нового» або «не слідкую».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `:has()` — батьківський селектор (замінює JS для умовних стилів). `@layer` — шари каскаду (вирішує проблему специфічності в design systems). Нативний CSS Nesting (без SCSS). Container Queries. `@scope`. CSS Scroll-driven Animations. `color-mix()`, `light-dark()`.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Як організувати CSS без конфліктів специфічності?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Ставлю `!important` коли не працює».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `@layer` вирішує це системно: оголошуємо порядок шарів `reset → base → components → utilities`. Utilities завжди перемагають components навіть з нижчою специфічністю. Ніяких `!important` та «гонки специфічностей».</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`light-dark(lightColor, darkColor)` (CSS 2024) — автоматично обирає колір залежно від теми. Замість медіа-запиту: просто `color: light-dark(#111, #eee)`.</li>
+        <li><a href="https://web.dev/blog/css-wrapped-2023" target="_blank" rel="noopener">CSS Wrapped 2023</a> — щорічний підсумок web.dev: всі нові CSS-функції з прикладами. Читай щороку.</li>
+        <li>CSS `@starting-style` (Chrome 117+) — анімація появи елемента від `display: none`. Нарешті можна анімувати відкриття `<dialog>` без JS!</li>
+        <li>Архів `@layer` для третьостороннього CSS: `@import url("bootstrap.css") layer(vendor);` — Bootstrap тепер в ізольованому шарі з найнижчим пріоритетом.</li>
+      </ul>
+    </section>

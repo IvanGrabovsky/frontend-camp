@@ -1,0 +1,148 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>Ти вже знаєш що масив — це список. Тепер навчимось його створювати різними способами і звертатись до конкретних елементів. JavaScript надає кілька способів створення масивів і два способи доступу до елементів: класичний через індекс `arr[i]` і сучасний через `arr.at(i)`.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🏢</span> Аналогія з ліфтом</div>
+      <p>Масив — багатоповерховий будинок. Перший поверх — індекс 0, другий — індекс 1... Останній поверх — `at(-1)`. Аби зайти в квартиру, треба знати поверх (індекс). Неіснуючий поверх — `undefined`.</p>
+    </section>
+
+    <section>
+      <h2>Способи створення масиву</h2>
+
+      
+
+```javascript
+// 1. Літеральний — найпоширеніший спосіб
+const fruits = ['яблуко', 'банан', 'апельсин'];
+
+
+// 2. Array.from() — з будь-якого ітерабельного
+const letters = Array.from('abc');    // ['a', 'b', 'c']
+const nums    = Array.from({length: 5}, (_, i) => i); // [0,1,2,3,4]
+
+
+// 3. Array.of() — масив з аргументів
+const three = Array.of(7);  // [7] (не [,,,,,,]!)
+
+
+// 4. Spread — клонування і злиття
+const copy  = [...fruits];
+const merged = [...fruits, ...letters];
+```
+
+
+
+      <h2>Доступ до елементів: arr[i] і arr.at(i)</h2>
+
+      
+
+```javascript
+const arr = ['a', 'b', 'c', 'd', 'e'];
+//           0     1     2     3     4
+//          -5    -4    -3    -2    -1  (для .at())
+
+
+// Класичний доступ
+arr[0];           // 'a'  — перший
+arr[4];           // 'e'  — останній (якщо знаємо довжину)
+arr[arr.length-1]; // 'e' — останній (стара формула)
+
+
+// .at() — сучасний спосіб (ES2022)
+arr.at(0);   // 'a'  — перший
+arr.at(-1);  // 'e'  — останній ✅ елегантно
+arr.at(-2);  // 'd'  — передостанній
+
+
+// Неіснуючий індекс
+arr[99];   // undefined (не помилка!)
+arr.at(99); // undefined
+```
+
+
+
+      <h2>length — кількість елементів</h2>
+      
+
+```javascript
+const arr = ['a', 'b', 'c'];
+arr.length;       // 3
+
+
+// length — це жива властивість, не метод
+arr.length = 2;   // обрізає масив: ['a', 'b']
+arr.length = 5;   // розтягує: ['a', 'b', ,,, ] (розріджений)
+
+
+// Перевірка чи масив порожній
+arr.length === 0; // true якщо порожній
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/at" target="_blank" rel="noopener">Array.prototype.at() — MDN</a></li>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Array/from" target="_blank" rel="noopener">Array.from() — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Починати рахувати з 1</strong> — перший елемент завжди індекс `0`. «Off by one» — найпоширеніша помилка початківців.</li>
+        <li><strong>`new Array(5)`</strong> — не масив з п'яти п'ятірок! Це масив із 5 порожніх слотів. Для п'яти п'ятірок: `Array(5).fill(5)` або <code>Array.from(&#123;length:5&#125;, ()=>5)</code>.</li>
+        <li><strong>Мутувати length напряму</strong> — небезпечно в продакшені. Краще використовувати `push/pop/splice`.</li>
+        <li><strong>Порівнювати масиви через `===`</strong> — `[] === []` це `false` (різні об'єкти в пам'яті).</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика в пісочниці</div>
+      <ol>
+        <li>Створи масив із 5 своїх улюблених фільмів. Виведи перший і останній через `.at()`.</li>
+        <li>Через <code>Array.from(&#123;length: 10&#125;, (_, i) => i * 2)</code> створи масив парних чисел від 0 до 18.</li>
+        <li>Дано масив `const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд']`. Виведи останній день через `.at(-1)`, і підрахуй кількість через `.length`.</li>
+        <li>Що виведе `console.log([1,2,3][5])`? Чому?</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Чим `arr.at(-1)` кращий за `arr[arr.length-1]`?</li>
+        <li>Що поверне `new Array(3)`? Як правильно створити `[0, 0, 0]`?</li>
+        <li>Яке значення `arr.length` якщо `arr = ['a', , 'c']` (розріджений масив)?</li>
+        <li>Як клонувати масив не мутуючи оригінал?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як отримати останній елемент масиву?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Тільки `arr[arr.length-1]` — не знає новий метод.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Два способи: класичний `arr[arr.length-1]` і сучасний `arr.at(-1)` (ES2022, читабельніший, підтримка у всіх сучасних браузерах).</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як створити масив з N елементів?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> `new Array(N)` — розріджений масив, не те що очікується.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> <code>Array.from(&#123;length: N&#125;, (_, i) => i)</code> або `Array(N).fill(0)` залежно від задачі. `new Array(N)` створює розріджений масив — обачно з методами типу `map`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`Array.isArray([])` → `true`. `typeof []` → `'object'`. Завжди перевіряй масив через `Array.isArray`, не `typeof`.</li>
+        <li>Масиви в JS — це просто об'єкти з числовими ключами і магічним `length`. `arr['0']` і `arr[0]` — одне і те ж.</li>
+        <li>`const arr = [,,]` — масив довжиною 2 (не 3!) з двома порожніми слотами. Кома після останнього елемента ігнорується.</li>
+        <li>DevTools: `copy(arr)` у консолі — копіює масив у буфер обміну як JSON.</li>
+      </ul>
+    </section>

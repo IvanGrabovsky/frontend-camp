@@ -1,0 +1,137 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>HTML (HyperText Markup Language)</strong> — мова розмітки, якою описується структура і зміст веб-сторінки. Кожен HTML-документ має обов'язкову базову структуру. Відхилення не завжди помилка (браузери толерантні), але це погана практика.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🏠</span> Аналогія з будинком</div>
+      <p><strong>DOCTYPE</strong> — дозвіл на будівництво. <strong>`<html>`</strong> — сам будинок. <strong>`<head>`</strong> — комунікації всередині стін (невидимі зовні). <strong>`<body>`</strong> — все що видно мешканцям.</p>
+    </section>
+
+    <section>
+      <h2>Мінімальна правильна структура</h2>
+
+      
+
+```html
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Моя перша сторінка</title>
+  </head>
+  <body>
+    <h1>Привіт, світ!</h1>
+    <p>Це мій перший HTML-документ.</p>
+  </body>
+</html>
+```
+
+
+
+      <h2>Кожна частина — детально</h2>
+
+      <h3>`<!DOCTYPE html>`</h3>
+      <p>Не тег — <strong>декларація</strong>, яка вмикає Standards mode замість Quirks mode. Завжди перший рядок файлу.</p>
+
+      <h3>`<html lang="uk">`</h3>
+      <p>Кореневий елемент. Атрибут `lang` обов'язковий для скрін-рідерів, пошукових систем і CSS-властивостей типу `quotes`.</p>
+
+      <h3>`<head>` — мета-інформація</h3>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Тег</th><th>Призначення</th><th>Обов'язковий?</th></tr></thead>
+          <tbody>
+            <tr><td>`<meta charset="UTF-8">`</td><td>Кодування. Без нього кирилиця — «кракозябри».</td><td>Так</td></tr>
+            <tr><td>`<meta name="viewport">`</td><td>Реальна ширина пристрою на мобільних.</td><td>Так</td></tr>
+            <tr><td>`<title>`</td><td>Назва вкладки і сніпет у Google.</td><td>Так</td></tr>
+            <tr><td>`<link rel="stylesheet">`</td><td>Підключення CSS.</td><td>Ні</td></tr>
+            <tr><td>`<meta name="description">`</td><td>Опис для пошукових систем.</td><td>Рекомендовано</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>DOM-дерево</h3>
+      
+
+```html
+// DOM-дерево для прикладу вище
+Document
+└─ html[lang="uk"]
+   ├─ head
+   │  ├─ meta[charset="UTF-8"]
+   │  ├─ meta[name="viewport"]
+   │  └─ title "Моя перша сторінка"
+   └─ body
+      ├─ h1 "Привіт, світ!"
+      └─ p "Це мій перший HTML-документ."
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Reference/Elements/html" target="_blank" rel="noopener">html — MDN</a></li>
+          <li><a href="https://validator.w3.org/" target="_blank" rel="noopener">W3C Validator</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Без DOCTYPE</strong> — Quirks mode, CSS поводиться інакше (box model!).</li>
+        <li><strong>Без charset</strong> — кирилиця відображається «кракозябрами».</li>
+        <li><strong>Без viewport</strong> — мобільний браузер симулює ширину 980px.</li>
+        <li><strong>Без lang</strong> — скрін-рідери читають неправильною мовою.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи файл `index.html` з мінімальною структурою. В `<body>` — `<h1>` зі своїм ім'ям.</li>
+        <li>Навмисно видали DOCTYPE. Чи щось змінилось у браузері? Перевір DevTools → Console.</li>
+        <li>Перевір файл на <a href="https://validator.w3.org/#validate_by_input" target="_blank" rel="noopener">W3C Validator</a>. Виправ всі помилки.</li>
+        <li>Введи `!` + Tab у VS Code — Emmet вставить базову структуру.</li>
+        <li>DevTools → Elements: знайди `<html>` → `<head>` → `<body>`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Навіщо `<!DOCTYPE html>`? Що без нього?</li>
+        <li>Чому `lang` важливий для доступності?</li>
+        <li>Яка різниця між `<head>` і `<body>`?</li>
+        <li>Що таке DOM і як він пов'язаний з HTML?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Що таке DOCTYPE?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Перший рядок в HTML» — без пояснення навіщо.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Вмикає Standards mode замість Quirks mode. Без нього CSS box model поводиться по-іншому.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Навіщо meta viewport?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Для мобільних» — занадто розмито.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Без нього мобільний браузер симулює 980px і зменшує сторінку. `width=device-width` — реальна ширина. `initial-scale=1` — без масштабування.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>`!` + Tab у VS Code — Emmet вставляє мінімальну структуру.</li>
+        <li>Браузери додають `<html>`, `<head>`, `<body>` автоматично, навіть якщо їх немає в коді.</li>
+        <li>`<meta charset>` має бути в перших 1024 байтах файлу.</li>
+        <li>`lang` можна ставити на будь-який елемент: `<span lang="en">Hello</span>`.</li>
+      </ul>
+    </section>

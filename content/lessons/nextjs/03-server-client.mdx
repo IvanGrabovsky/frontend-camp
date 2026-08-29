@@ -1,0 +1,154 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p>В архітектурі <strong>Next.js App Router</strong> компоненти розділені на два типи: <strong>Server Components (RSC)</strong> та <strong>Client Components</strong>. За замовчуванням усі компоненти в Next.js є Server Components. Їхній код виконується виключно на сервері й не додає жодного байта JavaScript до клієнтського бандла.</p>
+      <p>Директива `"use client"` на початку файлу оголошує межу переходу (boundary), де дозволено інтерактивність: хуки стану (`useState`), ефекти (`useEffect`) та обробники подій (`onClick`).</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🍽️</span> Аналогія з рестораном</div>
+      <p><strong>Server Components</strong> — це закрита кухня ресторану. Шеф-кухар має прямий доступ до продуктів (бази даних) і важкої техніки (секретні API ключі, важкі парсери). Гостю подають уже готове гаряче блюдо (чистий HTML/RSC Payload). <strong>Client Components</strong> — це спеції, ніж та виделка на столі гостя, якими він взаємодіє зі стравою за власним бажанням (кліки, перемикачі, інтерактив).</p>
+    </section>
+
+    <section>
+      <h2>Порівняльна таблиця: Server vs Client</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Можливість / Задача</th><th>Server Component (RSC)</th><th>Client Component ("use client")</th></tr></thead>
+          <tbody>
+            <tr><td>За замовчуванням?</td><td>✅ Так (всі файли в `app/`)</td><td>Ні (потрібна директива `"use client"`)</td></tr>
+            <tr><td>Прямий доступ до БД / ORM</td><td>✅ Так (Prisma, Drizzle, PostgreSQL)</td><td>❌ Ні (потрібен API або Server Action)</td></tr>
+            <tr><td>Секретні ключі (API Keys, Tokens)</td><td>✅ Безпечно (не потрапляють у браузер)</td><td>❌ Небезпечно (публічний клієнтський JS)</td></tr>
+            <tr><td>Хуки стану (`useState`, `useReducer`)</td><td>❌ Недоступні</td><td>✅ Доступні</td></tr>
+            <tr><td>Ефекти (`useEffect`, `useLayoutEffect`)</td><td>❌ Недоступні</td><td>✅ Доступні</td></tr>
+            <tr><td>Обробники подій (`onClick`, `onChange`)</td><td>❌ Недоступні</td><td>✅ Доступні</td></tr>
+            <tr><td>Браузерні API (`window`, `localStorage`)</td><td>❌ Недоступні</td><td>✅ Доступні після монтування</td></tr>
+            <tr><td>Вплив на розмір JS-бандла</td><td>⚡ <strong>0 КБ</strong> клієнтського JS</td><td>📦 Додається до завантажуваного бандла</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Як правильно використовувати "use client"</h2>
+      
+
+```javascript
+// components/LikeButton.tsx — Client Component для інтерактивності
+'use client';
+
+import { useState } from 'react';
+import { Heart } from 'lucide-react';
+
+export function LikeButton({ initialLikes }: { initialLikes: number }) {
+  const [likes, setLikes] = useState(initialLikes);
+
+  return (
+    <button onClick={() => setLikes(likes + 1)} className="like-btn">
+      <Heart /> {likes}
+    </button>
+  );
+}
+```
+
+
+
+      <h2>Композиція: як вкладати Server Component у Client Component</h2>
+      <p>Оскільки Client Component не може напряму імпортувати Server Component, використовуйте патерн <strong>Children (композиція через props)</strong>:</p>
+
+      
+
+```html
+// 1. Modal.tsx ("use client" компонент-обгортка)
+'use client';
+import { useState, ReactNode } from 'react';
+
+export function Modal({ children }: { children: ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>Відкрити</button>
+      {isOpen && <div className="modal">{children}</div>}
+    </div>
+  );
+}
+
+// 2. app/page.tsx (Server Component — рендерить обидва!)
+import { Modal } from '@/components/Modal';
+import { HeavyServerList } from '@/components/HeavyServerList'; // RSC з базою даних
+
+export default function Page() {
+  return (
+    <Modal>
+      <HeavyServerList /> <!-- Передається як children, рендериться на сервері! -->
+    </Modal>
+  );
+}
+```
+
+
+
+      <h2>Гідратація (Hydration) та помилки</h2>
+      <p><strong>Гідратація</strong> — це процес, коли браузер завантажує JS і «оживляє» статичний HTML, прив'язуючи обробники подій до DOM-вузлів.</p>
+      <p><strong>Hydration Mismatch Error</strong> виникає, коли початковий HTML із сервера відрізняється від того, що React згенерував у браузері під час першого рендеру (наприклад, перевірка `window !== undefined` або виклик `new Date().toLocaleTimeString()` без синхронізації).</p>
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://nextjs.org/docs/app/building-your-application/rendering/server-components" target="_blank" rel="noopener">Server Components — Next.js Docs</a></li>
+          <li><a href="https://nextjs.org/docs/app/building-your-application/rendering/client-components" target="_blank" rel="noopener">Client Components — Next.js Docs</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Ставити `"use client"` у кожному файлі</strong> — це зводить нанівець переваги Next.js, роздуває клієнтський JS бандл і сповільнює First Contentful Paint. Спускайте `"use client"` до найменших інтерактивних листків дерева (кнопка, інпут, перемикач).</li>
+        <li><strong>Прямий імпорт Server Component у файл із `"use client"`</strong> — якщо клієнтський файл імпортує серверний компонент, той автоматично перетворюється на Client Component і потрапляє в клієнтський JS!</li>
+        <li><strong>Спроба використати `localStorage` напряму в тілі функції компонента</strong> — під час SSR на сервері об'єкта `localStorage` не існує. Звертайтеся до нього лише всередині `useEffect` або обробників подій.</li>
+        <li><strong>Асинхронний Client Component (`export default async function`)</strong> — клієнтські компоненти не можуть бути `async` функціями (це дозволено лише для Server Components).</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи серверний компонент сторінки `app/profile/page.tsx`, що асинхронно отримує дані (RSC) без використання `useEffect`.</li>
+        <li>Винеси інтерактивну кнопку перемикання теми або лайка в окремий файл `components/ThemeButton.tsx` з директивою `"use client"`.</li>
+        <li>Імпортуй `ThemeButton` всередину серверної сторінки `app/profile/page.tsx` та передай у неї пропси.</li>
+        <li>Перевір розмір бандла у збірці (`npm run build`) — зверни увагу на позначки `○ (Static)` та `ƒ (Dynamic)`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що насправді означає директива `"use client"`? Чи означає вона, що компонент не виконується на сервері під час SSR?</li>
+        <li>Чому Server Components мають розмір 0 КБ у клієнтському JS бандлі?</li>
+        <li>Як передати Server Component всередину Client Component без перетворення першого на клієнтський?</li>
+        <li>Що таке Hydration Error і які дві найпоширеніші причини її виникнення?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«У чому різниця між Server Components та Client Components у Next.js App Router?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Server рендериться на сервері, а Client тільки в браузері».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Server Components (за замовчуванням) виконуються виключно на сервері під час збірки або запиту. Вони мають прямий доступ до бекенду/БД, безпечні для секретів і додають 0 КБ до JS бандла. Client Components (`"use client"`) також pre-рендеряться на сервері в статичний HTML під час SSR, але потім гідратуються в браузері, що дозволяє використовувати `useState`, `useEffect` та обробники подій.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Як уникнути Hydration Mismatch при роботі з даними клієнта (наприклад, localStorage або Date)?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Вимкнути SSR або загорнути весь додаток у "use client"».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> (1) Зчитувати клієнтські значення всередині `useEffect` після завершення першої гідратації; (2) Використовувати динамічний імпорт з вимкненим SSR для специфічних віджетів: `dynamic(() => import('./ClientWidget'), { ssr: false })`; (3) Для окремих елементів тексту застосовувати атрибут `suppressHydrationWarning`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Пакет `server-only` (`import 'server-only'`) викине помилку збірки, якщо хтось випадково імпортує серверний модуль з секретними ключами в Client Component.</li>
+        <li>Server Components можуть бути асинхронними функціями: `export default async function Page() { const user = await db.user.findFirst(); return <div>{user.name}</div>; }`.</li>
+        <li>Streaming з Suspense: можна обгорнути повільний Server Component у `<Suspense fallback={<Skeleton />}>`, і Next.js миттєво віддасть сторінку, підвантаживши блок потоково (streamed chunk).</li>
+      </ul>
+    </section>

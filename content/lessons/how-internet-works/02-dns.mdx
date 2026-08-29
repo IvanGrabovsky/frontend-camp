@@ -1,0 +1,118 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>DNS (Domain Name System)</strong> — розподілена база даних, яка перетворює людиночитані домени (`google.com`) на IP-адреси (`142.250.185.46`). Без DNS ти мусив би знати числові адреси кожного сайту.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📖</span> Аналогія з телефонною книгою</div>
+      <p>DNS — це <strong>телефонна книга інтернету</strong>. Ти знаєш ім'я (домен), книга дає номер (IP). Але вона глобальна, автоматично оновлюється і кешується на кожному рівні.</p>
+    </section>
+
+    <section>
+      <h2>Ієрархія та повний ланцюжок запиту</h2>
+
+      
+
+```text
+// Ланцюжок DNS при першому запиті
+Браузер (кеш?) → ОС (кеш / /etc/hosts?)
+  → Рекурсивний резолвер (провайдер / 8.8.8.8)
+    → Root DNS  ("com? → 192.5.6.30")
+    → TLD .com  ("example.com? → ns1.example.com")
+    → Authoritative ("example.com A → 93.184.216.34, TTL 3600")
+← IP повертається і кешується на кожному рівні
+```
+
+
+
+      <h2>Типи DNS-записів</h2>
+      <div className="syntax-params">
+        <table className="params-table">
+          <thead><tr><th>Тип</th><th>Призначення</th><th>Приклад</th></tr></thead>
+          <tbody>
+            <tr><td>`A`</td><td>Домен → IPv4</td><td>`example.com → 93.184.216.34`</td></tr>
+            <tr><td>`AAAA`</td><td>Домен → IPv6</td><td>`example.com → 2606:2800:...`</td></tr>
+            <tr><td>`CNAME`</td><td>Псевдонім домену</td><td>`www → example.com`</td></tr>
+            <tr><td>`MX`</td><td>Поштовий сервер</td><td>`example.com → mail.example.com`</td></tr>
+            <tr><td>`TXT`</td><td>Текст (SPF, DKIM, верифікація)</td><td>`"v=spf1..."`</td></tr>
+            <tr><td>`TTL`</td><td>Час кешування (секунди)</td><td>`3600` = 1 год</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
+```text
+# Команди в терміналі
+dig google.com A              # A-запис
+dig google.com +trace         # повний ланцюжок
+dig @8.8.8.8 google.com A    # через Google DNS
+dig @1.1.1.1 google.com A    # через Cloudflare DNS
+```
+
+
+
+      <div className="doc-links">
+        <h4>Інструменти</h4>
+        <ul>
+          <li><a href="https://dnschecker.org/" target="_blank" rel="noopener">DNS Checker — перевірити поширення</a></li>
+          <li><a href="https://www.iana.org/domains/root/servers" target="_blank" rel="noopener">IANA Root Servers</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>«DNS-зміна миттєва»</strong> — ні. Поширення: хвилини–24+ год залежно від TTL.</li>
+        <li><strong>«CNAME на root-домен»</strong> — неможливо. На `@` тільки A/AAAA/MX/TXT/NS.</li>
+        <li><strong>«Один домен — одна IP»</strong> — ні. Round-robin DNS: кілька A-записів для балансування.</li>
+        <li><strong>«DNS безпечний»</strong> — базовий DNS не шифрується (UDP 53). Є DoH та DoT.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>`dig google.com A` — знайди IP та TTL у секції ANSWER.</li>
+        <li>`dig google.com +trace` — відстеж Root → TLD → Authoritative.</li>
+        <li>Порівняй `dig @8.8.8.8` і `dig @1.1.1.1` — чи різні IP?</li>
+        <li>DevTools → Network → Timing: порівняй "DNS Lookup" для першого і повторного запиту.</li>
+        <li>Відкрий `chrome://net-internals/#dns` — побач закешовані домени.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Назви 4 рівні ієрархії DNS і роль кожного.</li>
+        <li>Що таке TTL і чому важливо зменшити його перед переїздом сайту?</li>
+        <li>Різниця між A і CNAME? Коли який?</li>
+        <li>Що таке рекурсивний резолвер?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Поясни DNS»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «DNS перетворює домени в IP» — занадто поверхнево.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Ієрархія Root→TLD→Authoritative, роль резолвера, кешування з TTL, конкретний приклад для google.com.</p>
+        </article>
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">«Чому DNS-зміни не миттєві?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Треба чекати» — без механізму.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> TTL: резолвери кешують відповідь на TTL секунд. При TTL=86400 стара IP може триматися 24год. Рішення: зменшити TTL до 300s за 24-48год до зміни.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
+      <ul>
+        <li>Файл `/etc/hosts` (Mac/Linux) обходить DNS повністю — записи там мають пріоритет.</li>
+        <li>Round-robin DNS: Google має ~8 A-записів, кожен запит отримує різні IP.</li>
+        <li>DNS cache poisoning — підробка відповідей. Захист: DNSSEC (цифровий підпис).</li>
+      </ul>
+    </section>

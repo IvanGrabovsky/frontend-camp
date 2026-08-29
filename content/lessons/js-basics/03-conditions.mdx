@@ -1,0 +1,127 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Умовні оператори</strong> дозволяють виконувати різний код залежно від умови. Основні інструменти: `if/else`, тернарний оператор `?:`, та `switch` для множинного вибору.</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🚦</span> Аналогія: світлофор</div>
+      <p>Умовні оператори — як світлофор: «якщо (if) горить зелений — іди, якщо (else if) жовтий — готуйся, інакше (else) — стій». `switch` — як меню в ресторані: перевіряєш кожен пункт і виконуєш відповідну дію.</p>
+    </section>
+    <section>
+      <h2>if / else if / else</h2>
+      
+
+```javascript
+const score = 75;
+
+if (score >= 90) {
+  console.log('Відмінно');
+} else if (score >= 70) {
+  console.log('Добре');    // ← виконається
+} else if (score >= 50) {
+  console.log('Задовільно');
+} else {
+  console.log('Незадовільно');
+}
+
+// Falsy значення в умові: false, 0, '', null, undefined, NaN
+if (0)         { /* не виконається */ }
+if ('')        { /* не виконається */ }
+if (null)      { /* не виконається */ }
+if ([])        { /* виконається — порожній масив truthy! */ }
+```
+
+
+
+      <h2>Тернарний оператор</h2>
+      
+
+```javascript
+// умова ? якщо_true : якщо_false
+const grade = score >= 90 ? 'A' : score >= 70 ? 'B' : 'C';
+
+// Зручно в JSX/шаблонах
+const label = isLoggedIn ? 'Вийти' : 'Увійти';
+const color = theme === 'dark' ? '#fff' : '#000';
+
+// ⚠️ Не вкладай більше 2 рівнів — стає нечитабельним
+```
+
+
+
+      <h2>switch</h2>
+      
+
+```javascript
+const day = 'Monday';
+switch (day) {
+  case 'Monday':
+  case 'Tuesday':    // fall-through — два кейси разом
+    console.log('Початок тижня'); break;
+  case 'Friday':
+    console.log('П'ятниця!'); break;
+  default:
+    console.log('Середина тижня');
+}
+
+// Сучасна альтернатива — об'єкт-словник
+const labels = { en: 'Hello', uk: 'Привіт', de: 'Hallo' };
+const greeting = labels[lang] ?? labels.en;
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/ifelse" target="_blank" rel="noopener noreferrer">if/else — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch" target="_blank" rel="noopener noreferrer">switch — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Забути `break` у `switch`</strong>: без нього виконання «проваліться» (fall-through) у наступний case.</li>
+        <li><strong>Покладатись на truthy/falsy без розуміння</strong>: `[]` і `{}` — truthy, навіть якщо «порожні».</li>
+        <li><strong>Надміру вкладати тернарні оператори</strong>: більше 2 рівнів — використовуй `if/else`.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Напиши функцію `getGrade(score)` що повертає 'A'/'B'/'C'/'D'/'F' залежно від балу.</li>
+        <li>Перепиши цю функцію через тернарний оператор.</li>
+        <li>Зроби `switch` що повертає назву місяця по числу (1 → 'Січень' і т.д.).</li>
+        <li>Перепиши `switch` через об'єкт-словник — яке рішення читабельніше?</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Які значення є falsy в JavaScript?</li>
+        <li>Що відбудеться якщо не написати `break` у `switch`?</li>
+        <li>Коли краще використовувати об'єкт-словник замість `switch`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Коли використовувати switch замість if/else?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «switch швидший» — майже ніколи не вірно в JS.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `switch` зручний для множинного порівняння однієї змінної з кількома константами. Але сучасна альтернатива — об'єкт-словник: `const map = { key: value }; map[key]` — чистіше, без fall-through ризиків, легко розширити.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Early return pattern: замість вкладених if/else повертай раніше — код стає плоскішим і читабельнішим.</li>
+        <li>Guard clauses: перевіряй некоректні стани на початку функції і повертай одразу — основна логіка залишається без вкладеності.</li>
+      </ul>
+    </section>
