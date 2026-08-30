@@ -3,6 +3,7 @@ import { HubLayout } from '@/components/HubLayout';
 import { loadLessonData, getAllLessonParams } from '@/data/lessons';
 import { getBlock } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
+import { LessonAuthGate } from '@/components/auth/LessonAuthGate';
 import Link from 'next/link';
 import fs from 'fs/promises';
 import path from 'path';
@@ -94,14 +95,22 @@ export default async function LessonPage({ params }: LessonPageProps) {
         )}
       </header>
 
-      {/* Lesson Content */}
-      <div className="prose dark:prose-invert max-w-none mb-16">
-        {mdxSource ? (
-          <MDXRemote source={mdxSource} components={components} />
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml || '' }} />
-        )}
-      </div>
+      {/* Lesson Content wrapped with Auth Gate */}
+      <LessonAuthGate
+        courseSlug={courseSlug}
+        lessonSlug={lessonSlug}
+        lessonIndex={currentIndex}
+        crystals={lesson.crystals || 10}
+        firstLessonSlug={lessons[0]?.slug}
+      >
+        <div className="prose dark:prose-invert max-w-none mb-16">
+          {mdxSource ? (
+            <MDXRemote source={mdxSource} components={components} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: lesson.contentHtml || '' }} />
+          )}
+        </div>
+      </LessonAuthGate>
 
       {/* Navigation Footer */}
       <div className="pt-8 border-t border-border/60 space-y-6">

@@ -1,8 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { RoadmapBlock } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
+import { useAuth } from '@/lib/auth/AuthContext';
+import { CheckCircle2, Lock } from 'lucide-react';
 
 interface RoadmapBlockCardProps {
   block: RoadmapBlock;
@@ -59,12 +63,32 @@ export function LessonCard({
   crystals: number;
 }) {
   const href = withBasePath(`/courses/${courseSlug}/${slug}/`);
+  const { isLessonCompleted, isAuthenticated } = useAuth();
+  const completed = isLessonCompleted(courseSlug, slug);
+  const isFree = num === '01';
 
   return (
     <a className="block outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl h-full" href={href}>
-      <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group border-border">
+      <Card className={`h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group border-border ${completed ? 'border-emerald-500/40 bg-emerald-500/5' : ''}`}>
         <CardHeader className="pb-2 flex-row justify-between items-center space-y-0">
-          <span className="text-2xl font-mono text-primary group-hover:text-accent transition-colors">{num}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-mono text-primary group-hover:text-accent transition-colors">{num}</span>
+            {completed && (
+              <span className="inline-flex items-center gap-1 text-[0.7rem] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <CheckCircle2 className="w-3 h-3" /> Пройдено
+              </span>
+            )}
+            {!completed && !isFree && !isAuthenticated && (
+              <span className="inline-flex items-center gap-1 text-[0.7rem] text-muted-foreground bg-muted px-2 py-0.5 rounded-full" title="Потрібна авторизація">
+                <Lock className="w-2.5 h-2.5" /> Вхід
+              </span>
+            )}
+            {!completed && isFree && (
+              <span className="inline-flex items-center text-[0.7rem] text-primary bg-primary/10 px-2 py-0.5 rounded-full font-medium">
+                Вільний
+              </span>
+            )}
+          </div>
           <span className="text-accent font-bold text-sm">💎 {crystals}</span>
         </CardHeader>
         <CardContent className="flex-1 pb-4">
@@ -80,3 +104,4 @@ export function LessonCard({
     </a>
   );
 }
+

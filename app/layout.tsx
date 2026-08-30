@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeInitScript } from '@/components/ThemeToggle';
+import { AuthProvider } from '@/lib/auth/AuthContext';
+import { AuthModal } from '@/components/auth/AuthModal';
 import { Inter, Fira_Code } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +21,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <ThemeInitScript />
       </head>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+          <AuthModal />
+        </AuthProvider>
+      </body>
     </html>
   );
 }

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { UserNav } from '@/components/auth/UserNav';
 import { withBasePath } from '@/lib/paths';
 
 interface SiteHeaderProps {
@@ -10,7 +11,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ breadcrumb }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md shadow-sm">
-      <div className="container flex h-14 items-center justify-between px-4 max-w-6xl mx-auto gap-2">
+      <div className="container flex h-14 items-center justify-between px-4 max-w-6xl mx-auto gap-3">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <Link className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0" href="/" aria-label="На головну" title="На головну">
             <ChevronLeft className="w-5 h-5" />
@@ -32,7 +33,9 @@ export function SiteHeader({ breadcrumb }: SiteHeaderProps) {
             )}
           </nav>
         </div>
-        <div className="flex items-center shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          <UserNav />
+          <div className="h-4 w-px bg-border/80 mx-0.5 hidden sm:block" />
           <ThemeToggle />
         </div>
       </div>

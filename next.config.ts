@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  transpilePackages: ['@supabase/supabase-js'],
 };
 
 export default nextConfig;

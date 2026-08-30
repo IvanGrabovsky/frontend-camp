@@ -12,6 +12,7 @@ export interface LessonData {
   blockTitle: string;
   methods: string;
   difficulty: Difficulty;
+  crystals: number;
   contentHtml?: string;
 }
 
