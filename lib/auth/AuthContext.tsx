@@ -134,10 +134,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (updatedUser) {
         localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedUser));
-        const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
-        const allUsers: Record<string, User> = allUsersJson ? JSON.parse(allUsersJson) : {};
-        allUsers[updatedUser.email.toLowerCase()] = updatedUser;
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(allUsers));
       } else {
         localStorage.removeItem(AUTH_STORAGE_KEY);
       }
@@ -157,7 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        // If Supabase is connected (Real Database Mode)
+        // 1. If Supabase is configured (Real Database Mode)
         if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase.auth.signInWithPassword({
             email: normalizedEmail,
@@ -172,7 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 error: 'Ваш email ще не підтверджено. Будь ласка, перейдіть за посиланням у надісланому листі.',
               };
             }
-            if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
+            if (msg.includes('invalid login credentials') || msg.includes('invalid credentials') || msg.includes('invalid')) {
               return { success: false, error: 'Невірний email або пароль' };
             }
             return { success: false, error: error.message };
@@ -189,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { success: false, error: 'Не вдалося завантажити профіль користувача' };
         }
 
-        // Local / Offline mode (No Supabase keys)
+        // 2. Local / Offline mode (Only when Supabase is not available)
         const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
         const allUsers: Record<string, User & { passwordHash?: string }> = allUsersJson ? JSON.parse(allUsersJson) : {};
 
@@ -202,11 +198,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
         }
 
-        // Check local password if stored
-        if (existingUser.passwordHash && existingUser.passwordHash !== password) {
+        // Strictly verify stored password
+        if (!existingUser.passwordHash || existingUser.passwordHash !== password) {
           return {
             success: false,
-            error: 'Невірний пароль',
+            error: 'Невірний email або пароль',
           };
         }
 
@@ -286,7 +282,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Local / Offline mode
         const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
-        const allUsers: Record<string, User> = allUsersJson ? JSON.parse(allUsersJson) : {};
+        const allUsers: Record<string, User & { passwordHash?: string }> = allUsersJson ? JSON.parse(allUsersJson) : {};
 
         if (allUsers[normalizedEmail]) {
           return {

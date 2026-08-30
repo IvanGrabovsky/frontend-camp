@@ -9,10 +9,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
-import { Sparkles, BookCheck, Trophy, ArrowRight, User as UserIcon, LogIn, CheckCircle2, ShieldCheck, Flame } from 'lucide-react';
+import { Sparkles, BookCheck, Trophy, ArrowRight, User as UserIcon, LogIn, CheckCircle2, ShieldCheck, Flame, LogOut } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading, openAuthModal } = useAuth();
+  const { user, isAuthenticated, isLoading, openAuthModal, logout } = useAuth();
 
   // Calculate stats
   let totalLessonsCount = 0;
@@ -128,6 +128,15 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3">
             <Button asChild variant="outline" size="sm">
               <Link href="/">До уроків →</Link>
+            </Button>
+            <Button
+              onClick={logout}
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Вийти</span>
             </Button>
           </div>
         </div>
