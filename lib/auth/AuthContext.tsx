@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { User, AuthContextType } from './types';
+import type { User, AuthContextType, AuthResponse } from './types';
 import { supabase, isSupabaseConfigured } from '@/lib/db/supabase';
 
 const AUTH_STORAGE_KEY = 'frontend_camp_user_session';
@@ -147,28 +147,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(
-    async (email: string, password?: string): Promise<{ success: boolean; error?: string }> => {
+    async (email: string, password?: string): Promise<AuthResponse> => {
       const normalizedEmail = email.trim().toLowerCase();
       if (!normalizedEmail) {
         return { success: false, error: 'Введіть email адресу' };
       }
+      if (!password) {
+        return { success: false, error: 'Введіть пароль' };
+      }
 
       try {
-        // If Supabase is connected and password provided
-        if (isSupabaseConfigured && supabase && password) {
+        // If Supabase is connected (Real Database Mode)
+        if (isSupabaseConfigured && supabase) {
           const { data, error } = await supabase.auth.signInWithPassword({
             email: normalizedEmail,
             password: password,
           });
 
           if (error) {
-            if (error.message.toLowerCase().includes('email not confirmed')) {
+            const msg = error.message.toLowerCase();
+            if (msg.includes('email not confirmed')) {
               return {
                 success: false,
-                error: 'Ваш email ще не підтверджено. Будь ласка, перейдіть за посиланням у листі.',
+                error: 'Ваш email ще не підтверджено. Будь ласка, перейдіть за посиланням у надісланому листі.',
               };
             }
-            if (error.message.toLowerCase().includes('invalid login credentials')) {
+            if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
               return { success: false, error: 'Невірний email або пароль' };
             }
             return { success: false, error: error.message };
@@ -182,24 +186,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               return { success: true };
             }
           }
+          return { success: false, error: 'Не вдалося завантажити профіль користувача' };
         }
 
-        // Local / Offline mode
+        // Local / Offline mode (No Supabase keys)
         const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
-        const allUsers: Record<string, User> = allUsersJson ? JSON.parse(allUsersJson) : {};
+        const allUsers: Record<string, User & { passwordHash?: string }> = allUsersJson ? JSON.parse(allUsersJson) : {};
 
-        let existingUser = allUsers[normalizedEmail];
+        const existingUser = allUsers[normalizedEmail];
 
         if (!existingUser) {
-          const defaultName = normalizedEmail.split('@')[0];
-          existingUser = {
-            id: `usr_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-            email: normalizedEmail,
-            name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
-            avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${normalizedEmail}`,
-            crystals: 50,
-            completedLessons: [],
-            createdAt: new Date().toISOString(),
+          return {
+            success: false,
+            error: 'Користувача з такою поштою не знайдено. Будь ласка, зареєструйтесь.',
+          };
+        }
+
+        // Check local password if stored
+        if (existingUser.passwordHash && existingUser.passwordHash !== password) {
+          return {
+            success: false,
+            error: 'Невірний пароль',
           };
         }
 
@@ -214,7 +221,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const register = useCallback(
-    async (name: string, email: string, password?: string): Promise<{ success: boolean; error?: string; requiresEmailConfirmation?: boolean }> => {
+    async (name: string, email: string, password?: string): Promise<AuthResponse> => {
       const trimmedName = name.trim();
       const normalizedEmail = email.trim().toLowerCase();
 
@@ -242,7 +249,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
 
           if (error) {
+            const msg = error.message.toLowerCase();
+            if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already exists')) {
+              return {
+                success: false,
+                userAlreadyExists: true,
+                error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
+              };
+            }
             return { success: false, error: error.message };
+          }
+
+          // Check if Supabase returned user with empty identities (meaning user already exists)
+          if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            return {
+              success: false,
+              userAlreadyExists: true,
+              error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
+            };
           }
 
           // If Supabase requires email confirmation, session is null
@@ -265,9 +289,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const allUsers: Record<string, User> = allUsersJson ? JSON.parse(allUsersJson) : {};
 
         if (allUsers[normalizedEmail]) {
-          saveSession(allUsers[normalizedEmail]);
-          setIsAuthModalOpen(false);
-          return { success: true };
+          return {
+            success: false,
+            userAlreadyExists: true,
+            error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
+          };
         }
 
         const newUser: User = {
@@ -279,6 +305,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           completedLessons: [],
           createdAt: new Date().toISOString(),
         };
+
+        allUsers[normalizedEmail] = { ...newUser, passwordHash: password };
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(allUsers));
 
         saveSession(newUser);
         setIsAuthModalOpen(false);

@@ -18,6 +18,7 @@ export interface AuthResponse {
   success: boolean;
   error?: string;
   requiresEmailConfirmation?: boolean;
+  userAlreadyExists?: boolean;
 }
 
 export interface AuthContextType extends AuthState {

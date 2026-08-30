@@ -93,7 +93,17 @@ export function AuthModal() {
       if (tab === 'register') {
         const res = await register(name, email, password);
         if (!res.success) {
-          setErrors({ general: res.error || 'Помилка реєстрації. Перевірте введені дані.' });
+          if (res.userAlreadyExists) {
+            // Automatically redirect user to Login tab
+            setTab('login');
+            setPassword('');
+            setConfirmPassword('');
+            setErrors({
+              general: 'Користувач із цією поштою вже зареєстрований. Будь ласка, введіть пароль для входу.',
+            });
+          } else {
+            setErrors({ general: res.error || 'Помилка реєстрації. Перевірте введені дані.' });
+          }
         } else if (res.requiresEmailConfirmation) {
           setRequiresConfirmation(true);
           setResendCooldown(60);
