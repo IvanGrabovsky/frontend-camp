@@ -59,7 +59,7 @@ export default function HomePage() {
               <CardTitle className="text-xl">Блоки roadmap</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground leading-relaxed">Інтернет → HTML → CSS → JavaScript → Next.js → фінальний проект.</p>
+              <p className="text-muted-foreground leading-relaxed">Інтернет → HTML/CSS → Git → JS/TS → Next.js → Безпека, Perf & Тести → Фінал.</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-md bg-card/50 hover:shadow-lg transition-all hover:-translate-y-1">

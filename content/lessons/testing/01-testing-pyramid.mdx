@@ -1,0 +1,60 @@
+<article className="lesson-card">
+  <h2>Навіщо тестувати фронтенд?</h2>
+  <p>
+    Тестування забезпечує стабільність вашого додатку під час додавання нових фіч та рефакторингу. Хороший набір автоматизованих тестів дозволяє розробникам впевнено випускати оновлення в production у будь-який час, не боячись щось зламати.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🏗️</span> Піраміда тестування — як перевірка нового автомобіля</div>
+  <p>
+    <strong>Unit-тести</strong> перевіряють, чи крутиться окремо взята гайка чи моторчик склоочисника (швидко, дешево). <strong>Integration-тести</strong> перевіряють, чи натискання педалі гальм справді передає сигнал до гідравліки коліс. А <strong>E2E-тест</strong> — це повноцінний тест-драйв на полігоні з манекеном за кермом.
+  </p>
+</section>
+
+<section>
+  <h2>Рівні піраміди тестування</h2>
+
+  <ul>
+    <li>
+      <strong>Unit Tests (Модульні тести):</strong> тестують ізольовані чисті функції, утиліти, розрахунки цін, форматування дат. Інструменти: <em>Vitest, Jest</em>.
+    </li>
+    <li>
+      <strong>Integration Tests (Інтеграційні тести):</strong> тестують взаємодію кількох компонентів та роботу інтерфейсу (форми, модальні вікна, фільтрація) так, як їх бачить користувач. Інструменти: <em>React Testing Library, MSW</em>.
+    </li>
+    <li>
+      <strong>End-to-End Tests (E2E / Наскрізні тести):</strong> запуск справжнього браузера (Chromium, Firefox, WebKit) та симуляція реального шляху клієнта: логін → додавання товару в кошик → оплата. Інструменти: <em>Playwright, Cypress</em>.
+    </li>
+  </ul>
+
+  <h2>Приклад простого Unit-тесту з Vitest</h2>
+
+```typescript
+// math.ts
+export function calculateDiscount(price: number, discountPercent: number): number {
+  if (discountPercent < 0 || discountPercent > 100) {
+    throw new Error('Знижка повинна бути від 0 до 100%');
+  }
+  return price - (price * discountPercent) / 100;
+}
+
+// math.test.ts
+import { describe, it, expect } from 'vitest';
+import { calculateDiscount } from './math';
+
+describe('calculateDiscount', () => {
+  it('коректно рахує ціну зі знижкою 20%', () => {
+    expect(calculateDiscount(100, 20)).toBe(80);
+  });
+
+  it('викидає помилку при невалідному відсотку', () => {
+    expect(() => calculateDiscount(100, 150)).toThrow('Знижка повинна бути від 0 до 100%');
+  });
+});
+```
+
+  <h2>Золоте правило тестування UI (Kent C. Dodds)</h2>
+  <blockquote>
+    «Чим більше ваші тести нагадують спосіб використання вашого програмного забезпечення реальними користувачами, тим більше впевненості вони вам надають.»
+  </blockquote>
+</section>

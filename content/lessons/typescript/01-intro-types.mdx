@@ -1,0 +1,69 @@
+<article className="lesson-card">
+  <h2>Що таке TypeScript?</h2>
+  <p>
+    <strong>TypeScript</strong> — це строга надбудова над JavaScript, яка додає статичну типізацію та потужний аналізатор коду. Код TypeScript транспілюється у чистий JavaScript, який виконується будь-яким браузером або середовищем Node.js.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🛡️</span> TypeScript — як ремінь безпеки та навігатор у авто</div>
+  <p>
+    JavaScript дозволяє вам їхати зі швидкістю 150 км/год із заплющеними очима і повідомляє про аварію лише тоді, коли ви вже врізалися в дерево (Runtime Error: Cannot read properties of undefined). TypeScript попереджає вас про небезпечний поворот ще на етапі написання маршруту в IDE.
+  </p>
+</section>
+
+<section>
+  <h2>Базові примітивні типи</h2>
+
+```typescript
+// Явне оголошення типів
+const userName: string = "Іван";
+const age: number = 24;
+const isEnrolled: boolean = true;
+const tags: string[] = ["frontend", "react", "typescript"];
+const scores: Array<number> = [95, 88, 100];
+
+// Type Inference (TypeScript автоматично визначає тип за значенням)
+let score = 100; // number
+// score = "top"; // ❌ Помилка: Type 'string' is not assignable to type 'number'
+```
+
+  <h2>Особливі типи: any, unknown, void, never</h2>
+
+```typescript
+// 1. any — вимикає перевірку типів (уникайте за можливістю!)
+let unsafeValue: any = "hello";
+unsafeValue.someNonExistentMethod(); // TS не попередить
+
+// 2. unknown — безпечна альтернатива any (вимагає перевірки типу перед використанням)
+let safeValue: unknown = "frontend";
+if (typeof safeValue === "string") {
+  console.log(safeValue.toUpperCase()); // ✅ Тепер це безпечно
+}
+
+// 3. void — функція не повертає значення
+function logMessage(msg: string): void {
+  console.log(msg);
+}
+
+// 4. never — функція ніколи не завершується або завжди викидає помилку
+function throwError(errorMsg: string): never {
+  throw new Error(errorMsg);
+}
+```
+
+  <h2>Union Types (Об'єднання типів)</h2>
+  <p>Дозволяють змінній приймати значення кількох визначених типів:</p>
+
+```typescript
+type Status = "pending" | "success" | "error";
+
+function handleResponse(status: Status, code: number | string) {
+  console.log(`Status: ${status}, Code: ${code}`);
+}
+
+handleResponse("success", 200);
+handleResponse("error", "TIMEOUT");
+// handleResponse("loading", 500); // ❌ Argument of type '"loading"' is not assignable
+```
+</section>

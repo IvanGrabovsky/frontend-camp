@@ -1,11 +1,10 @@
 # Frontend Learning Hub
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000)
-![Статус: Roadmap](https://img.shields.io/badge/Roadmap-5_блоків-7c6af7)
+![Статус: Roadmap](https://img.shields.io/badge/Roadmap-11_блоків-7c6af7)
 ![Тільки для некомерційного використання](https://img.shields.io/badge/Ліцензія-Некомерційна-ff69b4)
 
-> Повний навчальний шлях: **HTML → CSS → JavaScript → Next.js → фінальний проект**.
-> Зараз доступний блок **JavaScript масиви** (21 урок без змін); решта — roadmap-заглушки.
+> Повний навчальний шлях: **Інтернет → HTML/CSS → Git → JS/TS → Next.js → Безпека, Perf & Тести → Фінальний проект**.
 
 ## Швидкий старт
 
@@ -28,11 +27,18 @@ npm run build    # статичний export у out/
 
 | # | Блок | Статус | README |
 |---|------|--------|--------|
-| 01 | [HTML & CSS](blocks/01-html-css/) | Скоро | [README](blocks/01-html-css/README.md) |
-| 02 | [JavaScript основи](blocks/02-javascript-basics/) | Скоро | [README](blocks/02-javascript-basics/README.md) |
-| 03 | [JavaScript масиви](blocks/03-js-arrays/) | **Доступно** | [README](blocks/03-js-arrays/README.md) |
-| 04 | [Next.js](blocks/04-nextjs/) | Скоро | [README](blocks/04-nextjs/README.md) |
-| 05 | [Фінальний проект](blocks/05-capstone/) | Скоро | [README](blocks/05-capstone/README.md) |
+| 00 | [Як працює інтернет](blocks/00-how-internet-works/) | **Доступно** | [README](blocks/00-how-internet-works/README.md) |
+| 01 | [HTML](blocks/01-html-css/) | **Доступно** | [README](blocks/01-html-css/README.md) |
+| 02 | [CSS](blocks/01-html-css/) | **Доступно** | [README](blocks/01-html-css/README.md) |
+| 03 | [Git & Командна розробка](blocks/02-git/) | Скоро | [README](blocks/02-git/README.md) |
+| 04 | [JavaScript основи](blocks/02-javascript-basics/) | **Доступно** | [README](blocks/02-javascript-basics/README.md) |
+| 05 | [JavaScript масиви](blocks/03-js-arrays/) | **Доступно** | [README](blocks/03-js-arrays/README.md) |
+| 06 | [TypeScript](blocks/05-typescript/) | Скоро | [README](blocks/05-typescript/README.md) |
+| 07 | [Next.js](blocks/04-nextjs/) | **Доступно** | [README](blocks/04-nextjs/README.md) |
+| 08 | [Безпека браузера](blocks/06-web-security/) | **Доступно** | [README](blocks/06-web-security/README.md) |
+| 09 | [Web Performance & Оптимізація](blocks/07-web-performance/) | Скоро | [README](blocks/07-web-performance/README.md) |
+| 10 | [Тестування Frontend](blocks/08-testing/) | Скоро | [README](blocks/08-testing/README.md) |
+| 11 | [Фінальний проект](blocks/07-capstone/) | Скоро | [README](blocks/07-capstone/README.md) |
 
 ## Активний контент — масиви
 

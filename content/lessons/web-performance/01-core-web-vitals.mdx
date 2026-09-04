@@ -1,0 +1,68 @@
+<article className="lesson-card">
+  <h2>Що таке Core Web Vitals?</h2>
+  <p>
+    <strong>Core Web Vitals</strong> — це набір стандартизованих метрик від Google, які вимірюють реальний користувацький досвід (UX) веб-сторінки: швидкість завантаження головного контенту, інтерактивність та візуальну стабільність.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🏎️</span> Швидкодія — як сервіс у преміум ресторані</div>
+  <p>
+    Вам не просто важливо, щоб офіціант швидко прийняв замовлення (TTFB). Головне — коли вам принесуть основну страву (LCP), чи не стрибає тарілка по столу коли ви берете вилку (CLS), і наскільки миттєво офіціант реагує на ваш запит подати рахунок (INP).
+  </p>
+</section>
+
+<section>
+  <h2>Трійка головних метрик Core Web Vitals</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Метрика</th>
+          <th>Що вимірює</th>
+          <th>Хороший показник (Good)</th>
+          <th>Потребує покращення</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>LCP</strong> (Largest Contentful Paint)</td>
+          <td>Час рендерингу найбільшого видимого елемента (банер, h1, картинка)</td>
+          <td>≤ 2.5 с</td>
+          <td>2.5 с – 4.0 с</td>
+        </tr>
+        <tr>
+          <td><strong>INP</strong> (Interaction to Next Paint)</td>
+          <td>Затримка реакції сторінки на кліки, тапи та натискання клавіш</td>
+          <td>≤ 200 мс</td>
+          <td>200 мс – 500 мс</td>
+        </tr>
+        <tr>
+          <td><strong>CLS</strong> (Cumulative Layout Shift)</td>
+          <td>Сума неочікуваних зсувів макету під час завантаження сторінки</td>
+          <td>≤ 0.1</td>
+          <td>0.1 – 0.25</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Як виміряти показники на своєму сайті?</h2>
+
+```javascript
+// Використання офіційної бібліотеки web-vitals у JavaScript
+import { onLCP, onINP, onCLS } from 'web-vitals';
+
+onLCP((metric) => console.log('LCP:', metric.value));
+onINP((metric) => console.log('INP:', metric.value));
+onCLS((metric) => console.log('CLS:', metric.value));
+```
+
+  <h2>Ключові кроки для покращення кожної метрики:</h2>
+  <ul>
+    <li><strong>Для LCP:</strong> використання <code>priority</code> або <code>fetchpriority="high"</code> на головній картинці, CDN, оптимізація розмірів через modern WebP/AVIF.</li>
+    <li><strong>Для INP:</strong> розбиття довгих задач у JavaScript за допомогою <code>requestIdleCallback</code> або <code>scheduler.yield()</code>, уникнення блокування головного потоку (Main Thread).</li>
+    <li><strong>Для CLS:</strong> обов'язкове зазначення <code>width</code> та <code>height</code> для всіх <code>&lt;img&gt;</code> та <code>&lt;video&gt;</code>, резервування місця під банери та динамічні блоки (aspect-ratio).</li>
+  </ul>
+</section>
