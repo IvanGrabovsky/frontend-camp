@@ -1,0 +1,57 @@
+<article className="lesson-card">
+  <h2>Як влаштована веб-автентифікація?</h2>
+  <p>
+    Автентифікація — це процес підтвердження особи користувача (хто ви?). Вона є фундаментом безпеки будь-якого веб-додатку. Існує два основні підходи до збереження авторизованого стану між HTTP-запитами: <strong>сесії на основі Cookies (Stateful)</strong> та <strong>токени JWT (Stateless)</strong>.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🎫</span> Сесії vs JWT — як гардеробний номерок та квиток на концерт</div>
+  <p>
+    <strong>Сесія з Cookie</strong> — це як номерок у гардеробі: у вас є лише маленький номер (Session ID), а гардеробник (сервер) шукає ваше пальто у своїй базі даних. Якщо гардероб згорить — номерок нічого не вартий.<br />
+    <strong>JWT Token</strong> — це як квиток на концерт з печаткою, штрих-кодом і вашим ім'ям (підписані дані всередині самого квитка): охоронець може перевірити справжність печатки миттєво, не звертаючись до бази квиткової каси.
+  </p>
+</section>
+
+<section>
+  <h2>Порівняння Stateful Sessions та JWT Tokens</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>Stateful Cookie Sessions</th>
+          <th>Stateless JWT Tokens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Збереження стану</strong></td>
+          <td>На сервері (Redis, DB, пам'ять процесу)</td>
+          <td>У самому токені (клієнт надсилає щоразу)</td>
+        </tr>
+        <tr>
+          <td><strong>Масштабування</strong></td>
+          <td>Потребує спільного сховища сесій для кількох серверів</td>
+          <td>Ідеально для мікросервісів та Serverless</td>
+        </tr>
+        <tr>
+          <td><strong>Відкликання доступу (Revocation)</strong></td>
+          <td>Миттєве (видалити запис сесії з Redis)</td>
+          <td>Складніше (потрібен короткий Access Token + Refresh Token)</td>
+        </tr>
+        <tr>
+          <td><strong>Основний ризик</strong></td>
+          <td>CSRF (Cross-Site Request Forgery)</td>
+          <td>XSS викрадення токена з LocalStorage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Сучасний золотий стандарт для Single Page Application & Next.js:</h2>
+  <p>
+    Використання <strong>короткоживучого Access Token (5-15 хв)</strong> у пам'яті додатка + <strong>довгоживучого Refresh Token (7-30 днів)</strong>, збереженого у безпечній <code>HttpOnly, Secure, SameSite=Lax</code> куці з обов'язковою ротацією (Refresh Token Rotation).
+  </p>
+</section>

@@ -1,0 +1,58 @@
+<article className="lesson-card">
+  <h2>Server State проти Client State</h2>
+  <p>
+    У сучасних фронтенд-додатках найбільша помилка архітектури — намагатися зберігати весь стан у єдиному Redux/глобальному сховищі. Сучасний підхід чітко розділяє стан на дві фундаментальні категорії: <strong>Server State</strong> (стан сервера) та <strong>Client State</strong> (стан інтерфейсу).
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Стейт — як виписка з банку та форма на екрані</div>
+  <p>
+    Баланс вашої банківської картки — це <strong>Server State</strong>: ви не володієте цими даними на 100%, вони можуть змінитись у будь-який момент (наприклад, списання підписки), і їх потрібно кешувати та періодично оновлювати. А от чи відкрите зараз меню або перемикач темної теми — це <strong>Client State</strong>: ці дані належать тільки поточному браузеру.
+  </p>
+</section>
+
+<section>
+  <h2>Порівняння двох типів стану</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>Server State (Дані з API)</th>
+          <th>Client State (UI стан)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Де зберігається істина?</strong></td>
+          <td>На віддаленому сервері / базі даних</td>
+          <td>У пам'яті браузера / React компоненті</td>
+        </tr>
+        <tr>
+          <td><strong>Актуальність</strong></td>
+          <td>Може стати застарілим (stale) будь-якої секунди</td>
+          <td>Завжди синхронний та актуальний</td>
+        </tr>
+        <tr>
+          <td><strong>Потребує</strong></td>
+          <td>Кешування, дедуплікації запитів, retry, loading/error станів</td>
+          <td>Простого оновлення в пам'яті (set state)</td>
+        </tr>
+        <tr>
+          <td><strong>Найкращий інструмент</strong></td>
+          <td><strong>TanStack Query (React Query)</strong>, SWR, RTK Query</td>
+          <td><strong>Zustand</strong>, <code>useState</code>, <code>useReducer</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Коли який інструмент обирати?</h2>
+  <ul>
+    <li><strong>Локальний стан компонента (<code>useState</code>):</strong> відкритий/закритий дропдаун, значення поля вводу під час набору.</li>
+    <li><strong>Глобальний клієнтський стан (Zustand):</strong> тема оформлення, відкритий глобальний сайдбар, вміст кошика покупок перед відправкою.</li>
+    <li><strong>Серверний стан (TanStack Query):</strong> список користувачів, пости, профіль, пагінація з бекенду.</li>
+  </ul>
+</section>

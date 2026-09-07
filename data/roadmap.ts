@@ -144,6 +144,50 @@ export const TESTING_LESSONS: LessonMeta[] = [
   { num: '08', slug: '08-a11y-ci', title: 'A11y тести та автоматизація в CI', methods: 'axe-core · Vitest in CI · GitHub Actions', difficulty: 'hard', crystals: 0 },
 ];
 
+export const TAILWIND_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-utility-first', title: 'Utility-First підхід та налаштування', methods: 'utility classes · JIT compiler', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-responsive-design', title: 'Адаптивність та брейкпоінти', methods: 'sm: · md: · lg: · xl: · 2xl:', difficulty: 'easy', crystals: 0 },
+  { num: '03', slug: '03-pseudo-classes', title: 'Стани: hover, focus, active, dark mode', methods: 'hover: · focus-visible: · dark: · group', difficulty: 'easy', crystals: 0 },
+  { num: '04', slug: '04-flex-grid-layout', title: 'Flexbox та Grid у Tailwind', methods: 'flex · grid · gap · col-span · justify', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-custom-theme', title: 'Кастомізація: кольори, шрифти, spacing', methods: 'tailwind.config · theme.extend · CSS vars', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-animations-transitions', title: 'Транзишени та анімації', methods: 'transition-all · duration · animate-spin', difficulty: 'medium', crystals: 0 },
+  { num: '07', slug: '07-shadcn-radix', title: 'Shadcn UI та Radix UI примітиви', methods: 'components.json · cn() · cva · clsx', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-tailwind-v4', title: 'Сучасний Tailwind CSS v4 та @theme', methods: '@theme · @utility · CSS first setup', difficulty: 'hard', crystals: 0 },
+];
+
+export const JS_ASYNC_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-event-loop', title: 'Як працює Event Loop та Call Stack', methods: 'Call Stack · Web APIs · Task Queue', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-micro-macro-tasks', title: 'Microtasks vs Macrotasks', methods: 'Promise.resolve · queueMicrotask · setTimeout', difficulty: 'medium', crystals: 0 },
+  { num: '03', slug: '03-promises-deep', title: 'Promises: життєвий цикл та ланцюжки', methods: 'new Promise · then · catch · finally', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-promise-combinators', title: 'Комбінатори промісів', methods: 'all · allSettled · race · any', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-async-await-internals', title: 'Async/Await та генератори під капотом', methods: 'async/await · yield · generator function', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-abort-controller', title: 'Скасування запитів через AbortController', methods: 'AbortController · signal · timeout', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-web-workers', title: 'Багатопоточність у браузері: Web Workers', methods: 'new Worker · postMessage · onmessage', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-concurrency-patterns', title: 'Паттерни конкурентності та Debounce/Throttle', methods: 'p-limit · debounce · throttle', difficulty: 'hard', crystals: 0 },
+];
+
+export const STATE_MANAGEMENT_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-server-vs-client-state', title: 'Архітектура стану: Server vs Client State', methods: 'Context API · Local vs Global State', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-zustand-basics', title: 'Zustand: легкий глобальний стейт', methods: 'create · useStore · selectors · set/get', difficulty: 'medium', crystals: 0 },
+  { num: '03', slug: '03-zustand-middleware', title: 'Zustand Middleware: persist, devtools, immer', methods: 'persist · devtools · immer middleware', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-tanstack-query-basics', title: 'TanStack Query: запити та автокешування', methods: 'useQuery · queryKey · queryFn · staleTime', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-mutations-invalidation', title: 'Мутації та автоматична інвалідація кешу', methods: 'useMutation · invalidateQueries · reset', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-optimistic-updates', title: 'Оптимістичні оновлення інтерфейсу', methods: 'onMutate · context rollback · UX patterns', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-infinite-scroll-pagination', title: 'Пагінація та Infinite Scroll', methods: 'useInfiniteQuery · getNextPageParam', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-offline-sync', title: 'Offline-first стейт та міжвкладочна синхронізація', methods: 'BroadcastChannel · LocalStorage sync', difficulty: 'hard', crystals: 0 },
+];
+
+export const AUTH_SECURITY_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-auth-models', title: 'Моделі автентифікації: Sessions vs Tokens', methods: 'Stateful Session · Stateless JWT', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-jwt-internals', title: 'JWT під мікроскопом: Header, Payload, Sign', methods: 'base64url · HMAC SHA256 · claims · exp', difficulty: 'medium', crystals: 0 },
+  { num: '03', slug: '03-cookie-security', title: 'Безпечні Cookies: HttpOnly, Secure, SameSite', methods: 'SameSite=Lax/Strict · HttpOnly · prefix', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-token-storage', title: 'Де зберігати токени: Memory vs Cookie vs Storage', methods: 'XSS resistance · Refresh Token Rotation', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-csrf-protection', title: 'CSRF атаки та захист у SPA / Next.js', methods: 'Anti-CSRF Tokens · SameSite · Double Submit', difficulty: 'hard', crystals: 0 },
+  { num: '06', slug: '06-oauth-pkce', title: 'OAuth 2.0 та OIDC з PKCE для SPA', methods: 'Authorization Code · code_verifier · PKCE', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-passkeys-webauthn', title: 'WebAuthn & Passkeys: безпарольний вхід', methods: 'navigator.credentials · FIDO2 · biometrics', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-security-audit', title: 'Чеклист аудиту безпеки клієнтської частини', methods: 'OWASP Top 10 Client · Content Security', difficulty: 'hard', crystals: 0 },
+];
+
 export const NEXTJS_LESSONS: LessonMeta[] = [
   { num: '01', slug: '01-what-is-nextjs', title: 'Що таке Next.js і навіщо він', methods: 'CSR · SSR · SSG · ISR', difficulty: 'easy', crystals: 0 },
   { num: '02', slug: '02-app-router', title: 'App Router: файлова маршрутизація', methods: 'page · layout · loading · error', difficulty: 'easy', crystals: 0 },
@@ -201,6 +245,21 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     courseSlug: 'css',
     lessons: CSS_LESSONS,
     startHref: '/courses/css/01-selectors/',
+    children: [
+      {
+        slug: 'tailwind-css',
+        order: 2.1,
+        title: 'Tailwind CSS & UI системи',
+        subtitle: 'Утилітарний CSS, дизайн-токени, анімації, JIT та Shadcn UI',
+        status: 'active',
+        level: 'Початківець → середній',
+        readmePath: 'blocks/01-css-tailwind/README.md',
+        courseSlug: 'tailwind-css',
+        lessons: TAILWIND_LESSONS,
+        startHref: '/courses/tailwind-css/01-utility-first/',
+        topics: ['Utility-First підхід', 'Адаптивність sm/md/lg', 'Стани hover/focus/dark', 'Flexbox & Grid', 'Кастомізація теми', 'Shadcn UI & Radix'],
+      }
+    ]
   },
   {
     slug: 'git-workflow',
@@ -248,6 +307,19 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
         lessons: ARRAYS_LESSONS,
         startHref: '/courses/js-arrays/01-intro/',
         topics: ['push · pop · shift · unshift', 'map · filter · reduce · forEach', 'find · findIndex · includes', 'sort · reverse · flat · flatMap', 'spread · деструктуризація · every · some'],
+      },
+      {
+        slug: 'js-async-deep',
+        order: 5.1,
+        title: 'Асинхронний JS & Event Loop',
+        subtitle: 'Event Loop, Microtasks, Promise під капотом, AbortController та Web Workers',
+        status: 'active',
+        level: 'Середній → просунутий',
+        readmePath: 'blocks/02-js-async/README.md',
+        courseSlug: 'js-async-deep',
+        lessons: JS_ASYNC_LESSONS,
+        startHref: '/courses/js-async-deep/01-event-loop/',
+        topics: ['Event Loop & Call Stack', 'Microtasks vs Macrotasks', 'Promises під капотом', 'Promise combinators', 'AbortController', 'Web Workers'],
       }
     ]
   },
@@ -284,6 +356,21 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     courseSlug: 'nextjs',
     lessons: NEXTJS_LESSONS,
     startHref: '/courses/nextjs/01-what-is-nextjs/',
+    children: [
+      {
+        slug: 'state-management',
+        order: 7.1,
+        title: 'Керування станом (State Management)',
+        subtitle: 'Zustand, TanStack Query, Server vs Client State, Оптимістичні оновлення',
+        status: 'active',
+        level: 'Середній → просунутий',
+        readmePath: 'blocks/04-state-management/README.md',
+        courseSlug: 'state-management',
+        lessons: STATE_MANAGEMENT_LESSONS,
+        startHref: '/courses/state-management/01-server-vs-client-state/',
+        topics: ['Server vs Client State', 'Zustand глобальний стейт', 'TanStack Query (React Query)', 'Мутації та інвалідація', 'Оптимістичні оновлення', 'Offline-first стейт'],
+      }
+    ]
   },
   {
     slug: 'web-security',
@@ -309,6 +396,21 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       'Lazy Loading + CSS :visited: History Sniffing без JavaScript',
       'Smooth Scroll Timing Attacks та Scroll-jacking',
     ],
+    children: [
+      {
+        slug: 'auth-security',
+        order: 8.1,
+        title: 'Автентифікація & Безпека сесій',
+        subtitle: 'JWT, Session Cookies, OAuth 2.0 / OIDC, CSRF, PKCE та безпечне збереження',
+        status: 'active',
+        level: 'Середній → просунутий',
+        readmePath: 'blocks/06-auth-security/README.md',
+        courseSlug: 'auth-security',
+        lessons: AUTH_SECURITY_LESSONS,
+        startHref: '/courses/auth-security/01-auth-models/',
+        topics: ['Sessions vs Stateless JWT', 'Анатомія JWT токена', 'HttpOnly, Secure, SameSite cookies', 'Безпечне збереження токенів', 'CSRF захист', 'OAuth 2.0 з PKCE', 'Passkeys & WebAuthn'],
+      }
+    ]
   },
   {
     slug: 'web-performance',

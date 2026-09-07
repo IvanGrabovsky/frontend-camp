@@ -1,0 +1,53 @@
+<article className="lesson-card">
+  <h2>Що таке Utility-First CSS?</h2>
+  <p>
+    <strong>Tailwind CSS</strong> — це утилітарний CSS-фреймворк, який замість створення громіздких кастомних класів на кшталт <code>.btn-primary-card-header</code> надає низькорівневі класи-будівельні блоки (наприклад, <code>flex</code>, <code>pt-4</code>, <code>text-center</code>, <code>rounded-xl</code>).
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🧱</span> Tailwind — як конструктор LEGO</div>
+  <p>
+    Замість того щоб ліпити з пластиліну унікальну деталь під кожну кнопку (традиційний CSS), ти береш готові стандартизовані кубики LEGO однакового розміру та кольору (Tailwind utilities) і збираєш будь-яку конструкцію просто в HTML.
+  </p>
+</section>
+
+<section>
+  <h2>Порівняння: Класичний CSS vs Tailwind CSS</h2>
+
+```html
+<!-- Традиційний CSS: потрібен окремий файл стилів та вигадування назв класів -->
+<!-- HTML -->
+<div class="user-card">
+  <img src="/avatar.jpg" class="user-avatar" alt="Avatar" />
+  <h3 class="user-name">Оксана</h3>
+</div>
+
+<!-- CSS -->
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+```
+
+```html
+<!-- Tailwind CSS: все прямо в розмітці, жодного перемикання між файлами! -->
+<div class="flex items-center gap-4 p-6 rounded-xl bg-card shadow-md">
+  <img src="/avatar.jpg" class="w-12 h-12 rounded-full object-cover" alt="Avatar" />
+  <h3 class="text-lg font-bold text-foreground">Оксана</h3>
+</div>
+```
+
+  <h2>Чому такий підхід став стандартом індустрії?</h2>
+  <ul>
+    <li><strong>Не треба вигадувати назви класів:</strong> більше жодних <code>.sidebar-wrapper-inner-container</code>.</li>
+    <li><strong>CSS не розростається з часом:</strong> JIT (Just-In-Time) компілятор генерує у фінальний бандл лише ті класи, які ви реально використали.</li>
+    <li><strong>Безпечні зміни:</strong> зміна стилів в одному компоненті ніколи випадково не зламає іншу сторінку сайту.</li>
+    <li><strong>Єдина система дизайн-токенів:</strong> відступи (<code>p-2</code>, <code>p-4</code>, <code>p-6</code>) та кольори завжди гармонійні та узгоджені.</li>
+  </ul>
+</section>
