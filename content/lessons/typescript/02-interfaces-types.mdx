@@ -1,0 +1,93 @@
+<article className="lesson-card">
+  <h2>Interfaces проти Type Aliases</h2>
+  <p>
+    У TypeScript є два основних способи опису форми об'єктів та структур даних: <code>interface</code> та <code>type</code>. У сучасних версіях TS вони дуже схожі за можливостями, але мають важливі відмінності у призначенні та гнучкості.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">📑</span> Interface vs Type — як бланк анкети та синонім у словнику</div>
+  <p>
+    <strong>Interface (Інтерфейс)</strong> — це офіційний бланк: ви можете доповнювати його новими пунктами (Declaration Merging) або створювати нові бланки на його основі (<code>extends</code>).<br />
+    <strong>Type Alias (Псевдонім типу)</strong> — це пряме визначення/формула: ви можете сказати «Користувач — це або Адмін, або Гість» (Union), або дати ім'я конкретній комбінації примітивів, що неможливо зробити через звичайний бланк.
+  </p>
+</section>
+
+<section>
+  <h2>Синтаксис та розширення</h2>
+
+```typescript
+// 1. Оголошення через Interface
+interface User {
+  id: string;
+  name: string;
+  readonly createdAt: Date; // Заборонено змінювати після створення
+  email?: string;           // Опціональне поле
+}
+
+// Розширення інтерфейсу через extends
+interface AdminUser extends User {
+  role: "admin" | "superadmin";
+  permissions: string[];
+}
+
+// 2. Оголошення через Type Alias
+type Product = {
+  id: string;
+  title: string;
+  price: number;
+};
+
+// Розширення типу через Intersection (&)
+type DiscountedProduct = Product & {
+  discountPercent: number;
+};
+```
+
+  <h2>Коли обов'язково використовувати `type`?</h2>
+  <p>Type Aliases незамінні для об'єднань (Unions), примітивів та кортежів (Tuples):</p>
+
+```typescript
+// Union Types (Об'єднання)
+type ThemeMode = "light" | "dark" | "system";
+type ID = string | number;
+
+// Tuples (Кортежі з фіксованою довжиною та типами)
+type LatLng = [latitude: number, longitude: number];
+const kyivCoords: LatLng = [50.4501, 30.5234];
+```
+
+  <h2>Патерн на мільйон: Discriminated Unions (Розмічені об'єднання)</h2>
+  <p>
+    Це фундаментальний патерн у фронтенді для моделювання станів завантаження, подій або відповідей API без помилок <code>undefined</code>:
+  </p>
+
+```typescript
+type FetchState<T> =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: T }
+  | { status: "error"; error: string };
+
+function renderUI(state: FetchState<string[]>) {
+  switch (state.status) {
+    case "idle":
+      return "Натисніть кнопку для завантаження";
+    case "loading":
+      return "Завантаження...";
+    case "success":
+      // TypeScript ТОЧНО знає, що тут є data і це string[]!
+      return `Завантажено ${state.data.length} елементів`;
+    case "error":
+      // Тут гарантовано доступне поле error!
+      return `Помилка: ${state.error}`;
+  }
+}
+```
+
+  <h2>Золоте правило вибору в команді:</h2>
+  <ul>
+    <li>Використовуйте <code>interface</code> для публічних API бібліотек, React Props та об'єктно-орієнтованих моделей.</li>
+    <li>Використовуйте <code>type</code> для складних типів: Unions (<code>|</code>), Intersections (<code>&</code>), функцій та утилітарних трансформерів.</li>
+  </ul>
+</section>

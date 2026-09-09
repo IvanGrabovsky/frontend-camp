@@ -1,0 +1,72 @@
+<article className="lesson-card">
+  <h2>Анатомія JSON Web Token (JWT)</h2>
+  <p>
+    <strong>JSON Web Token (JWT)</strong> — це відкритий стандарт (RFC 7519) для безпечної передачі інформації між сторонами у вигляді компактного JSON-об'єкта. Оскільки JWT підписаний цифровим підписом сервера (HMAC або RSA), сервер може довіряти даним всередині токена без повторного звернення до бази даних на кожен запит.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">📜</span> JWT — як нотаріально завірений документ</div>
+  <p>
+    Токен складається з трьох частин, розділених крапками: <code>Header.Payload.Signature</code>. Payload — це текст вашого паспорта (ваше ім'я, роль, дата видачі). Signature — це печатка нотаріуса. Будь-хто може прочитати текст (він лише закодований у Base64, а не зашифрований!), але ніхто не може підробити навіть одну літеру, бо тоді печатка (підпис) стане недійсною.
+  </p>
+</section>
+
+<section>
+  <h2>3 частини JWT токена</h2>
+
+```text
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFuYSIsImFkbWluIjp0cnVlLCJleHAiOjE3MTg5MDAwMDB9.4PzV4k05...
+  [ 1. HEADER (Червоний) ]    .     [ 2. PAYLOAD (Фіолетовий) ]     .  [ 3. SIGNATURE (Блакитний) ]
+```
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Секція</th>
+          <th>Призначення</th>
+          <th>Типовий вміст</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Header</strong></td>
+          <td>Тип токена та алгоритм підпису</td>
+          <td><code>&#123; "alg": "HS256", "typ": "JWT" &#125;</code></td>
+        </tr>
+        <tr>
+          <td><strong>2. Payload (Claims)</strong></td>
+          <td>Корисні дані користувача та метадані</td>
+          <td><code>&#123; "sub": "user_123", "role": "admin", "exp": 1718900000 &#125;</code></td>
+        </tr>
+        <tr>
+          <td><strong>3. Signature</strong></td>
+          <td>Криптографічний підпис для перевірки цілісності</td>
+          <td><code>HMACSHA256(base64(header) + "." + base64(payload), secret)</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Стандартні клейми (Registered Claims)</h2>
+  <ul>
+    <li><code>sub</code> (Subject): унікальний ID користувача.</li>
+    <li><code>exp</code> (Expiration Time): Unix timestamp закінчення дії токена (<strong>обов'язково!</strong>).</li>
+    <li><code>iat</code> (Issued At): час створення токена.</li>
+    <li><code>iss</code> (Issuer): хто випустив токен (наприклад, <code>https://auth.mysite.com</code>).</li>
+  </ul>
+
+  <h2>⚠️ Головні помилки безпеки при роботі з JWT:</h2>
+  <ul>
+    <li>
+      <strong>JWT — це НЕ шифрування:</strong> Base64URL легко декодується на клієнті через <code>atob()</code>. Ніколи не кладіть у токен паролі, банківські картки або конфіденційні дані!
+    </li>
+    <li>
+      <strong>Вразливість «alg: none»:</strong> старі бібліотеки дозволяли зловмисникам підмінити алгоритм на <code>none</code> і вимкнути перевірку підпису. Завжди використовуйте перевірені бібліотеки на бекенді (наприклад, <code>jose</code>, <code>jsonwebtoken</code>).
+    </li>
+    <li>
+      <strong>Збереження в LocalStorage:</strong> будь-який XSS-скрипт може прочитати <code>localStorage.getItem('token')</code>. Зберігайте Access Token у пам'яті (JS змінна / Zustand), а Refresh Token — в <code>HttpOnly Secure Cookie</code>.
+    </li>
+  </ul>
+</section>

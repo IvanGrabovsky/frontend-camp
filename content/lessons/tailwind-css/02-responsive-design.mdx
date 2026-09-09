@@ -1,0 +1,98 @@
+<article className="lesson-card">
+  <h2>Mobile-First філософія та Адаптивність</h2>
+  <p>
+    У сучасному веб-дизайні понад 65% трафіку надходить з мобільних пристроїв. Tailwind CSS за замовчуванням використовує <strong>Mobile-First</strong> підхід: будь-який утилітарний клас без префікса діє на всіх екранах (починаючи з найменших), а префікси брейкпоінтів застосовують стилі <em>тільки від певної ширини і ширше</em> (<code>min-width</code>).
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">📱</span> Адаптивність — як гардероб за сезонами</div>
+  <p>
+    Базовий шар одягу (футболка = клас без префікса) на тобі завжди. Коли стає холодніше (екран стає ширшим, наприклад <code>md:</code>), ти накидаєш худі. Коли настає зима (<code>lg:</code>) — одягаєш куртку. Ти не вдягаєш шубу влітку, щоб потім її знімати (Desktop-first); ти нашаровуєш одяг від простого до складнішого.
+  </p>
+</section>
+
+<section>
+  <h2>Стандартні брейкпоінти Tailwind</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Префікс</th>
+          <th>Мінімальна ширина (min-width)</th>
+          <th>Типовий пристрій</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><em>(без префікса)</em></td>
+          <td><code>0px</code> і більше</td>
+          <td>Смартфони (Mobile portrait)</td>
+        </tr>
+        <tr>
+          <td><code>sm:</code></td>
+          <td><code>640px</code></td>
+          <td>Великі смартфони / горизонтальна орієнтація</td>
+        </tr>
+        <tr>
+          <td><code>md:</code></td>
+          <td><code>768px</code></td>
+          <td>Планшети (Tablets)</td>
+        </tr>
+        <tr>
+          <td><code>lg:</code></td>
+          <td><code>1024px</code></td>
+          <td>Ноутбуки (Laptops / Small Desktop)</td>
+        </tr>
+        <tr>
+          <td><code>xl:</code></td>
+          <td><code>1280px</code></td>
+          <td>Десктопні монітори</td>
+        </tr>
+        <tr>
+          <td><code>2xl:</code></td>
+          <td><code>1536px</code></td>
+          <td>Великі широкоформатні дисплеї</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Практичний приклад адаптивної сітки (Responsive Grid)</h2>
+
+```html
+<!-- На мобільному: 1 колонка; на планшеті: 2 колонки; на десктопі: 4 колонки -->
+<div class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4 p-4">
+  <div class="p-6 rounded-2xl bg-card border border-border shadow-sm">Картка 1</div>
+  <div class="p-6 rounded-2xl bg-card border border-border shadow-sm">Картка 2</div>
+  <div class="p-6 rounded-2xl bg-card border border-border shadow-sm">Картка 3</div>
+  <div class="p-6 rounded-2xl bg-card border border-border shadow-sm">Картка 4</div>
+</div>
+```
+
+  <h2>Сучасна фішка: Container Queries (`@container`)</h2>
+  <p>
+    Звичайні медіа-запити реагують на ширину <em>всього вікна браузера</em>. Але часто компонент (наприклад, картка) має змінювати свій вигляд залежно від <strong>ширини батьківського контейнера</strong> (у вузькому сайдбарі vs у широкій центральній колонці).
+  </p>
+
+```html
+<!-- Оголошуємо контейнер -->
+<div class="@container">
+  <!-- Якщо контейнер ширший за 400px — показуємо горизонтальний лейаут -->
+  <div class="flex flex-col @sm:flex-row items-center gap-4">
+    <img src="/thumb.jpg" class="w-full @sm:w-32 rounded-lg" alt="Thumbnail" />
+    <div class="text-center @sm:text-left">
+      <h4 class="font-bold">Назва статті</h4>
+      <p class="text-sm text-muted-foreground">Короткий опис для картки</p>
+    </div>
+  </div>
+</div>
+```
+
+  <h2>Поширені помилки початківців:</h2>
+  <ul>
+    <li><strong>Не пишіть <code>sm:text-sm md:text-base</code> якщо мобільний розмір такий самий:</strong> пишіть <code>text-sm md:text-base</code>. Без префікса — це мобільний стиль.</li>
+    <li><strong>Не використовуйте max-width хаки:</strong> думайте від найменшого екрана до найбільшого.</li>
+  </ul>
+</section>

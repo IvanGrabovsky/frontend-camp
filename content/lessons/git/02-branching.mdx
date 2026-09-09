@@ -1,0 +1,73 @@
+<article className="lesson-card">
+  <h2>Гілкування у Git (Branching)</h2>
+  <p>
+    Гілкування — це серце командної роботи в Git. Гілка дозволяє ізольовано розробляти нову функціональність, тестувати експерименти чи виправляти баги, не ризикуючи зламати стабільний код у головній гілці (<code>main</code> або <code>master</code>).
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🌿</span> Гілка — як паралельний вимір у фільмі</div>
+  <p>
+    Уяви, що головна лінія часу — це гілка <code>main</code>. Коли ти створюєш гілку <code>feat/dark-mode</code>, ти відкриваєш портал у паралельний вимір, де робиш зміни. Якщо експеримент вдалий — ти об'єднуєш цей вимір з основною реальністю (Merge). Якщо невдалий — просто видаляєш гілку без жодного сліду в <code>main</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Секрет під капотом: чим насправді є гілка?</h2>
+  <p>
+    У більшості старих систем контролю версій гілка створювала повну копію всіх файлів. У Git гілка — це <strong>всього лише текстовий файл вагою 41 байт</strong>, що містить хеш останнього комміту (вказівник у <code>.git/refs/heads/</code>). Саме тому створення та перемикання гілок у Git відбувається за 1 мілісекунду!
+  </p>
+
+  <h2>Сучасні команди для роботи з гілками</h2>
+
+```bash
+# 1. Створення та перехід на нову гілку (сучасний синтаксис):
+git switch -c feat/header-redesign
+
+# 2. Перегляд списку всіх локальних гілок:
+git branch
+
+# 3. Перемикання на існуючу гілку:
+git switch main
+
+# 4. Злиття гілки feat/header-redesign у поточну гілку (main):
+git merge feat/header-redesign
+
+# 5. Безпечне видалення гілки після успішного злиття:
+git branch -d feat/header-redesign
+```
+
+  <h2>Fast-Forward злиття проти 3-Way Merge</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Тип злиття</th>
+          <th>Коли виникає</th>
+          <th>Результат у дереві коммітів</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fast-Forward</strong></td>
+          <td>Якщо в гілці <code>main</code> не з'явилося нових коммітів з моменту створення feature-гілки.</td>
+          <td>Вказівник <code>main</code> просто пересувається вперед без створення додаткового комміту злиття.</td>
+        </tr>
+        <tr>
+          <td><strong>3-Way Merge</strong> (Merge commit)</td>
+          <td>Якщо і в <code>main</code>, і у feature-гілці паралельно з'явилися нові комміти.</td>
+          <td>Git знаходить спільного предка і створює спеціальний <em>Merge Commit</em> з двома батьками.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Угода про іменування гілок у команді</h2>
+  <ul>
+    <li><code>feat/login-modal</code> — нова функціональність</li>
+    <li><code>fix/cart-discount-calc</code> — виправлення бага</li>
+    <li><code>refactor/auth-context</code> — оптимізація та рефакторинг</li>
+    <li><code>chore/deps-update</code> — оновлення пакетів та конфігів</li>
+  </ul>
+</section>

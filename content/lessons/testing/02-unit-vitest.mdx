@@ -1,0 +1,122 @@
+<article className="lesson-card">
+  <h2>Unit-тестування за допомогою Vitest</h2>
+  <p>
+    <strong>Vitest</strong> — це ультрашвидкий тестовий фреймворк наступного покоління, створений командою Vite. Він має повну сумісність з API Jest (ті ж самі <code>describe</code>, <code>it</code>, <code>expect</code>), але підтримує нативні ES-модулі, TypeScript та JSX «з коробки» без складного конфігурування Babel/ts-jest.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🧪</span> Unit-тести — як перевірка інгредієнтів кухарем</div>
+  <p>
+    Перш ніж випікати складний торт, кондитер пробує кожний крем та джем окремо на смак і свіжість (Unit Test). Якщо крем зіпсований — немає сенсу збирати весь торт у духовку (E2E Test). Unit-тести дають миттєвий зворотний зв'язок за лічені мілісекунди.
+  </p>
+</section>
+
+<section>
+  <h2>Базова анатомія тесту: патерн AAA (Arrange - Act - Assert)</h2>
+
+```typescript
+// utils/formatCurrency.ts
+export function formatCurrency(amount: number, currency: 'UAH' | 'USD' = 'UAH'): string {
+  if (isNaN(amount)) throw new Error('Невалідне число');
+  return new Intl.NumberFormat('uk-UA', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+```
+
+```typescript
+// utils/formatCurrency.test.ts
+import { describe, it, expect } from 'vitest';
+import { formatCurrency } from './formatCurrency';
+
+describe('formatCurrency()', () => {
+  it('коректно форматує суму в гривнях', () => {
+    // 1. Arrange (Підготовка даних)
+    const input = 1500;
+
+    // 2. Act (Виконання функції)
+    const result = formatCurrency(input, 'UAH');
+
+    // 3. Assert (Перевірка очікуваного результату)
+    expect(result).toContain('1');
+    expect(result).toContain('500');
+    expect(result).toContain('грн');
+  });
+
+  it('викидає помилку при передачі NaN', () => {
+    expect(() => formatCurrency(NaN)).toThrow('Невалідне число');
+  });
+});
+```
+
+  <h2>Основні матчери Vitest, які треба знати</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Матчер</th>
+          <th>Призначення</th>
+          <th>Приклад використання</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>toBe(value)</code></td>
+          <td>Строга рівність для примітивів (<code>===</code>)</td>
+          <td><code>expect(2 + 2).toBe(4)</code></td>
+        </tr>
+        <tr>
+          <td><code>toEqual(obj)</code></td>
+          <td>Глибоке порівняння об'єктів та масивів</td>
+          <td><code>expect(user).toEqual(&#123; id: 1, name: 'Іван' &#125;)</code></td>
+        </tr>
+        <tr>
+          <td><code>toContain(item)</code></td>
+          <td>Перевірка наявності елемента у масиві або рядку</td>
+          <td><code>expect(['react', 'ts']).toContain('ts')</code></td>
+        </tr>
+        <tr>
+          <td><code>toBeDefined() / toBeNull()</code></td>
+          <td>Перевірка на існування / відсутність значення</td>
+          <td><code>expect(user.avatar).toBeNull()</code></td>
+        </tr>
+        <tr>
+          <td><code>toThrow(message)</code></td>
+          <td>Перевірка, що виклик функції викинув очікувану помилку</td>
+          <td><code>expect(() =&gt; fn()).toThrow('Error')</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Параметризовані тести з `test.each`</h2>
+  <p>Замість дублювання коду тесту для різних вхідних даних — використовуйте табличні тести:</p>
+
+```typescript
+describe('перевірка валідності email', () => {
+  it.each([
+    ['test@example.com', true],
+    ['user.name+tag@domain.co.uk', true],
+    ['invalid-email', false],
+    ['@missing-user.com', false],
+    ['spaces in@email.com', false],
+  ])('для вводу %s повертає %s', (email, expected) => {
+    expect(isValidEmail(email)).toBe(expected);
+  });
+});
+```
+
+  <h2>Швидкий запуск у терміналі:</h2>
+
+```bash
+# Запуск у watch-режимі (миттєвий перезапуск при збереженні файлу)
+npx vitest
+
+# Одноразовий прогін для CI/CD з покриттям коду (coverage)
+npx vitest run --coverage
+```
+</section>

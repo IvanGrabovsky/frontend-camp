@@ -1,0 +1,106 @@
+<article className="lesson-card">
+  <h2>Чому Zustand переміг Redux у сучасному React?</h2>
+  <p>
+    <strong>Zustand</strong> — це мінімалістична, швидка та масштабована бібліотека керування станом (важить менше 1 КБ). Вона повністю позбавлена бойлерплейту: не потребує обгортання додатку в <code>&lt;Provider&gt;</code>, підтримує асинхронні екшени прямо всередині сховища та гарантує оновлення тільки тих компонентів, чиї дані реально змінилися.
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🐻</span> Zustand — як спільна дошка нотаток в офісі</div>
+  <p>
+    Уяви магнітну дошку в кабінеті (Zustand store): кожен співробітник (компонент) може підійти, прочитати тільки потрібний йому стікер (selector) або змінити його (action). При цьому вам не потрібен менеджер-посередник (Context Provider), щоб передавати інформацію по ланцюжку.
+  </p>
+</section>
+
+<section>
+  <h2>Створення першого типізованого сховища (Store)</h2>
+
+```typescript
+// store/useCartStore.ts
+import { create } from 'zustand';
+
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface CartStore {
+  items: CartItem[];
+  addItem: (item: CartItem) => void;
+  removeItem: (id: string) => void;
+  clearCart: () => void;
+}
+
+export const useCartStore = create<CartStore>((set) => ({
+  items: [],
+
+  // Додавання елемента (set приймає функцію для доступу до попереднього стану)
+  addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+
+  // Видалення за ID
+  removeItem: (id) =>
+    set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+
+  // Очищення кошика
+  clearCart: () => set({ items: [] }),
+}));
+```
+
+  <h2>Використання у компонентах із селекторами</h2>
+  <p>
+    <strong>Критично важливо:</strong> завжди використовуйте селектор <code>useCartStore((state) =&gt; state.field)</code>, щоб компонент ререндерився лише при зміні цього поля!
+  </p>
+
+```tsx
+// components/CartBadge.tsx
+import { useCartStore } from '@/store/useCartStore';
+
+export function CartBadge() {
+  // Компонент перерендериться ТІЛЬКИ якщо зміниться кількість товарів
+  const itemsCount = useCartStore((state) => state.items.length);
+
+  return (
+    <div className="relative inline-flex items-center p-2 rounded-lg bg-secondary">
+      🛒 Кошик
+      <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-primary text-primary-foreground rounded-full">
+        {itemsCount}
+      </span>
+    </div>
+  );
+}
+```
+
+  <h2>Асинхронні дії прямо у Store</h2>
+  <p>Вам не потрібні thunk або saga — просто пишіть <code>async/await</code>:</p>
+
+```typescript
+interface UserStore {
+  user: User | null;
+  isLoading: boolean;
+  fetchUser: (userId: string) => Promise<void>;
+}
+
+export const useUserStore = create<UserStore>((set) => ({
+  user: null,
+  isLoading: false,
+  fetchUser: async (userId) => {
+    set({ isLoading: true });
+    try {
+      const res = await fetch(`/api/users/${userId}`);
+      const user = await res.json();
+      set({ user, isLoading: false });
+    } catch (err) {
+      set({ isLoading: false });
+    }
+  },
+}));
+```
+
+  <h2>Головні переваги Zustand:</h2>
+  <ul>
+    <li><strong>Працює поза React:</strong> ви можете отримати або встановити стейт у звичайній TS-утиліті через <code>useCartStore.getState()</code> та <code>useCartStore.setState()</code>.</li>
+    <li><strong>Нуль бойлерплейту:</strong> жодних редʼюсерів, екшен-тайпів чи провайдерів.</li>
+    <li><strong>Автоматична оптимізація рендеру:</strong> компоненти не підписані на весь стор, а лише на свої селектори.</li>
+  </ul>
+</section>
