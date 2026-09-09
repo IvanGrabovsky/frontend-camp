@@ -188,6 +188,39 @@ export const AUTH_SECURITY_LESSONS: LessonMeta[] = [
   { num: '08', slug: '08-security-audit', title: 'Чеклист аудиту безпеки клієнтської частини', methods: 'OWASP Top 10 Client · Content Security', difficulty: 'hard', crystals: 0 },
 ];
 
+export const GITHUB_ACTIONS_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-actions-intro', title: 'Вступ до GitHub Actions та Workflows', methods: '.github/workflows · triggers · runners', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-jobs-steps', title: 'Синтаксис Jobs, Steps та матриці тестування', methods: 'jobs · matrix · runs-on · steps', difficulty: 'medium', crystals: 0 },
+  { num: '03', slug: '03-secrets-env', title: 'Секрети, змінні середовища та безпека', methods: 'secrets.GITHUB_TOKEN · env variables', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-automated-lint-test', title: 'Автоматизований лінтинг, тести та type-check', methods: 'npm run lint · vitest run · tsc --noEmit', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-preview-deployments', title: 'Автоматичний деплой превʼю на Pull Request', methods: 'Vercel preview · GitHub Pages action', difficulty: 'hard', crystals: 0 },
+  { num: '06', slug: '06-custom-actions', title: 'Створення власних Custom Actions', methods: 'action.yml · @actions/core · composite', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-release-automation', title: 'Автоматичні релізи та Semantic Versioning', methods: 'release-it · changelog generation · git tags', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-security-scanning', title: 'Сканування вразливостей (Dependabot & CodeQL)', methods: 'dependabot · CodeQL · SAST scanning', difficulty: 'hard', crystals: 0 },
+];
+
+export const NODEJS_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-node-runtime', title: 'Node.js Runtime & Модульна система (ESM vs CJS)', methods: 'node · process · fs · path · ESM/CJS', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-http-servers', title: 'Створення HTTP серверів (Node HTTP & Hono/Express)', methods: 'http.createServer · Hono · Express · Routing', difficulty: 'easy', crystals: 0 },
+  { num: '03', slug: '03-rest-crud-api', title: 'Проектування RESTful API та CRUD операції', methods: 'GET/POST/PUT/DELETE · req.body · status codes', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-middleware-architecture', title: 'Архітектура Middleware, валідація з Zod та CORS', methods: 'cors · zod validation · error handling', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-databases-sql-prisma', title: 'Робота з базами даних (PostgreSQL & Prisma/Drizzle)', methods: 'PostgreSQL · Prisma ORM · migrations', difficulty: 'medium', crystals: 0 },
+  { num: '06', slug: '06-auth-jwt-backend', title: 'Автентифікація на бекенді: хешування паролів та JWT', methods: 'bcrypt · jsonwebtoken · Auth Middleware', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-realtime-websockets', title: 'Real-time звʼязок: WebSockets (Socket.io / ws)', methods: 'WebSocket Server · broadcast · connection events', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-docker-deploy', title: 'Docker контейнеризація та Fullstack деплой', methods: 'Dockerfile · docker-compose · Railway/VPS', difficulty: 'hard', crystals: 0 },
+];
+
+export const DATABASES_ORM_LESSONS: LessonMeta[] = [
+  { num: '01', slug: '01-sql-basics', title: 'Основи SQL: вибірки, фільтри та індекси', methods: 'SELECT · INSERT · WHERE · JOIN · INDEX', difficulty: 'easy', crystals: 0 },
+  { num: '02', slug: '02-relational-modeling', title: 'Проектування реляційних схем даних', methods: '1:1 · 1:N · N:M · Foreign Keys · Normalization', difficulty: 'medium', crystals: 0 },
+  { num: '03', slug: '03-prisma-orm', title: 'Prisma ORM: типи, запити та міграції', methods: 'prisma generate · prisma migrate · schema.prisma', difficulty: 'medium', crystals: 0 },
+  { num: '04', slug: '04-drizzle-orm', title: 'Drizzle ORM: максимальна продуктивність та TS', methods: 'drizzle-orm · pgTable · drizzle-kit', difficulty: 'medium', crystals: 0 },
+  { num: '05', slug: '05-transactions-acid', title: 'Транзакції та властивості ACID', methods: '$transaction · rollback · isolation levels', difficulty: 'hard', crystals: 0 },
+  { num: '06', slug: '06-redis-caching', title: 'Кешування та черги з Redis', methods: 'Redis · key-value · TTL · BullMQ queues', difficulty: 'hard', crystals: 0 },
+  { num: '07', slug: '07-db-performance', title: 'Оптимізація запитів та EXPLAIN ANALYZE', methods: 'EXPLAIN · N+1 problem · Connection Pooling', difficulty: 'hard', crystals: 0 },
+  { num: '08', slug: '08-db-backups-cloud', title: 'Хмарні бази даних (Supabase/Neon) та реплікація', methods: 'Supabase · Neon Serverless · pooling · backups', difficulty: 'hard', crystals: 0 },
+];
+
 export const NEXTJS_LESSONS: LessonMeta[] = [
   { num: '01', slug: '01-what-is-nextjs', title: 'Що таке Next.js і навіщо він', methods: 'CSR · SSR · SSG · ISR', difficulty: 'easy', crystals: 0 },
   { num: '02', slug: '02-app-router', title: 'App Router: файлова маршрутизація', methods: 'page · layout · loading · error', difficulty: 'easy', crystals: 0 },
@@ -281,6 +314,21 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       'Автоматизація якості коду: Git Hooks, Husky, lint-staged та Conventional Commits',
       'GitHub Actions: налаштування CI/CD пайплайнів, автоматичний лінтинг і тести',
     ],
+    children: [
+      {
+        slug: 'github-actions',
+        order: 3.1,
+        title: 'CI/CD & GitHub Actions',
+        subtitle: 'Автоматизовані пайплайни, тестування, preview deploy та безпека',
+        status: 'active',
+        level: 'Середній → просунутий',
+        readmePath: 'blocks/02-git-actions/README.md',
+        courseSlug: 'github-actions',
+        lessons: GITHUB_ACTIONS_LESSONS,
+        startHref: '/courses/github-actions/01-actions-intro/',
+        topics: ['Workflows & Triggers', 'Jobs & Matrix builds', 'Секрети та env змінні', 'Автоматизовані тести & lint', 'Preview deployments', 'Custom Actions', 'Release automation', 'Dependabot & CodeQL'],
+      }
+    ]
   },
   {
     slug: 'javascript-basics',
@@ -373,8 +421,45 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     ]
   },
   {
-    slug: 'web-security',
+    slug: 'nodejs-fullstack',
     order: 8,
+    title: 'Node.js & Fullstack Backend',
+    subtitle: 'Runtime, Hono/Express, REST API, PostgreSQL, Prisma ORM, WebSockets та Docker — 8 уроків',
+    status: 'active',
+    level: 'Середній → просунутий',
+    readmePath: 'blocks/09-nodejs-fullstack/README.md',
+    courseSlug: 'nodejs',
+    lessons: NODEJS_LESSONS,
+    startHref: '/courses/nodejs/01-node-runtime/',
+    topics: [
+      'Node.js Runtime: архітектура, libuv, Event Loop, Buffer, Streams та ESM/CJS модулі',
+      'Створення HTTP серверів на нативному Node.js та сучасних фреймворках (Hono / Express)',
+      'Проектування RESTful API: CRUD операції, валідація вхідних даних (Zod), обробка помилок',
+      'Архітектура Middleware: CORS, логування, rate-limiting та захисні заголовки (Helmet)',
+      'Робота з реляційними базами даних: PostgreSQL, міграції та Prisma/Drizzle ORM',
+      'Автентифікація на бекенді: хешування паролів (bcrypt/argon2), JWT токени, Auth Middleware',
+      'Real-time комунікація: WebSockets (ws / Socket.io) та Server-Sent Events (SSE)',
+      'Контейнеризація додатків з Docker, docker-compose та деплой на хмарні платформи (VPS, Railway, Render)',
+    ],
+    children: [
+      {
+        slug: 'databases-orm',
+        order: 8.1,
+        title: 'Бази даних & ORM (PostgreSQL & Prisma)',
+        subtitle: 'SQL, реляційні схеми, Prisma & Drizzle ORM, транзакції, Redis та оптимізація',
+        status: 'active',
+        level: 'Середній → просунутий',
+        readmePath: 'blocks/09-databases-orm/README.md',
+        courseSlug: 'databases-orm',
+        lessons: DATABASES_ORM_LESSONS,
+        startHref: '/courses/databases-orm/01-sql-basics/',
+        topics: ['Основи SQL & індекси', 'Реляційне моделювання 1:N / N:M', 'Prisma ORM & міграції', 'Drizzle ORM & TypeScript', 'ACID транзакції', 'Redis кешування', 'Оптимізація запитів EXPLAIN', 'Хмарні БД Supabase/Neon'],
+      }
+    ]
+  },
+  {
+    slug: 'web-security',
+    order: 9,
     title: 'Безпека браузера',
     subtitle: 'Приховані вразливості сучасних API: fingerprinting, DoS, UI spoofing, CSS-only attacks — 4 уроки',
     status: 'active',
@@ -399,7 +484,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     children: [
       {
         slug: 'auth-security',
-        order: 8.1,
+        order: 9.1,
         title: 'Автентифікація & Безпека сесій',
         subtitle: 'JWT, Session Cookies, OAuth 2.0 / OIDC, CSRF, PKCE та безпечне збереження',
         status: 'active',
@@ -414,7 +499,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   },
   {
     slug: 'web-performance',
-    order: 9,
+    order: 10,
     title: 'Web Performance & Оптимізація',
     subtitle: 'Core Web Vitals (LCP, CLS, INP), аналіз бандлу, ледаче завантаження та кешування — 8 уроків',
     status: 'active',
@@ -435,7 +520,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   },
   {
     slug: 'frontend-testing',
-    order: 10,
+    order: 11,
     title: 'Тестування Frontend',
     subtitle: 'Unit, інтеграційні та E2E тести: Vitest, React Testing Library, Playwright — 8 уроків',
     status: 'active',
@@ -457,13 +542,13 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   },
   {
     slug: 'capstone',
-    order: 11,
+    order: 12,
     title: 'Фінальний проект',
-    subtitle: 'Повноцінний додаток з усіма блоками',
+    subtitle: 'Повноцінний Fullstack додаток з усіма блоками курсу',
     status: 'planned',
     level: 'Середній → просунутий',
     readmePath: 'blocks/07-capstone/README.md',
-    topics: ['Архітектура', 'API інтеграція', 'Тестування', 'Production deploy'],
+    topics: ['Fullstack архітектура', 'API та база даних', 'Автентифікація та безпека', 'Тестування та CI/CD', 'Production deploy з Docker'],
   },
 ];
 
