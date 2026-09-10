@@ -1,0 +1,82 @@
+<article className="lesson-card">
+  <h2>Прототипне успадкування та прихована властивість [[Prototype]]</h2>
+  <p>
+    У JavaScript майже кожен об'єкт має приховане посилання на інший об'єкт, яке називається його <strong>прототипом</strong>. Коли ми звертаємося до властивості, якої немає в самому об'єкті, рушій автоматично шукає її вгору по ланцюжку прототипів (Prototype Chain).
+  </p>
+</article>
+
+<Callout type="pro" title="[[Prototype]] проти __proto__">
+  <code>[[Prototype]]</code> — це внутрішня системна властивість рушія. Історичний гетер/сетер <code>__proto__</code> дозволяє отримати або встановити її в браузерах. У сучасному стандарті рекомендується використовувати <code>Object.getPrototypeOf()</code> та <code>Object.create()</code>.
+</Callout>
+
+<section>
+  <h2>1. Ланцюжок прототипів на практиці</h2>
+
+```javascript
+const animal = {
+  eats: true,
+  walk() {
+    return "Ця тварина гуляє";
+  }
+};
+
+const rabbit = {
+  jumps: true,
+  __proto__: animal // rabbit успадковує властивості animal
+};
+
+console.log(rabbit.jumps); // true (знайдено в rabbit)
+console.log(rabbit.eats);  // true (знайдено в прототипі animal!)
+console.log(rabbit.walk()); // "Ця тварина гуляє"
+```
+
+  <h2>2. Запис не використовує прототип</h2>
+  <p>
+    При <strong>читанні</strong> властивості пошук іде по ланцюжку прототипів. Але при <strong>записі</strong> нове значення завжди створюється або перезаписується в самому цільовому об'єкті:
+  </p>
+
+```javascript
+rabbit.eats = false;
+
+console.log(rabbit.eats); // false (локальна властивість rabbit)
+console.log(animal.eats); // true (прототип animal залишився незмінним)
+```
+
+  <h2>3. Контекст `this` у прототипах</h2>
+  <p>
+    Незалежно від того, де знайдено метод (в об'єкті чи його прототипі), <code>this</code> завжди вказує на об'єкт <strong>перед крапкою</strong> під час виклику.
+  </p>
+
+<CodeRunner
+  title="Інтерактивний експеримент з ланцюжком прототипів"
+  initialCode={`const vehicle = {
+  isMoving: false,
+  start() {
+    this.isMoving = true;
+    console.log(this.model + " завів двигун!");
+  }
+};
+
+const car = {
+  model: "Tesla Model 3",
+  autopilot: true,
+  __proto__: vehicle
+};
+
+car.start();
+console.log("Чи рухається car:", car.isMoving);
+console.log("Чи рухається прототип vehicle:", vehicle.isMoving);`}
+/>
+</section>
+
+<QuizCard
+  question="Що відбудеться, якщо викликати rabbit.walk(), якщо методу walk немає у rabbit, але він є в animal (__proto__)?"
+  options={[
+    "Виникне TypeError: rabbit.walk is not a function",
+    "Метод виконається, причому this всередині методу вказуватиме на rabbit",
+    "Метод виконається, але this вказуватиме на animal",
+    "Повернеться undefined"
+  ]}
+  correctIndex={1}
+  explanation="Рушій знайде метод walk у прототипі animal, але викличе його з context this = rabbit (об'єкт перед крапкою)."
+/>

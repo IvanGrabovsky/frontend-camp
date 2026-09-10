@@ -1,0 +1,104 @@
+<article className="lesson-card">
+  <h2>Вбудовані Utility Types у TypeScript</h2>
+  <p>
+    TypeScript надає потужний набір глобальних типів-утиліт, які дозволяють трансформувати вже існуючі типи без необхідності дублювати код.
+  </p>
+</article>
+
+<Callout type="tip" title="DRY для типізації">
+  Utility Types допомагають дотримуватися принципу Don't Repeat Yourself (DRY) на рівні системи типів, створюючи нові форми з існуючих інтерфейсів.
+</Callout>
+
+<section>
+  <h2>1. Основні утиліти для об'єктів</h2>
+
+```typescript
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  age: number;
+}
+
+// 1. Partial<T> — робить усі поля опціональними (?)
+type UpdateUserDto = Partial<UserProfile>;
+// Використовується для PATCH запитів, де можна оновити лише окремі поля
+
+// 2. Required<T> — робить усі поля обов'язковими (прибирає ?)
+type CompleteUserProfile = Required<UserProfile>;
+
+// 3. Readonly<T> — забороняє мутацію полів
+type ReadonlyUser = Readonly<UserProfile>;
+
+// 4. Pick<T, K> — вибирає конкретні поля
+type UserPreview = Pick<UserProfile, "id" | "name" | "avatarUrl">;
+
+// 5. Omit<T, K> — виключає вказані поля
+type UserWithoutId = Omit<UserProfile, "id">;
+```
+
+  <h2>2. Словники та мапи: `Record<Keys, Type>`</h2>
+  <p>
+    <code>Record&lt;K, T&gt;</code> — це швидкий та безпечний спосіб типізувати об'єкти-словники:
+  </p>
+
+```typescript
+type Role = "admin" | "editor" | "viewer";
+
+interface RolePermissions {
+  canDelete: boolean;
+  canEdit: boolean;
+}
+
+const roleMatrix: Record<Role, RolePermissions> = {
+  admin: { canDelete: true, canEdit: true },
+  editor: { canDelete: false, canEdit: true },
+  viewer: { canDelete: false, canEdit: false },
+};
+```
+
+  <h2>3. Робота з функціями та промісами: `ReturnType` та `Awaited`</h2>
+
+```typescript
+function fetchUserData() {
+  return Promise.resolve({ id: "u123", email: "dev@camp.ua", score: 100 });
+}
+
+// Отримуємо тип того, що повертає функція
+type FetchFnReturn = ReturnType<typeof fetchUserData>; // Promise<{ id: string... }>
+
+// Розпаковуємо результат Promise
+type UserData = Awaited<ReturnType<typeof fetchUserData>>; // { id: string, email: string, score: number }
+```
+
+<CodeRunner
+  title="Практикум: фільтрація та оновлення даних"
+  initialCode={`function patchUser(currentUser, changes) {
+  // Симуляція оновлення об'єкта через Partial
+  return {
+    ...currentUser,
+    ...changes,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+const initial = { id: "u-1", name: "Олександр", role: "junior", score: 50 };
+const updated = patchUser(initial, { role: "middle", score: 120 });
+
+console.log("До оновлення:", initial);
+console.log("Після оновлення:", updated);`}
+/>
+</section>
+
+<QuizCard
+  question="Яка утиліта дозволяє створити тип, який бере всі поля з інтерфейсу Todo, крім поля 'id'?"
+  options={[
+    "Pick<Todo, 'id'>",
+    "Omit<Todo, 'id'>",
+    "Exclude<Todo, 'id'>",
+    "Extract<Todo, 'id'>"
+  ]}
+  correctIndex={1}
+  explanation="Omit<Type, Keys> конструює тип, вилучаючи зазначені ключі з вихідного типу. (Exclude використовується для Union типів, а не об'єктних інтерфейсів)."
+/>

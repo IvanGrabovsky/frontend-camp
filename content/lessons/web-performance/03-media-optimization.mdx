@@ -1,0 +1,74 @@
+<article className="lesson-card">
+  <h2>Оптимізація медіа: зображення, WebP/AVIF та шрифти</h2>
+  <p>
+    Зображення та веб-шрифти зазвичай складають понад <strong>70% ваги сторінки</strong> та є головною причиною низьких показників LCP (Largest Contentful Paint) і CLS (Cumulative Layout Shift).
+  </p>
+</article>
+
+<Callout type="pro" title="Формати нового покоління: AVIF & WebP">
+  Формат <strong>AVIF</strong> забезпечує на 50% кращу компресію, ніж традиційний JPEG, та на 20-30% кращу, ніж WebP, зберігаючи високу чіткість деталей.
+</Callout>
+
+<section>
+  <h2>1. Тег `&lt;picture&gt;` та прогресивне завантаження</h2>
+
+```html
+<picture>
+  <!-- 1. Найновіший та найефективніший формат -->
+  <source srcset="/hero.avif" type="image/avif" />
+  <!-- 2. Сучасний WebP з відмінною підтримкою -->
+  <source srcset="/hero.webp" type="image/webp" />
+  <!-- 3. Fallback для старих браузерів -->
+  <img
+    src="/hero.jpg"
+    alt="Frontend Camp Banner"
+    width="1200"
+    height="600"
+    loading="lazy"
+    decoding="async"
+  />
+</picture>
+```
+
+  <h2>2. Боротьба з Layout Shifts (CLS)</h2>
+  <p>
+    Завжди вказуйте атрибути <code>width</code> та <code>height</code> (або CSS <code>aspect-ratio</code>) для кожного зображення! Це дозволяє браузеру заздалегідь виділити точне місце в макеті до завантаження байтів картинки.
+  </p>
+
+  <h2>3. Оптимізація веб-шрифтів</h2>
+  <ul>
+    <li><code>font-display: swap</code> — негайно показує системний шрифт, поки кастомний вантажиться (запобігає FOIT — Flash of Invisible Text).</li>
+    <li><strong>Підмножини (Subsetting):</strong> завантажуйте лише потрібні гліфи (наприклад, тільки <code>latin + cyrillic</code>), вилучаючи непотрібні символи.</li>
+    <li><strong>Preload ключового шрифту:</strong> <code>&lt;link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin&gt;</code>.</li>
+  </ul>
+
+<CodeRunner
+  title="Калькулятор заощадження трафіку при переході на AVIF"
+  initialCode={`function calculateSavings(jpegSizeKb, visitorsPerMonth) {
+  const avifSizeKb = jpegSizeKb * 0.5; // AVIF на 50% легший
+  const totalJpegGb = (jpegSizeKb * visitorsPerMonth) / (1024 * 1024);
+  const totalAvifGb = (avifSizeKb * visitorsPerMonth) / (1024 * 1024);
+  const savedGb = totalJpegGb - totalAvifGb;
+
+  return {
+    originalPerMonth: totalJpegGb.toFixed(2) + " GB",
+    optimizedPerMonth: totalAvifGb.toFixed(2) + " GB",
+    bandwidthSaved: savedGb.toFixed(2) + " GB (" + (savedGb * 0.08).toFixed(2) + " $ заощаджено на CDN)"
+  };
+}
+
+console.log(calculateSavings(850, 50000));`}
+/>
+</section>
+
+<QuizCard
+  question="Чому вкрай важливо додавати атрибути width та height або CSS aspect-ratio для тегів <img>?"
+  options={[
+    "Щоб браузер конвертував картинку у векторний формат",
+    "Щоб уникнути стрибків макета (Cumulative Layout Shift, CLS) при появі завантаженого зображення",
+    "Це обов'язкова вимога HTTP/2",
+    "Для ввімкнення апаратного прискорення GPU"
+  ]}
+  correctIndex={1}
+  explanation="Браузер обчислює пропорції aspect-ratio з width/height і бронює точне місце під картинку, усуваючи зсуви сторінки (CLS)."
+/>

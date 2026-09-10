@@ -1,0 +1,103 @@
+<article className="lesson-card">
+  <h2>Типізація функцій та звуження типів (Type Narrowing)</h2>
+  <p>
+    Функції — це фундамент будь-якої програми. У TypeScript ми типізуємо як вхідні параметри, так і результат повернення, а також використовуємо механізми звуження типів для безпечної обробки динамічних даних.
+  </p>
+</article>
+
+<Callout type="tip" title="Чому завжди корисно явно вказувати return type?">
+  Хоча TypeScript чудово вміє виводити (infer) тип значення, явна типізація повернення запобігає випадковим змінам контракту функції при рефакторингу та пришвидшує компіляцію.
+</Callout>
+
+<section>
+  <h2>1. Базовий синтаксис та опціональні параметри</h2>
+
+```typescript
+// Оголошення звичайної функції
+function calculateTotal(price: number, quantity: number = 1, discount?: number): number {
+  const base = price * quantity;
+  return discount ? base * (1 - discount) : base;
+}
+
+// Типізація функції як значення (Function Type Signature)
+type FormatterFn = (value: string | number) => string;
+
+const currencyFormat: FormatterFn = (val) => `$${Number(val).toFixed(2)}`;
+```
+
+  <h2>2. Звуження типів (Type Narrowing)</h2>
+  <p>
+    Коли змінна має тип <code>union</code> (наприклад, <code>string | number</code>), компілятор не дозволить викликати методи, специфічні для одного з типів, доки ви не зробите звуження:
+  </p>
+
+  <ul>
+    <li><code>typeof</code> — для примітивів (<code>"string"</code>, <code>"number"</code>, <code>"boolean"</code>, <code>"symbol"</code>, <code>"undefined"</code>).</li>
+    <li><code>instanceof</code> — для екземплярів класів або вбудованих об'єктів (<code>Date</code>, <code>Error</code>, <code>HTMLElement</code>).</li>
+    <li><code>"prop" in obj</code> — перевірка наявності ключа в об'єкті.</li>
+    <li><strong>Custom Type Guards</strong> з предикатом <code>value is TargetType</code>.</li>
+  </ul>
+
+<CodeRunner
+  title="Спробуй Type Narrowing у дії"
+  initialCode={`function formatInput(input) {
+  if (typeof input === "number") {
+    return "Число: " + input.toFixed(2);
+  }
+  if (typeof input === "string") {
+    return "Рядок [верхній регістр]: " + input.toUpperCase();
+  }
+  if (Array.isArray(input)) {
+    return "Масив довжиною: " + input.length + " (" + input.join(", ") + ")";
+  }
+  return "Інший тип";
+}
+
+console.log(formatInput(42.5678));
+console.log(formatInput("hello typescript"));
+console.log(formatInput(["React", "Next.js", "TypeScript"]));`}
+/>
+
+  <h2>3. Custom Type Guards (`is`)</h2>
+  <p>
+    Коли логіка перевірки складна, ми виносимо її у спеціальну функцію-предикат:
+  </p>
+
+```typescript
+interface ApiResponseSuccess {
+  status: "success";
+  data: { id: string; name: string };
+}
+
+interface ApiResponseError {
+  status: "error";
+  message: string;
+}
+
+type ApiResponse = ApiResponseSuccess | ApiResponseError;
+
+// Custom Type Guard з предикатом 'is'
+function isSuccessResponse(res: ApiResponse): res is ApiResponseSuccess {
+  return res.status === "success";
+}
+
+function handleResponse(res: ApiResponse) {
+  if (isSuccessResponse(res)) {
+    console.log("Отримано користувача:", res.data.name);
+  } else {
+    console.error("Помилка запиту:", res.message);
+  }
+}
+```
+</section>
+
+<QuizCard
+  question="Який предикат повернення вказує компілятору TypeScript, що функція є користувацьким Type Guard?"
+  options={[
+    "function isCat(animal: Animal): animal === Cat",
+    "function isCat(animal: Animal): animal is Cat",
+    "function isCat(animal: Animal): boolean as Cat",
+    "function isCat(animal: Animal): asserts animal"
+  ]}
+  correctIndex={1}
+  explanation="Синтаксис 'param is Type' — це офіційний спосіб створити кастомний звужувач типу (Type Predicate) у TypeScript."
+/>

@@ -1,0 +1,70 @@
+<article className="lesson-card">
+  <h2>Code Splitting та оптимізація JS-бандлу</h2>
+  <p>
+    JavaScript — найдорожчий ресурс у браузері, оскільки він вимагає не лише завантаження через мережу, але й тривалого парсингу та компіляції рушієм V8. Завдання оптимізації — доставляти користувачу тільки той JS-код, який потрібен прямо зараз.
+  </p>
+</article>
+
+<Callout type="warning" title="Ціна великого JS бандлу">
+  Бандл розміром 1 МБ у стисненому вигляді перетворюється на 4-5 МБ розпакованого коду, що може заблокувати головний потік (Main Thread) на мобільних пристроях на кілька секунд (руйнуючи показник INP).
+</Callout>
+
+<section>
+  <h2>1. Динамічні імпорти (Dynamic Imports)</h2>
+  <p>
+    Замість статичного <code>import Modal from './Modal'</code>, який включає весь важкий код у головний чанк, ми завантажуємо модулі за вимогою:
+  </p>
+
+```typescript
+// React.lazy та dynamic у Next.js
+import dynamic from 'next/dynamic';
+
+const HeavyChart = dynamic(() => import('@/components/HeavyChart'), {
+  loading: () => <p>Завантаження графіка...</p>,
+  ssr: false, // Якщо компонент потрібен тільки в браузері
+});
+```
+
+  <h2>2. Деревовидалення (Tree Shaking)</h2>
+  <p>
+    Сучасні збирачі (Webpack, Turbopack, Rollup, Vite) автоматично видаляють невикористовуваний dead code за умови використання ES-модулів (<code>import / export</code>):
+  </p>
+
+```typescript
+// ❌ Погано: затягує всю бібліотеку (деревоподібне видалення ускладнене)
+import _ from 'lodash';
+
+// ✅ Чудово: імпортуємо тільки потрібний метод або використовуємо lodash-es
+import debounce from 'lodash-es/debounce';
+```
+
+  <h2>3. Аналіз бандлу (Bundle Analyzer)</h2>
+  <p>
+    Використовуйте <code>@next/bundle-analyzer</code> або <code>vite-bundle-visualizer</code> для виявлення випадково продубльованих або надмірно важких пакетів (наприклад, заміна <code>moment.js</code> на <code>date-fns</code> чи нативний <code>Intl</code>).
+  </p>
+
+<CodeRunner
+  title="Тест швидкодії парсингу та створення структури"
+  initialCode={`console.time("Масив з 50 000 елементів");
+const items = Array.from({ length: 50000 }, (_, i) => ({
+  id: i,
+  name: "Item " + i,
+  active: i % 2 === 0
+}));
+console.timeEnd("Масив з 50 000 елементів");
+
+console.log("Кількість створених об'єктів:", items.length);`}
+/>
+</section>
+
+<QuizCard
+  question="Яка основна перевага використання Next.js dynamic() або React.lazy()?"
+  options={[
+    "Зменшення розміру початкового JS-бандлу за рахунок винесення компонента в окремий асинхронний чанк",
+    "Автоматичне кешування відповідей бекенду",
+    "Примусова оптимізація зображень",
+    "Повний перехід на TypeScript"
+  ]}
+  correctIndex={0}
+  explanation="Динамічний імпорт розділяє код на окремі чанки (Code Splitting), які завантажуються браузером лише в момент рендерингу компонента."
+/>

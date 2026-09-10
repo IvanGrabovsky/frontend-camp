@@ -1,0 +1,64 @@
+<article className="lesson-card">
+  <h2>End-to-End (E2E) тестування з Playwright</h2>
+  <p>
+    Playwright від Microsoft — це сучасний стандарт для надійного тестування реальних користувацьких сценаріїв у реальних браузерах (Chromium, Firefox, WebKit).
+  </p>
+</article>
+
+<Callout type="pro" title="Чому Playwright перемагає Cypress & Selenium?">
+  Playwright підтримує автоматичне очікування (Auto-waiting), працює нативно через Chrome DevTools Protocol, підтримує паралельний запуск тестів з коробки та дозволяє зручно перехоплювати й мокувати мережеві запити.
+</Callout>
+
+<section>
+  <h2>1. Базовий тест у Playwright</h2>
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('користувач може увійти та побачити свій профіль', async ({ page }) => {
+  // 1. Перехід на сторінку
+  await page.goto('https://camp.ua/login');
+
+  // 2. Введення даних у поля (селектори за доступністю - a11y first)
+  await page.getByLabel('Електронна пошта').fill('student@camp.ua');
+  await page.getByLabel('Пароль').fill('SecurePass123!');
+
+  // 3. Клік по кнопці входу
+  await page.getByRole('button', { name: 'Увійти' }).click();
+
+  // 4. Перевірка очікуваного результату
+  await expect(page).toHaveURL(/.*dashboard/);
+  await expect(page.getByText('Вітаємо, student!')).toBeVisible();
+});
+```
+
+  <h2>2. Перехоплення та мокування API (`page.route`)</h2>
+
+```typescript
+test('обробка помилки 500 від сервера', async ({ page }) => {
+  // Мокуємо відповідь бекенду
+  await page.route('**/api/user/profile', async (route) => {
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Сервер тимчасово недоступний' }),
+    });
+  });
+
+  await page.goto('/profile');
+  await expect(page.getByRole('alert')).toContainText('Сервер тимчасово недоступний');
+});
+```
+</section>
+
+<QuizCard
+  question="Які локатори (locators) рекомендує використовувати офіційна документація Playwright для максимальної стійкості тестів?"
+  options={[
+    "Жорсткі XPath шляхи (наприклад, //div[2]/span/button[1])",
+    "Селектори на базі accessibility ролей та тексту (getByRole, getByLabel, getByText)",
+    "Генеровані CSS-класи з Tailwind або CSS Modules",
+    "Внутрішні ID елементів DOM"
+  ]}
+  correctIndex={1}
+  explanation="User-facing селектори (getByRole, getByText, getByLabel) імітують поведінку реального користувача та скрінрідера, залишаючись стійкими при зміні верстки або CSS-стилів."
+/>

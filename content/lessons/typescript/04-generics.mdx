@@ -1,0 +1,91 @@
+<article className="lesson-card">
+  <h2>Дженерики (Generics) у TypeScript</h2>
+  <p>
+    Дженерики дозволяють писати гнучкий, багаторазовий код, який зберігає інформацію про конкретні типи даних під час виклику, а не відкидає її за допомогою <code>any</code>.
+  </p>
+</article>
+
+<Callout type="pro" title="Generics як змінні для типів">
+  Подібно до того, як звичайні функції приймають <strong>значення</strong> як аргументи, дженерики приймають <strong>типи</strong> як аргументи за допомогою синтаксису <code>&lt;T&gt;</code>.
+</Callout>
+
+<section>
+  <h2>1. Generic функції</h2>
+
+```typescript
+// Без generics (втрачається точний тип):
+function getFirstAny(items: any[]): any {
+  return items[0];
+}
+
+// З generics (тип T фіксується при виклику):
+function getFirst<T>(items: T[]): T | undefined {
+  return items[0];
+}
+
+const num = getFirst([10, 20, 30]);      // num: number | undefined
+const str = getFirst(["apple", "banana"]); // str: string | undefined
+```
+
+  <h2>2. Обмеження дженериків (Generic Constraints: `extends`)</h2>
+  <p>
+    Іноді нам потрібно вимагати від типу <code>T</code> наявності певних властивостей (наприклад, довжини <code>length</code> або поля <code>id</code>):
+  </p>
+
+```typescript
+interface HasLength {
+  length: number;
+}
+
+// T зобов'язаний мати властивість length
+function logLength<T extends HasLength>(item: T): number {
+  console.log("Довжина:", item.length);
+  return item.length;
+}
+
+logLength("Привіт");         // ✅ Рядок має length
+logLength([1, 2, 3, 4]);     // ✅ Масив має length
+// logLength(123);           // ❌ Помилка: number не має length
+```
+
+  <h2>3. Оператор `keyof` та безпечний доступ до властивостей</h2>
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const user = { name: "Іван", age: 24, role: "developer" };
+
+const userName = getProperty(user, "name"); // type string
+const userAge = getProperty(user, "age");   // type number
+// getProperty(user, "salary"); // ❌ Помилка компіляції: "salary" не є ключем user!
+```
+
+<CodeRunner
+  title="Жива перевірка безпечного доступу до полів"
+  initialCode={`function safeGet(obj, key) {
+  if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
+    return { found: true, value: obj[key] };
+  }
+  return { found: false, error: 'Ключ "' + key + '" відсутній' };
+}
+
+const product = { id: 101, title: "Next.js Pro Course", price: 49 };
+
+console.log(safeGet(product, "title"));
+console.log(safeGet(product, "discount"));`}
+/>
+</section>
+
+<QuizCard
+  question="Що робить запис <T extends { id: string }>(item: T) у сигнатурі функції?"
+  options={[
+    "Змушує тип T обов'язково бути класом, успадкованим від класу id",
+    "Обмежує тип T, вимагаючи, щоб переданий об'єкт містив як мінімум поле id типу string",
+    "Перетворює всі поля об'єкта T на string",
+    "Забороняє додавати нові поля до T"
+  ]}
+  correctIndex={1}
+  explanation="Ключове слово extends у контексті Generics задає верхню межу (constraint) для типу, гарантуючи наявність необхідних властивостей."
+/>

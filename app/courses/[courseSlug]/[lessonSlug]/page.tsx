@@ -10,14 +10,28 @@ import path from 'path';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
 
-// Shadcn UI Components
 import { Card } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CodeRunner } from '@/components/mdx/CodeRunner';
+import { QuizCard } from '@/components/mdx/QuizCard';
+import { Callout } from '@/components/mdx/Callout';
 
-const components = { Card, Alert, Badge, Button, Tabs, TabsContent, TabsList, TabsTrigger };
+const components = {
+  Card,
+  Alert,
+  Badge,
+  Button,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  CodeRunner,
+  QuizCard,
+  Callout,
+};
 
 interface LessonPageProps {
   params: Promise<{ courseSlug: string; lessonSlug: string }>;
