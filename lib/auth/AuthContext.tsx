@@ -83,15 +83,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function initAuth() {
       try {
         if (isSupabaseConfigured && supabase) {
-          // Check Supabase session
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user) {
-            const dbUser = await fetchSupabaseProfile(session.user.id, session.user.email || '');
-            if (dbUser) {
-              setUser(dbUser);
-              setIsLoading(false);
-              return;
+          try {
+            // Add a 2-second timeout so a paused/unreachable Supabase does not freeze the UI loading state
+            const sessionPromise = supabase.auth.getSession();
+            const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) =>
+              setTimeout(() => resolve({ data: { session: null } }), 2000)
+            );
+            const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+
+            if (session?.user) {
+              const dbUser = await fetchSupabaseProfile(session.user.id, session.user.email || '');
+              if (dbUser) {
+                setUser(dbUser);
+                setIsLoading(false);
+                return;
+              }
             }
+          } catch (supaErr) {
+            console.warn('Supabase init session error or timeout:', supaErr);
           }
         }
 
@@ -155,34 +164,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         // 1. If Supabase is configured (Real Database Mode)
         if (isSupabaseConfigured && supabase) {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: normalizedEmail,
-            password: password,
-          });
+          try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: normalizedEmail,
+              password: password,
+            });
 
-          if (error) {
-            const msg = error.message.toLowerCase();
-            if (msg.includes('email not confirmed')) {
+            if (error) {
+              const msg = error.message.toLowerCase();
+              if (msg.includes('email not confirmed')) {
+                return {
+                  success: false,
+                  error: 'Ваш email ще не підтверджено. Будь ласка, перейдіть за посиланням у надісланому листі.',
+                };
+              }
+              if (msg.includes('invalid login credentials') || msg.includes('invalid credentials') || msg.includes('invalid')) {
+                return { success: false, error: 'Невірний email або пароль' };
+              }
+              return { success: false, error: error.message };
+            }
+
+            if (data.user) {
+              const dbUser = await fetchSupabaseProfile(data.user.id, data.user.email || normalizedEmail);
+              if (dbUser) {
+                saveSession(dbUser);
+                setIsAuthModalOpen(false);
+                return { success: true };
+              }
+            }
+            return { success: false, error: 'Не вдалося завантажити профіль користувача' };
+          } catch (netErr: any) {
+            console.warn('Supabase auth network error:', netErr);
+            const errStr = String(netErr?.message || netErr);
+            if (errStr.includes('fetch failed') || errStr.includes('Failed to fetch') || errStr.includes('ENOTFOUND') || errStr.includes('NetworkError')) {
               return {
                 success: false,
-                error: 'Ваш email ще не підтверджено. Будь ласка, перейдіть за посиланням у надісланому листі.',
+                error: 'Не вдалося зʼєднатися з базою даних Supabase (проект недоступний або вказано невірний URL у .env.local). Будь ласка, перевірте налаштування Supabase або очистіть .env.local для роботи у локальному режимі.',
               };
             }
-            if (msg.includes('invalid login credentials') || msg.includes('invalid credentials') || msg.includes('invalid')) {
-              return { success: false, error: 'Невірний email або пароль' };
-            }
-            return { success: false, error: error.message };
+            throw netErr;
           }
-
-          if (data.user) {
-            const dbUser = await fetchSupabaseProfile(data.user.id, data.user.email || normalizedEmail);
-            if (dbUser) {
-              saveSession(dbUser);
-              setIsAuthModalOpen(false);
-              return { success: true };
-            }
-          }
-          return { success: false, error: 'Не вдалося завантажити профіль користувача' };
         }
 
         // 2. Local / Offline mode (Only when Supabase is not available)
@@ -231,52 +252,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         // If Supabase is connected
         if (isSupabaseConfigured && supabase && password) {
-          const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
-          const { data, error } = await supabase.auth.signUp({
-            email: normalizedEmail,
-            password: password,
-            options: {
-              data: {
-                name: trimmedName,
-                avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${normalizedEmail}`,
+          try {
+            const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+            const { data, error } = await supabase.auth.signUp({
+              email: normalizedEmail,
+              password: password,
+              options: {
+                data: {
+                  name: trimmedName,
+                  avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${normalizedEmail}`,
+                },
+                emailRedirectTo: redirectTo,
               },
-              emailRedirectTo: redirectTo,
-            },
-          });
+            });
 
-          if (error) {
-            const msg = error.message.toLowerCase();
-            if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already exists')) {
+            if (error) {
+              const msg = error.message.toLowerCase();
+              if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already exists')) {
+                return {
+                  success: false,
+                  userAlreadyExists: true,
+                  error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
+                };
+              }
+              return { success: false, error: error.message };
+            }
+
+            // Check if Supabase returned user with empty identities (meaning user already exists)
+            if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
               return {
                 success: false,
                 userAlreadyExists: true,
                 error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
               };
             }
-            return { success: false, error: error.message };
-          }
 
-          // Check if Supabase returned user with empty identities (meaning user already exists)
-          if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-            return {
-              success: false,
-              userAlreadyExists: true,
-              error: 'Акаунт із цією поштою вже зареєстровано. Будь ласка, увійдіть.',
-            };
-          }
-
-          // If Supabase requires email confirmation, session is null
-          if (data.user && !data.session) {
-            return { success: true, requiresEmailConfirmation: true };
-          }
-
-          if (data.user) {
-            const dbUser = await fetchSupabaseProfile(data.user.id, data.user.email || normalizedEmail);
-            if (dbUser) {
-              saveSession(dbUser);
-              setIsAuthModalOpen(false);
-              return { success: true };
+            // If Supabase requires email confirmation, session is null
+            if (data.user && !data.session) {
+              return { success: true, requiresEmailConfirmation: true };
             }
+
+            if (data.user) {
+              const dbUser = await fetchSupabaseProfile(data.user.id, data.user.email || normalizedEmail);
+              if (dbUser) {
+                saveSession(dbUser);
+                setIsAuthModalOpen(false);
+                return { success: true };
+              }
+            }
+          } catch (netErr: any) {
+            console.warn('Supabase auth network error in signup:', netErr);
+            const errStr = String(netErr?.message || netErr);
+            if (errStr.includes('fetch failed') || errStr.includes('Failed to fetch') || errStr.includes('ENOTFOUND') || errStr.includes('NetworkError')) {
+              return {
+                success: false,
+                error: 'Не вдалося зʼєднатися з базою даних Supabase (проект недоступний або вказано невірний URL у .env.local). Будь ласка, перевірте налаштування Supabase або очистіть .env.local для роботи у локальному режимі.',
+              };
+            }
+            throw netErr;
           }
         }
 

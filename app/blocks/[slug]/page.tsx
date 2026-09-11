@@ -7,6 +7,7 @@ import { HubLayout } from '@/components/HubLayout';
 import { LessonCard, RoadmapBlockCard } from '@/components/RoadmapBlockCard';
 import { getBlock, ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
+import { CAPSTONE_PROJECTS, CAPSTONE_CRITERIA } from '@/data/capstone-projects';
 
 interface BlockPageProps {
   params: Promise<{ slug: string }>;
@@ -120,6 +121,121 @@ export default async function BlockPage({ params }: BlockPageProps) {
             </section>
           )}
         </>
+      ) : block.slug === 'capstone' ? (
+        <div className="space-y-12 mb-20">
+          {/* Header Description */}
+          <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 backdrop-blur-md">
+            <h2 className="text-2xl font-bold mb-2 text-foreground flex items-center gap-2">
+              <span>🎯</span> Оберіть ідею для вашого фінального проекту
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+              Фінальний проект — це головний експонат вашого портфоліо. Оберіть один із готових варіантів нижче або запропонуйте власний, що відповідає технічним критеріям курсу.
+            </p>
+          </div>
+
+          {/* Projects Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {CAPSTONE_PROJECTS.map((project) => (
+              <Card
+                key={project.id}
+                className="group flex flex-col justify-between border-border/70 hover:border-primary/50 hover:shadow-xl transition-all bg-card/60 backdrop-blur-md overflow-hidden"
+              >
+                <div>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-3xl p-2 rounded-xl bg-muted/60">{project.icon}</span>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant="outline" className="text-[11px] font-medium uppercase tracking-wider">
+                          {project.difficulty}
+                        </Badge>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+                      {project.category}
+                    </span>
+                    <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
+                      {project.title}
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground font-medium pt-0.5">
+                      {project.subtitle}
+                    </p>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4 text-xs sm:text-sm">
+                    <p className="text-muted-foreground leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    <div>
+                      <div className="font-semibold text-foreground text-xs mb-2 uppercase tracking-wider">
+                        Ключовий функціонал:
+                      </div>
+                      <ul className="space-y-1.5 list-none">
+                        {project.features.map((f, idx) => (
+                          <li key={idx} className="flex items-start text-muted-foreground leading-tight">
+                            <span className="text-primary mr-1.5 shrink-0">✓</span>
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="pt-2 border-t border-border/50">
+                      <div className="font-semibold text-foreground text-xs mb-2 uppercase tracking-wider">
+                        Стек технологій:
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.techStack.map((tech) => (
+                          <Badge key={tech} variant="secondary" className="text-[11px] font-mono py-0.5 px-2">
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+
+                <div className="p-4 sm:p-6 pt-0 mt-2">
+                  <div className="p-3 rounded-xl bg-muted/40 border border-border/60 text-[11px] text-muted-foreground leading-relaxed">
+                    <strong className="text-foreground">💎 Для портфоліо:</strong> {project.portfolioHighlight}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Technical Criteria Box */}
+          <Card className="border-border/80 bg-muted/20 backdrop-blur-md">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold flex items-center gap-2">
+                <span>📋</span> Обовʼязкові технічні критерії для здачі
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {CAPSTONE_CRITERIA.map((crit, idx) => (
+                  <div key={idx} className="p-3.5 rounded-xl border border-border/60 bg-card/50">
+                    <div className="font-semibold text-sm text-foreground mb-1 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-mono">
+                        {idx + 1}
+                      </span>
+                      {crit.label}
+                    </div>
+                    <div className="text-xs text-muted-foreground leading-relaxed">
+                      {crit.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-center pt-4">
+            <Button asChild variant="outline" size="lg">
+              <Link href="/">← Повернутися до Roadmap</Link>
+            </Button>
+          </div>
+        </div>
       ) : (
         <Card className="border-none shadow-md">
           <CardHeader>
