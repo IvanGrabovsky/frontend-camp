@@ -8,7 +8,7 @@ import { ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 
 export default function HomePage() {
-  const jsBlock = ROADMAP_BLOCKS.find((b) => b.slug === 'javascript-basics');
+  const jsBlock = ROADMAP_BLOCKS.find((b) => b.slug === 'javascript');
 
   return (
     <HubLayout>
@@ -40,7 +40,7 @@ export default function HomePage() {
         <div className="flex flex-col mb-12">
           <h2 id="roadmap-title" className="text-3xl md:text-4xl font-bold mb-4">Шлях навчання</h2>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Курс будується блоками. Зараз доступний блок <strong className="text-foreground font-semibold">JavaScript масиви</strong>.
+            Курс будується блоками. Зараз доступний повний блок <strong className="text-foreground font-semibold">JavaScript</strong> (8 підмодулів, 77 уроків).
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>

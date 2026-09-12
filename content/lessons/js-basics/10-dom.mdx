@@ -1,0 +1,125 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>DOM</strong> (Document Object Model) — об'єктне представлення HTML-документа. JavaScript взаємодіє з ним через API: знаходить елементи, змінює їх, реагує на події. Розуміння DOM — ключ до будь-якої інтерактивності на сторінці.</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🌳</span> Аналогія: дерево з гілками</div>
+      <p>DOM — дерево: `<html>` — корінь, `<body>`, `<head>` — гілки, теги — листя. JavaScript — садівник: може знайти будь-який лист, змінити його, додати новий або видалити.</p>
+    </section>
+    <section>
+      <h2>Вибірка елементів</h2>
+      
+
+```javascript
+// Сучасні методи (рекомендовані)
+document.querySelector('.btn');         // перший елемент
+document.querySelectorAll('.card');      // NodeList всіх
+document.querySelector('#header');       // за ID
+document.querySelector('input[type=text]'); // за атрибутом
+
+// Старіші (але й досі швидші для ID/tag)
+document.getElementById('header');       // HTMLElement | null
+document.getElementsByClassName('card'); // HTMLCollection (live)
+```
+
+
+
+      <h2>Маніпуляції з DOM</h2>
+      
+
+```javascript
+const btn = document.querySelector('.btn');
+
+// Зміна вмісту
+btn.textContent = 'Натисни';      // текст (безпечно)
+btn.innerHTML = '<b>Натисни</b>'; // HTML (небезпечно з даними!)
+
+// Стилі та класи
+btn.style.backgroundColor = '#6366f1';
+btn.classList.add('active');     // додати
+btn.classList.remove('hidden');  // видалити
+btn.classList.toggle('open');    // перемкнути
+btn.classList.contains('active');// перевірити
+
+// Атрибути
+btn.setAttribute('disabled', '');
+btn.getAttribute('href');
+btn.removeAttribute('disabled');
+
+// Створення та вставка
+const li = document.createElement('li');
+li.textContent = 'Новий елемент';
+list.append(li);      // в кінець
+list.prepend(li);     // на початок
+li.remove();          // видалити
+```
+
+
+
+      <h2>Події (Events)</h2>
+      
+
+```javascript
+// addEventListener — рекомендований спосіб
+btn.addEventListener('click', (event) => {
+  console.log(event.target);  // елемент що спричинив подію
+  event.preventDefault();     // скасувати стандартну поведінку
+  event.stopPropagation();    // зупинити bubbling
+});
+
+// Event delegation — один обробник для кількох елементів
+document.querySelector('.list').addEventListener('click', (e) => {
+  if (e.target.matches('.list-item')) {
+    console.log('Клікнуто на:', e.target.textContent);
+  }
+});
+
+// Популярні події
+// click, dblclick, mouseover, mouseout, keydown, keyup
+// input, change, submit, focus, blur, scroll, resize
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/dom-nodes" target="_blank" rel="noopener noreferrer">DOM — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" target="_blank" rel="noopener noreferrer">DOM API — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати `innerHTML` з даними користувача</strong>: XSS-атака. Використовуй `textContent` або `createElement`.</li>
+        <li><strong>Не перевіряти що елемент існує</strong>: `querySelector()` повертає `null` — наступний `.addEventListener()` кине помилку.</li>
+        <li><strong>Додавати обробники в цикл</strong>: замість цього використовуй event delegation — один обробник на батьківський елемент.</li>
+      </ul>
+    </section>
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Зроби список задач (todo list): додавання через форму, видалення по кліку.</li>
+        <li>Реалізуй перемикач темної теми через `classList.toggle()`.</li>
+        <li>Зроби лічильник з кнопками +/- що оновлює текст на сторінці.</li>
+        <li>Використай event delegation для таблиці: один обробник виділяє рядок що клікнули.</li>
+      </ol>
+    </section>
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що таке event delegation і навіщо він?</li>
+        <li>Яка різниця між `textContent` і `innerHTML`?</li>
+        <li>Що таке bubbling подій?</li>
+        <li>Навіщо `event.preventDefault()`?</li>
+      </ol>
+    </section>
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`element.closest('.parent')` — шукає найближчого предка що відповідає селектору. Зручно в event delegation.</li>
+        <li>`IntersectionObserver` — відстежує коли елемент входить у viewport без scroll-listener. Для lazy loading і анімацій.</li>
+        <li>`MutationObserver` — відстежує зміни в DOM. Корисно для спостереження за динамічним контентом.</li>
+      </ul>
+    </section>

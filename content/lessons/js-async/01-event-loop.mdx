@@ -1,0 +1,51 @@
+<article className="lesson-card">
+  <h2>Як JavaScript виконує асинхронний код?</h2>
+  <p>
+    JavaScript є <strong>однопотоковою (single-threaded)</strong> мовою з одним стеком викликів (Call Stack). Це означає, що він може виконувати лише один шматок коду в конкретний момент часу. Як же тоді працюють неблокуючі таймери, мережеві запити <code>fetch</code> та анімації? Завдяки <strong>Event Loop</strong> та браузерним Web APIs!
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">☕</span> Event Loop — як бариста в кав'ярні</div>
+  <p>
+    Один бариста (Call Stack) приймає замовлення біля каси. Коли клієнт замовляє еспресо, що готується 30 секунд (асинхронна операція), бариста не стоїть і не чекає: він відправляє завдання кавомашині (Web API), дає клієнту чек-номер і одразу обслуговує наступного в черзі. Коли кава готова, кавомашина ставить стаканчик на стійку видачі (Task Queue), і як тільки бариста звільниться (стек порожній) — він віддає напій (виконує callback).
+  </p>
+</section>
+
+<section>
+  <h2>4 компоненти асинхронної архітектури</h2>
+
+  <ul>
+    <li><strong>Call Stack (Стек викликів):</strong> виконує синхронні функції за принципом LIFO (Last In, First Out).</li>
+    <li><strong>Web APIs:</strong> фонові можливості браузера (таймери <code>setTimeout</code>, мережеві запити <code>fetch</code>, DOM події).</li>
+    <li><strong>Task Queue / Callback Queue (Черга макротасків):</strong> черга колбеків, готових до виконання.</li>
+    <li><strong>Microtask Queue (Черга мікротасків):</strong> пріоритетна черга для <code>Promise.then</code> та <code>queueMicrotask</code>.</li>
+  </ul>
+
+  <h2>Порядок виконання на прикладі</h2>
+
+```javascript
+console.log("1. Синхронний старт");
+
+setTimeout(() => {
+  console.log("4. Макротаска (setTimeout)");
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("3. Мікротаска (Promise.then)");
+});
+
+console.log("2. Синхронний фініш");
+
+// Вивід у консоль:
+// 1. Синхронний старт
+// 2. Синхронний фініш
+// 3. Мікротаска (Promise.then)
+// 4. Макротаска (setTimeout)
+```
+
+  <h2>Головне правило Event Loop:</h2>
+  <blockquote>
+    Event Loop перевіряє черги тільки тоді, коли <strong>Call Stack повністю порожній</strong>. При цьому <strong>всі мікротаски виконуються раніше</strong> за будь-яку макротаску!
+  </blockquote>
+</section>

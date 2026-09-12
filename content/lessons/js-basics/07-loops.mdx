@@ -1,0 +1,96 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Цикли</strong> дозволяють виконувати код декілька разів. JavaScript має: `for`, `while`, `do...while`, `for...of` (для ітерабельних), `for...in` (для властивостей об'єкта).</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">🔁</span> Аналогія: конвеєр</div>
+      <p>Цикл — як конвеєр на заводі: кожен елемент (ітерація) проходить однакову обробку доки є умова продовжувати. `break` — аварійна зупинка конвеєра, `continue` — пропустити один елемент.</p>
+    </section>
+    <section>
+      <h2>for та while</h2>
+      
+
+```javascript
+// for — коли знаєш кількість ітерацій
+for (let i = 0; i < 5; i++) {
+  console.log(i); // 0 1 2 3 4
+}
+
+// while — коли умова невідома наперед
+let count = 0;
+while (count < 5) { count++; }
+
+// break та continue
+for (let i = 0; i < 10; i++) {
+  if (i === 3) continue; // пропустити 3
+  if (i === 7) break;    // зупинитись на 7
+  console.log(i); // 0 1 2 4 5 6
+}
+```
+
+
+
+      <h2>for...of та for...in</h2>
+      
+
+```javascript
+// for...of — перебір елементів масиву/рядка
+const fruits = ['яблуко', 'банан', 'вишня'];
+for (const fruit of fruits) {
+  console.log(fruit);
+}
+
+// З індексом через entries()
+for (const [i, fruit] of fruits.entries()) {
+  console.log(`${i}: ${fruit}`);
+}
+
+// for...in — перебір ключів об'єкта (обережно!)
+const obj = { a: 1, b: 2, c: 3 };
+for (const key in obj) {
+  console.log(key, obj[key]);
+}
+// ⚠️ for...in перебирає і успадковані властивості!
+// Краще: Object.keys(obj).forEach(key => ...)
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/while-for" target="_blank" rel="noopener noreferrer">Цикли — javascript.info</a></li>
+        </ul>
+      </div>
+    </section>
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Нескінченний цикл</strong>: умова завжди `true` — браузер зависне. Завжди перевіряй що умова рано чи пізно стане `false`.</li>
+        <li><strong>Використовувати `for...in` для масивів</strong>: він перебирає і прототипні властивості. Для масивів — `for...of` або `.forEach()`.</li>
+        <li><strong>Мутувати масив під час перебору</strong>: непередбачувана поведінка. Якщо потрібно — перебирай копію `[...arr]`.</li>
+      </ul>
+    </section>
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Напиши цикл що виводить числа від 1 до 100. Замість кратних 3 виводь «Fizz», кратних 5 — «Buzz», обох — «FizzBuzz».</li>
+        <li>Перебери масив імен через `for...of` з індексом через `entries()`.</li>
+        <li>Перебери об'єкт через `Object.entries()` і виведи пари ключ-значення.</li>
+      </ol>
+    </section>
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>В чому різниця між `for...of` і `for...in`?</li>
+        <li>Коли використовувати `while` замість `for`?</li>
+        <li>Що робить `break` і `continue`?</li>
+      </ol>
+    </section>
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Для масивів — майже завжди краще використовувати функціональні методи: `.map()`, `.filter()`, `.reduce()` замість циклів — код декларативніший і читабельніший.</li>
+        <li>`for...of` працює з будь-яким ітерабельним: масив, рядок, Set, Map, Generator.</li>
+      </ul>
+    </section>

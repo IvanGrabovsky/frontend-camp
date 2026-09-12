@@ -1,0 +1,195 @@
+# 03. Спецсимволи, екранування (\n, \t) та форматування тексту
+
+<article className="lesson-card">
+  <h2>Навіщо потрібне екранування (Escaping)?</h2>
+  <p>У мовах програмування лапки <code>'</code> та <code>"</code> використовуються для позначення меж текстового рядка. Але що робити, коли сам текст містить лапки, або коли потрібно зробити перенесення на новий рядок чи відступ табуляцією всередині одного виклику?</p>
+  <p>Для цього використовується <strong>екранування (escape sequence)</strong> — спеціальна комбінація символів, що починається зі зворотного слешу <code>&#92;</code> (backslash). Символ <code>&#92;</code> вказує рушію: <em>«Наступний символ особливий, інтерпретуй його не як службовий синтаксис, а як спеціальну команду або символ!»</em></p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🪄</span> Аналогія: Магічна паличка перевтілення</div>
+  <p>
+    Зворотний слеш <code>&#92;</code> — це як магічна паличка. Звичайна літера <code>n</code> — це просто літера, але якщо перед нею поставити <code>&#92;n</code>, вона перетворюється на невидиму клавішу <strong>Enter</strong> (перехід на новий рядок). Звичайна літера <code>t</code> перетворюється на клавішу <strong>Tab</strong> (відступ). А службова лапка <code>&#92;"</code> перестає завершувати рядок і стає просто розділовим знаком у тексті.
+  </p>
+</section>
+
+<section>
+  <h2>Головні спецсимволи (Escape Sequences) в JavaScript</h2>
+
+  <div className="overflow-x-auto my-6">
+    <table className="w-full text-sm border border-border rounded-xl overflow-hidden">
+      <thead className="bg-muted text-foreground">
+        <tr>
+          <th className="p-3 text-left border-b border-border">Спецсимвол</th>
+          <th className="p-3 text-left border-b border-border">Назва</th>
+          <th className="p-3 text-left border-b border-border">Призначення та дія</th>
+          <th className="p-3 text-left border-b border-border">Приклад</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border/60">
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;n</code></td>
+          <td className="p-3">New Line</td>
+          <td className="p-3">Перенесення тексту на наступний новий рядок</td>
+          <td className="p-3 font-mono text-xs"><code>"Привіт,&#92;nСвіте!"</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;t</code></td>
+          <td className="p-3">Horizontal Tab</td>
+          <td className="p-3">Горизонтальна табуляція (відступ для вирівнювання колонок)</td>
+          <td className="p-3 font-mono text-xs"><code>"Товар:&#92;tЦіна:"</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;'</code></td>
+          <td className="p-3">Escaped Single Quote</td>
+          <td className="p-3">Одинарна лапка / апостроф всередині одинарних лапок</td>
+          <td className="p-3 font-mono text-xs"><code>'П&#92;'ятниця'</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;"</code></td>
+          <td className="p-3">Escaped Double Quote</td>
+          <td className="p-3">Подвійна лапка всередині подвійних лапок</td>
+          <td className="p-3 font-mono text-xs"><code>"Книга &#92;"Кобзар&#92;""</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;&#92;</code></td>
+          <td className="p-3">Backslash</td>
+          <td className="p-3">Вивід самого символу зворотного слешу (наприклад у шляхах файлів)</td>
+          <td className="p-3 font-mono text-xs"><code>"C:&#92;&#92;Users&#92;&#92;Ivan"</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;r</code></td>
+          <td className="p-3">Carriage Return</td>
+          <td className="p-3">Повернення каретки (у Windows кінець рядка це <code>&#92;r&#92;n</code>)</td>
+          <td className="p-3 font-mono text-xs"><code>"Рядок&#92;r&#92;n"</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;uXXXX</code></td>
+          <td className="p-3">Unicode Character</td>
+          <td className="p-3">Спеціальні символи Unicode за 4-значним шістнадцятковим кодом</td>
+          <td className="p-3 font-mono text-xs"><code>"&#92;u00A9 2026" (©)</code></td>
+        </tr>
+        <tr>
+          <td className="p-3 font-mono font-bold text-primary"><code>&#92;u&#123;XXXXX&#125;</code></td>
+          <td className="p-3">Unicode Code Point</td>
+          <td className="p-3">Емодзі та розширені символи Unicode (ES6+)</td>
+          <td className="p-3 font-mono text-xs"><code>"&#92;u&#123;1F680&#125;" (🚀)</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Приклади використання в коді</h2>
+
+```javascript
+// 1. Перенесення рядків та лапки
+console.log("План на день:\n1. Вивчити JavaScript\n2. Написати код\n3. Відпочити");
+
+// 2. Екранування лапок в цитаті
+console.log('Шевченко писав: "Учітесь, читайте, і чужому научайтесь, й свого не цурайтесь".');
+console.log("Іван сказав: \"Сьогодні п\'ятниця!\"");
+
+// 3. Форматування чека таблицею за допомогою табуляції \t
+console.log("НАЗВА\t\tК-СТЬ\tЦІНА");
+console.log("Ноутбук\t\t1 шт\t35000 грн");
+console.log("Мишка USB\t2 шт\t1200 грн");
+console.log("Клавіатура\t1 шт\t2800 грн");
+
+// 4. Шляхи до файлів у Windows (подвійний слеш)
+console.log("Шлях проекту: C:\\Users\\grabovsky\\projects\\frontend-camp");
+
+// 5. Юнікод символи та емодзі
+console.log("\u00A9 2026 Frontend Camp. Всі права захищено.");
+```
+
+  <h2>Альтернатива: Шаблонні рядки (Template Literals)</h2>
+  <p>
+    У сучасному JavaScript (ES6) з'явилися <strong>шаблонні рядки</strong> у зворотних лапках. Вони автоматично підтримують перенесення рядків без необхідності писати <code>&#92;n</code>:
+  </p>
+
+```javascript
+// Зручний багаторядковий запис без \n
+const receipt = `
+============================
+🧾 ФІСКАЛЬНИЙ ЧЕК
+Кава Latte:\t\t65 грн
+Круасан:\t\t50 грн
+----------------------------
+РАЗОМ:\t\t\t115 грн
+============================
+`;
+
+console.log(receipt);
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Інтерактивна пісочниця: Спецсимволи та форматування</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Експериментуйте з комбінаціями <code>&#92;n</code>, <code>&#92;t</code>, лапок та символів Unicode:
+  </p>
+  <CodeRunner
+    title="Тестування спецсимволів"
+    initialCode={'// Спробуйте запустити цей відформатований вивід\nconsole.log("=== ЗВІТ ПРОГРАМИ ===");\nconsole.log("Користувач:\\t\\t\\"Іван Грабовський\\"");\nconsole.log("Статус:\\t\\t\\u2705 Активний");\nconsole.log("Локація:\\t\\tКиїв, Україна");\nconsole.log("Файл журналу:\\t\\tC:\\\\logs\\\\app.log");\nconsole.log("\\nПідсумок:\\t\\tОперацію завершено успішно!");'}
+  />
+</section>
+
+<section className="tip-block tip-block--warn">
+  <div className="tip-block__title"><span>⚠️</span> Часті помилки зі спецсимволами</div>
+  <ul>
+    <li><strong>Плутанина між прямим <code>/</code> (slash) та зворотним <code>&#92;</code> (backslash)</strong>: екранування працює виключно зі зворотним слешем <code>&#92;</code>. Комбінація <code>/n</code> буде надрукована буквально як два символи <code>/n</code>.</li>
+    <li><strong>Забуте подвоєння слешу у файлових шляхах</strong>: якщо написати <code>"C:&#92;new_folder&#92;test"</code>, JS сприйме <code>&#92;n</code> як перенесення рядка, а <code>&#92;t</code> як табуляцію! Завжди пишіть <code>"C:&#92;&#92;new_folder&#92;&#92;test"</code> або використовуйте прямі слеші <code>"C:/new_folder/test"</code>.</li>
+    <li><strong>Втрата закриваючої лапки через екранування в кінці</strong>: якщо рядок закінчується зворотним слешем перед лапкою <code>"C:&#92;&#92;test&#92;"</code>, слеш заекранує саму лапку і викличе синтаксичну помилку. Правильно: <code>"C:&#92;&#92;test&#92;&#92;"</code>.</li>
+  </ul>
+</section>
+
+<section className="quiz-section mb-12">
+  <h2>🧠 Перевірте себе</h2>
+  <QuizCard
+    question="Який спецсимвол використовується в JavaScript для перенесення тексту на новий рядок?"
+    options={[
+      { text: "/n", isCorrect: false, explanation: "/n — це звичайний слеш з літерою n, він не є керуючою послідовністю." },
+      { text: "\\n", isCorrect: true, explanation: "\\n (зворотний слеш + n) — це escape-послідовність для New Line." },
+      { text: "\\t", isCorrect: false, explanation: "\\t використовується для горизонтальної табуляції (відступу)." },
+      { text: "<br>", isCorrect: false, explanation: "<br> — це HTML тег, але в консолі або чистому JS тексті він надрукується як звичайний текст." }
+    ]}
+  />
+  <div className="mt-6">
+    <QuizCard
+      question="Як правильно вивести у консоль шлях до файлу C:\\projects\\app.js?"
+      options={[
+        { text: 'console.log("C:\\projects\\app.js")', isCorrect: false, explanation: "Слеші будуть проінтерпретовані як початок екранування." },
+        { text: 'console.log("C:\\\\projects\\\\app.js")', isCorrect: true, explanation: "Кожен зворотний слеш необхідно екранувати другим зворотним слешем: \\\\." },
+        { text: 'console.log("C://projects//app.js")', isCorrect: false, explanation: "Це прямі слеші, а не зворотні." },
+        { text: 'console.log(C:\\projects\\app.js)', isCorrect: false, explanation: "Рядок обов'язково має бути взятий у лапки." }
+      ]}
+    />
+  </div>
+</section>
+
+<section className="practice-block">
+  <div className="practice-block__title"><span>⚡</span> Практичні завдання на занятті (💎 40)</div>
+  <ol>
+    <li>
+      <strong>Завдання 1 (💎 10)</strong>: Виведіть одним рядком з <code>console.log</code> строфу вірша або цитату, де кожен рядок починається з нового рядка за допомогою <code>&#92;n</code>, а пряма мова взята у подвійні лапки <code>&#92;"</code>.
+    </li>
+    <li>
+      <strong>Завдання 2 (💎 10)</strong>: Створіть консольну таблицю меню кафе з трьох колонок: <em>Назва</em>, <em>Розмір</em>, <em>Ціна</em>. Використайте <code>&#92;t</code> для акуратного вирівнювання стовпчиків.
+    </li>
+    <li>
+      <strong>Завдання 3 (💎 10)</strong>: Надрукуйте рядок: <code>Увага! Символ зворотного слешу виглядає так: "&#92;&#92;"</code>. Переконайтеся, що ви коректно заекранували як сам слеш, так і лапки.
+    </li>
+    <li>
+      <strong>Завдання 4 (💎 10)</strong>: Виведіть за допомогою кодів Unicode символ авторського права <code>&#92;u00A9</code>, знак торгової марки <code>&#92;u2122</code> та галочку <code>&#92;u2705</code>.
+    </li>
+  </ol>
+</section>
+
+<section className="homework-block mt-8">
+  <div className="practice-block__title"><span>🏠</span> Домашнє завдання (💎 40)</div>
+  <ol>
+    <li>Створіть у консолі генератор візитної картки або бейджика розробника, використовуючи рамку з символів псевдографіки (<code>+</code>, <code>-</code>, <code>|</code>), табуляцію <code>&#92;t</code> та перенесення рядків <code>&#92;n</code>.</li>
+    <li>Напишіть скрипт, який виводить повний шлях до файлу конфігурації у Windows: <code>C:&#92;Program Files&#92;FrontendCamp&#92;config&#92;settings.json</code> без помилок екранування.</li>
+    <li>Складіть порівняльну таблицю виводу одного й того самого тексту за допомогою звичайних лапок зі спецсимволами та шаблонних рядків (Template Literals) у зворотних лапках.</li>
+  </ol>
+</section>

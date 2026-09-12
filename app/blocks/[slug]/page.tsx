@@ -64,15 +64,17 @@ export default async function BlockPage({ params }: BlockPageProps) {
         <Badge variant="secondary" className="text-sm font-medium">Рівень: {block.level}</Badge>
       </header>
 
-      {isActive && block.lessons ? (
+      {isActive && (block.lessons || block.children) ? (
         <>
           <div className="flex flex-wrap gap-4 mb-16">
-            <Button asChild size="lg" className="h-12 px-8 font-semibold shadow-md shadow-primary/20">
-              <a href={withBasePath(block.startHref || `/courses/${block.courseSlug || block.slug}/01-intro/`)}>
-                Почати модуль 01 →
-              </a>
-            </Button>
-            {block.slug === 'javascript-basics' && (
+            {block.startHref && (
+              <Button asChild size="lg" className="h-12 px-8 font-semibold shadow-md shadow-primary/20">
+                <a href={withBasePath(block.startHref)}>
+                  {block.children ? 'Почати навчання →' : 'Почати модуль 01 →'}
+                </a>
+              </Button>
+            )}
+            {(block.slug === 'javascript' || block.slug.startsWith('js-')) && (
               <>
                 <Button asChild variant="outline" size="lg" className="h-12 px-6">
                   <Link href="/playground/">🧪 Пісочниця</Link>
@@ -84,41 +86,42 @@ export default async function BlockPage({ params }: BlockPageProps) {
             )}
           </div>
 
-          <section aria-labelledby="topics-title" className="mb-24">
-            <h2 id="topics-title" className="text-3xl font-bold mb-8">Теми блоку</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
-              {block.lessons.map((lesson) => (
-                <LessonCard key={lesson.slug} courseSlug={block.courseSlug || block.slug} {...lesson} />
-              ))}
-            </div>
-          </section>
-
-          {block.slug === 'javascript-basics' && (
-            <Card className="mb-24 border-none shadow-md bg-secondary/30">
-              <CardHeader>
-                <CardTitle className="text-xl">Структура кожного уроку</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4 text-muted-foreground list-none">
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Теорія з аналогіями та прикладами</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Жива пісочниця в браузері</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> 4 завдання на занятті (💎 10 кожне)</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> 3 домашні завдання (💎 40)</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Розбір типових помилок ДЗ та цікаві фішки</li>
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-
           {block.children && (
             <section aria-labelledby="subblocks-title" className="mb-24">
-              <h2 id="subblocks-title" className="text-3xl font-bold mb-8">Підмодулі</h2>
+              <h2 id="subblocks-title" className="text-3xl font-bold mb-8">Підмодулі курсу</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {block.children.map((child) => (
                   <RoadmapBlockCard key={child.slug} block={child} />
                 ))}
               </div>
             </section>
+          )}
+
+          {block.lessons && (
+            <section aria-labelledby="topics-title" className="mb-24">
+              <h2 id="topics-title" className="text-3xl font-bold mb-8">Уроки модулю</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
+                {block.lessons.map((lesson) => (
+                  <LessonCard key={lesson.slug} courseSlug={block.courseSlug || block.slug} {...lesson} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {(block.slug === 'javascript' || block.slug.startsWith('js-')) && (
+            <Card className="mb-24 border-none shadow-md bg-secondary/30">
+              <CardHeader>
+                <CardTitle className="text-xl">Структура кожного уроку</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4 text-muted-foreground list-none">
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Теорія з практичними прикладами та поясненнями</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Жива пісочниця в браузері для тестування коду</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Практичні завдання з автоматичною перевіркою (💎 кристали)</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Домашні завдання та розбір типових помилок</li>
+                </ul>
+              </CardContent>
+            </Card>
           )}
         </>
       ) : block.slug === 'capstone' ? (

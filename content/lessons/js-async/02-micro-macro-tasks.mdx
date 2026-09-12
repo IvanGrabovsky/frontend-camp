@@ -1,0 +1,89 @@
+<article className="lesson-card">
+  <h2>Microtasks проти Macrotasks</h2>
+  <p>
+    Не всі асинхронні задачі у браузері однакові. Event Loop ділить чергу на дві окремі структури: <strong>Microtask Queue (Черга мікрозавдань)</strong> та <strong>Macrotask Queue / Task Queue (Черга макрозавдань)</strong>. Розуміння різниці між ними — це ключ до передбачуваного порядку виконання коду та уникнення зависань інтерфейсу (UI Freezes).
+  </p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">⚡</span> VIP-коридор проти звичайної черги</div>
+  <p>
+    <strong>Макротаски</strong> — це звичайні покупці у черзі до каси супермаркету. А <strong>мікротаски</strong> — це швидкі запитання від касира («чи потрібен вам пакет?» або «прикладіть картку»). Касир не почне обслуговувати наступного покупця з черги (наступну макротаску), поки не завершить <em>абсолютно всі</em> дрібні мікрозавдання для поточного чека!
+  </p>
+</section>
+
+<section>
+  <h2>Що створює які типи задач?</h2>
+
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Тип черги</th>
+          <th>Джерела задач (Web APIs)</th>
+          <th>Пріоритет виконання</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Microtask Queue</strong> (VIP)</td>
+          <td>
+            <code>Promise.then / catch / finally</code><br />
+            <code>queueMicrotask(() =&gt; {})</code><br />
+            <code>MutationObserver</code>
+          </td>
+          <td><strong>Найвищий:</strong> виконуються всі до єдиної одразу після завершення поточного синхронного коду.</td>
+        </tr>
+        <tr>
+          <td><strong>Macrotask Queue</strong></td>
+          <td>
+            <code>setTimeout / setInterval</code><br />
+            <code>setImmediate</code> (Node.js)<br />
+            Мережеві колбеки (I/O, <code>fetch</code> завершення)<br />
+            Події користувача (кліки, скрол)
+          </td>
+          <td><strong>Звичайний:</strong> виконується лише <em>одна</em> макротаска за один ітераційний цикл Event Loop.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Як фаза рендерингу (UI Render) пов'язана з чергами?</h2>
+  <p>
+    Браузер оновлює екран (Layout → Paint → Composite) приблизно кожні 16.6 мс (при 60 FPS). Рендеринг відбувається <strong>ТІЛЬКИ ПІСЛЯ ТОГО</strong>, як спорожніє вся черга мікротасок, і <strong>ПЕРЕД</strong> наступною макротаскою!
+  </p>
+
+```text
+[ СИНХРОННИЙ КОД (Call Stack) ]
+              ↓
+[ ВСІ МІКРОТАСКИ (Microtask Queue) ] ← очищаються повністю!
+              ↓
+[ ОНОВЛЕННЯ ЕКРАНА (UI Render / rAF) ] ← якщо настав час кадру
+              ↓
+[ ОДНА МАКРОТАСКА (Macrotask) ]
+              ↓
+(Повторення циклу)
+```
+
+  <h2>Небезпека: Microtask Starvation (Зависання вкладки)</h2>
+  <p>
+    Якщо мікротаска додаватиме в чергу нові мікротаски (рекурсивно), браузер <strong>НІКОЛИ</strong> не дійде до фази рендерингу чи обробки кліків користувача. Вкладка миттєво зависне!
+  </p>
+
+```javascript
+// ⚠️ НЕ РОБІТЬ ТАК: повне зависання сторінки (UI Freeze)
+function infiniteMicrotask() {
+  Promise.resolve().then(() => {
+    infiniteMicrotask(); // Безкінечно заповнює Microtask Queue
+  });
+}
+
+// ✅ Для розбиття важких завдань використовуйте макротаски або scheduler.yield():
+function safeBackgroundTask() {
+  setTimeout(() => {
+    // Браузер встигає відрендерити кадр між викликами!
+    safeBackgroundTask();
+  }, 0);
+}
+```
+</section>

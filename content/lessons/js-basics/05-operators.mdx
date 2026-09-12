@@ -1,0 +1,127 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Оператори</strong> — символи або ключові слова що виконують дії над значеннями. JS має арифметичні, порівняльні, логічні, присвоювання та спеціальні оператори. Розуміння <strong>суворого порівняння</strong> (`===` vs `==`) та <strong>короткого замикання</strong> є ключовим для уникнення типових багів.</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">⚖️</span> Аналогія: операторові як правила гри</div>
+      <p>Уяви гру де є правила: «+» додає очки, «===» — суворий суддя що перевіряє і значення і тип, «==» — ліберальний суддя що спочатку конвертує типи. Логічний `&&` — як «і те, і це», `||` — «або те, або це».</p>
+    </section>
+    <section>
+      <h2>Арифметичні та присвоювання</h2>
+      
+
+```javascript
+let x = 10;
+x + 3   // 13    x - 3  // 7
+x * 2   // 20    x / 4  // 2.5
+x % 3   // 1  ← залишок від ділення
+x ** 2  // 100 ← степінь
+
+// Скорочені присвоювання
+x += 5;  // x = x + 5 = 15
+x -= 3;  // x = 12
+x++;     // x = 13 (після виразу)
+++x;     // x = 14 (до виразу)
+```
+
+
+
+      <h2>Порівняння: === vs ==</h2>
+      
+
+```javascript
+// === суворе — перевіряє значення І тип
+1 === 1     // true
+1 === '1'   // false ← різні типи
+0 === false // false
+
+// == нестрогe — конвертує типи (не рекомендоване)
+1 == '1'   // true  ← JavaScript зробив '1' → 1
+0 == false // true  ← false → 0
+null == undefined // true  ← особливий випадок
+
+// ЗАВЖДИ використовуй === і !==
+```
+
+
+
+      <h2>Логічні оператори та коротке замикання</h2>
+      
+
+```javascript
+// && — AND: повертає перше falsy або останнє значення
+true && 'hello'   // 'hello'
+false && 'hello'  // false  ← зупинився на false
+const user = { name: 'Іван' };
+user && user.name  // 'Іван'  ← безпечний доступ
+
+// || — OR: повертає перше truthy або останнє значення
+null || 'default'   // 'default'
+'value' || 'default' // 'value'
+
+// ?? — Nullish Coalescing: тільки null/undefined
+0 || 'default'  // 'default' ← 0 falsy!
+0 ?? 'default'  // 0         ← 0 не null/undefined
+
+// ?. — Optional Chaining
+const city = user?.address?.city; // undefined замість помилки
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/operators" target="_blank" rel="noopener noreferrer">Оператори — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators" target="_blank" rel="noopener noreferrer">Operators — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати `==` замість `===`</strong>: неявна конверсія типів — джерело важко відловлюваних багів.</li>
+        <li><strong>Плутати `||` і `??`</strong>: `||` вважає `0`, `''`, `false` falsy-значеннями. `??` — тільки `null`/`undefined`.</li>
+        <li><strong>Не використовувати `?.`</strong>: доступ до властивості без перевірки (`user.address.city`) кидає помилку якщо `address` є `undefined`.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Перевір в консолі: `0 == false`, `0 === false`, `'' == false`, `null == undefined`.</li>
+        <li>Напиши вираз що повертає ім'я користувача або `'Гість'` якщо ім'я не задане (використай `??`).</li>
+        <li>Створи об'єкт `user` без поля `address`. Безпечно отримай `user?.address?.city`.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що поверне `null == undefined` і `null === undefined`?</li>
+        <li>Яка різниця між `||` і `??`?</li>
+        <li>Що таке «коротке замикання» в логічних операторах?</li>
+        <li>Навіщо `?.` і яку помилку він запобігає?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «Яка різниця між == і ===?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «== швидший, тому я його і використовую».</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `===` — суворе рівність: перевіряє і значення і тип без конверсії. `==` виконує type coercion перед порівнянням (`'1' == 1 → true`). Завжди використовуй `===` — поведінка передбачувана і явна.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Оператор `!` (NOT) конвертує значення в boolean: `!!'text' === true`, `!!'' === false`. Подвійний `!!` — швидкий спосіб перетворити на boolean.</li>
+        <li>`??=` (Logical Nullish Assignment): `x ??= 'default'` — присвоює тільки якщо `x` є `null`/`undefined`.</li>
+        <li>`x ||= y` та `x &&= y` — логічне присвоювання (ES2021).</li>
+      </ul>
+    </section>

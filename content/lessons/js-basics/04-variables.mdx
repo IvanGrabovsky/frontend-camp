@@ -1,0 +1,136 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Змінна</strong> — це іменоване місце в пам'яті, де зберігається значення. JavaScript має три способи оголосити змінну: `var` (застарілий), `let` (для значень що змінюються) і `const` (для констант).</p>
+      <p><strong>Тип даних</strong> визначає що може зберігатись у змінній: число, рядок, булеве значення, `null`, `undefined`, об'єкт, або `Symbol`.</p>
+    </article>
+
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Аналогія: коробки з підписами</div>
+      <p>Змінна — як підписана коробка. `const` — запаяна коробка (не можна змінити вміст). `let` — відкрита коробка (вміст можна замінити). Тип даних — це те що всередині: число, текст, або «нічого» (`null`).</p>
+    </section>
+
+    <section>
+      <h2>let та const</h2>
+      
+
+```javascript
+// const — значення не змінюється (рекомендований за замовчуванням)
+const name = 'Іван';
+const age  = 25;
+const PI   = 3.14159;
+
+// let — значення може змінитись
+let score = 0;
+score = 10;   // OK
+score += 5;   // OK → 15
+
+// ❌ const — не можна перевизначити
+const MAX = 100;
+MAX = 200; // TypeError: Assignment to constant variable
+```
+
+
+
+      <h2>Типи даних</h2>
+      
+
+```javascript
+// Примітивні типи
+const str  = 'Привіт, світе!';   // string
+const num  = 42;                  // number
+const big  = 9007199254740993n;   // bigint
+const bool = true;                // boolean
+const empty = null;               // null — навмисна відсутність
+let notSet;                       // undefined — ще не задано
+const id = Symbol('unique');      // symbol
+
+// typeof — визначити тип
+typeof 'text'   // 'string'
+typeof 42       // 'number'
+typeof true     // 'boolean'
+typeof null     // 'object' ← відома помилка JS!
+typeof undefined // 'undefined'
+
+// Template literals — рядки з виразами
+const greeting = `Привіт, ${name}! Тобі ${age} років.`;
+const multiline = `
+  Рядок перший
+  Рядок другий
+`;
+```
+
+
+
+      <div className="syntax-params">
+        <h4>Порівняння let / const / var</h4>
+        <table className="params-table">
+          <thead><tr><th></th><th>const</th><th>let</th><th>var</th></tr></thead>
+          <tbody>
+            <tr><td>Перевизначення</td><td>❌</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Область видимості</td><td>block</td><td>block</td><td>function</td></tr>
+            <tr><td>Hoisting</td><td>TDZ</td><td>TDZ</td><td>undefined</td></tr>
+            <tr><td>Рекомендований</td><td>✅ завжди</td><td>✅ якщо змінюється</td><td>❌ не використовуй</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures" target="_blank" rel="noopener noreferrer">JavaScript data types — MDN</a></li>
+          <li><a href="https://javascript.info/variables" target="_blank" rel="noopener noreferrer">Variables — javascript.info</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Використовувати `var`</strong>: function-scope і hoisting створюють несподівані баги. Завжди використовуй `const`/`let`.</li>
+        <li><strong>Плутати `null` і `undefined`</strong>: `null` — ти навмисно встановив «нічого». `undefined` — значення ще не задано.</li>
+        <li><strong>`typeof null === 'object'`</strong>: відома помилка JS з 1995 року. Для перевірки null використовуй `=== null`.</li>
+        <li><strong>Перевизначати `const` об'єкти</strong>: `const arr = []` — не можна змінити <em>посилання</em> на масив, але можна змінювати його <em>вміст</em>: `arr.push(1)` — це OK.</li>
+      </ul>
+    </section>
+
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <p className="practice-block__intro">Відкрий консоль браузера (F12) або <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a>:</p>
+      <ol>
+        <li>Оголоси `const` для свого імені та року народження. Обрахуй вік через `new Date().getFullYear()`.</li>
+        <li>Виведи `typeof` для 5 різних значень. Перевір `typeof null` — це сюрприз!</li>
+        <li>Створи template literal з привітанням: «Привіт, [ім'я]! Тобі [вік] років.»</li>
+        <li>Спробуй перевизначити `const` і подивись на помилку в консолі.</li>
+      </ol>
+    </section>
+
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
+      <ol>
+        <li>Яка різниця між `let` і `const`?</li>
+        <li>Чому не варто використовувати `var`?</li>
+        <li>Що поверне `typeof null` і чому це дивно?</li>
+        <li>Як написати багаторядковий рядок без конкатенації?</li>
+        <li>Чи можна додати елемент до `const arr = []`?</li>
+      </ol>
+    </section>
+
+    <section className="hw-review-block">
+      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
+      <div className="hw-review-items">
+        <article className="hw-review-item">
+          <h4 className="hw-review-item__task">Питання: «В чому різниця між let, const та var?»</h4>
+          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «const — для констант, let — для змінних, var — застарілий» — поверхнево.</p>
+          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `const`/`let` — block scope (видимі тільки в межах блоку `{}`). `var` — function scope і hoisting (підіймається на початок функції зі значенням `undefined`). `const` не дозволяє перевизначення (але мутацію об'єктів — дозволяє). TDZ (Temporal Dead Zone) — звернення до `let`/`const` до їх оголошення кидає `ReferenceError`.</p>
+        </article>
+      </div>
+    </section>
+
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>Правило: <strong>завжди починай з `const`</strong>. Якщо потрібно перевизначити — зміни на `let`. Це мінімізує мутації і робить код передбачуваним.</li>
+        <li>`Number.isNaN()` — надійніший спосіб перевірити NaN ніж `isNaN()`: `isNaN('text') === true`, а `Number.isNaN('text') === false`.</li>
+        <li>Nullish coalescing: `const val = input ?? 'default'` — повертає `'default'` тільки якщо `input` є `null` або `undefined` (не `0` або `''`).</li>
+      </ul>
+    </section>

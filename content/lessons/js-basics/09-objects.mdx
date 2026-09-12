@@ -1,0 +1,97 @@
+<article className="lesson-card">
+      <h2>Що це таке?</h2>
+      <p><strong>Об'єкт</strong> — колекція пар ключ-значення. <strong>Деструктуризація</strong> дозволяє зручно витягувати значення. <strong>Spread</strong> (`...`) копіює та об'єднує об'єкти. Є також прототипна модель та класи (ES6).</p>
+    </article>
+    <section className="analogy-block">
+      <div className="analogy-block__title"><span className="analogy-block__icon">📋</span> Аналогія: анкета</div>
+      <p>Об'єкт — як заповнена анкета: ім'я, вік, адреса — кожне поле (ключ) має відповідне значення. Деструктуризація — як «вирвати» конкретне поле з анкети в окрему змінну.</p>
+    </section>
+    <section>
+      <h2>Створення та доступ</h2>
+      
+
+```javascript
+const user = {
+  name:  'Іван',
+  age:   25,
+  email: 'ivan@example.com',
+  address: { city: 'Київ', zip: '01001' },
+  greet() { return `Привіт, ${this.name}!`; },
+};
+
+// Доступ
+user.name;          // 'Іван' — dot notation
+user['email'];      // 'ivan@example.com' — bracket notation
+user.address.city;  // 'Київ'
+user.phone;         // undefined (не помилка!)
+
+// Shorthand properties (ES6)
+const name = 'Марія'; const age = 30;
+const person = { name, age }; // { name: 'Марія', age: 30 }
+```
+
+
+
+      <h2>Деструктуризація та spread</h2>
+      
+
+```javascript
+// Деструктуризація об'єкта
+const { name, age, address: { city } } = user;
+console.log(name, age, city); // 'Іван' 25 'Київ'
+
+// З перейменуванням та значенням за замовчуванням
+const { name: userName, role = 'user' } = user;
+
+// Spread — копія об'єкта (shallow copy)
+const updated = { ...user, age: 26 };   // оновлення поля
+const merged  = { ...defaults, ...user }; // об'єднання
+
+// Object.keys / values / entries
+Object.keys(user);    // ['name', 'age', 'email', 'address']
+Object.values(user);  // ['Іван', 25, ...]
+Object.entries(user); // [['name','Іван'], ['age',25], ...]
+```
+
+
+
+      <div className="doc-links">
+        <h4>Документація</h4>
+        <ul>
+          <li><a href="https://javascript.info/object" target="_blank" rel="noopener noreferrer">Objects — javascript.info</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" target="_blank" rel="noopener noreferrer">Destructuring — MDN</a></li>
+        </ul>
+      </div>
+    </section>
+    <section className="tip-block tip-block--warn">
+      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
+      <ul>
+        <li><strong>Spread робить shallow copy</strong>: вкладені об'єкти копіюються по посиланню. `const copy = {...obj}` — зміна `copy.address.city` змінить і оригінал!</li>
+        <li><strong>Перевіряти властивість через `obj.prop === undefined`</strong>: краще `'prop' in obj` — повертає `true` навіть якщо значення `undefined`.</li>
+        <li><strong>Мутувати об'єкти напряму</strong>: особливо в React/Next.js. Завжди створюй нову копію через spread.</li>
+      </ul>
+    </section>
+    <section className="practice-block">
+      <div className="practice-block__title"><span>⚡</span> Практика</div>
+      <ol>
+        <li>Створи об'єкт `product` з полями name, price, category. Деструктуруй з перейменуванням та дефолтом.</li>
+        <li>Зроби функцію `updateUser(user, changes)` що повертає новий об'єкт зі змінами (без мутації оригіналу).</li>
+        <li>Перебери `Object.entries(product)` і виведи всі пари ключ-значення.</li>
+      </ol>
+    </section>
+    <section className="homework-block">
+      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
+      <ol>
+        <li>Що таке shallow copy і чому це проблема при вкладених об'єктах?</li>
+        <li>Яка різниця між dot notation і bracket notation?</li>
+        <li>Що повертає `Object.entries()`?</li>
+      </ol>
+    </section>
+    <section className="pro-tips-block">
+      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
+      <ul>
+        <li>`structuredClone(obj)` (2022) — нативний deep clone без `JSON.parse(JSON.stringify())`. Підтримує Date, RegExp, Map, Set.</li>
+        <li>Computed property names: `const key = 'name'; const obj = { [key]: 'Іван' }`.</li>
+        <li>`Object.freeze(obj)` — робить об'єкт незмінним (shallow). Корисно для конфігурацій.</li>
+      </ul>
+    </section>
