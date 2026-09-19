@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 4: Практичний проєкт, розгалуження та тернарний оператор · Навчальний посібник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./materials.css" />
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="lm-container">
+    <nav class="top-nav-bar no-print">
+      <a href="./index.html" class="back-link">← До всіх уроків</a>
+      <div class="top-actions">
+        <button id="themeToggleBtn" class="btn-secondary" type="button">🌓 Тема</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Друк матеріалу (Ctrl/Cmd+P)</button>
+      </div>
+    </nav>
+
+    <div class="doc-header">
+      <span class="lm-badge">Frontend Camp • JavaScript Основи • Урок 4 з 4</span>
+      <h1>УРОК 4: Практичний проєкт, розгалуження та тернарний оператор</h1>
+      <p>Ключові теми: оператори розгалужень (if/else), тернарний оператор (?:), блок-схеми зі змінними та умовами, проєкт 'Профіль користувача' та інтерактивний практикум</p>
+    </div>
+
+    <table class="meta-table">
+      <tr>
+        <th>⏱️ Орієнтовний час</th>
+        <td>80 хвилин (Розгалуження та тернарний оператор 20 хв + Проєкт «Профіль» та Блок-схема 25 хв + Баг-фіксинг 15 хв + Битва з кодом 20 хв)</td>
+      </tr>
+      <tr>
+        <th>🎯 Рівень складності</th>
+        <td>Початковий (JavaScript Basics)</td>
+      </tr>
+      <tr>
+        <th>💡 Ключовий інсайт</th>
+        <td>Тернарний оператор — лаконічний if/else в один вираз; блок-схеми об'єднують логіку умов та обчислень в інженерну систему.</td>
+      </tr>
+    </table>
+
+    <!-- ЧАСТИНА 1: РОЗГАЛУЖЕННЯ ТА ТЕРНАРНИЙ ОПЕРАТОР -->
+    <div class="section-title">
+      <span>Розділ 1. Оператори розгалужень та Тернарний оператор (? :)</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-concept">
+      <span class="block-label">💡 Ухвалення рішень у коді</span>
+      <p>Досі наші програми йшли строго лінійно: оголосили, порахували, вивели. Але реальні додатки вміють аналізувати дані та обирати шлях виконання за допомогою <strong>операторів розгалужень</strong>.</p>
+      <p>А ще в JavaScript є єдиний у всій мові <strong>тернарний оператор</strong>. Йому потрібно три операнди: УМОВА ➔ ? ЗНАЧЕННЯ_ЯКЩО_ТАК ➔ : ЗНАЧЕННЯ_ЯКЩО_НІ.</p>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📚 Академічна теорія: if/else проти Тернарного оператора</span>
+      <p><strong>1. Класичний оператор розгалуження (if / else):</strong></p>
+      <pre><code>let age = 17;
+let access;
+
+if (age >= 18) {
+  access = "Доступ дозволено";
+} else {
+  access = "Доступ обмежено";
+}</code></pre>
+      <p><strong>2. Тернарний оператор (<code>умова ? вираз1 : вираз2</code>):</strong></p>
+      <pre><code>let access = (age >= 18) ? "Доступ дозволено" : "Доступ обмежено";
+console.log(access); // "Доступ обмежено"</code></pre>
+    </div>
+
+    <!-- ЧАСТИНА 2: ПРОЄКТ ТА БЛОК-СХЕМА -->
+    <div class="section-title">
+      <span>Розділ 2. Проєкт «Профіль користувача» та Блок-схема</span>
+      <span class="timing">⏱️ ~25 хв</span>
+    </div>
+
+    <div class="block block-interactive">
+      <span class="block-label">🛠️ Практика за ПК: Файл userProfile.js</span>
+      <pre><code>const name = "Alex";
+const age = 17;
+const city = "Kyiv";
+const isStudent = true;
+const favoriteNumber = 7;
+
+// Використання тернарного оператора для статусу:
+const statusText = isStudent ? "Студент денної форми" : "Не студент";
+
+console.log("Name: " + name + "\nAge: " + age + "\nCity: " + city + "\nStatus: " + statusText);
+
+// Перевірка кожного поля через typeof:
+console.log(typeof name);     // "string"
+console.log(typeof age);      // "number"
+console.log(typeof isStudent);// "boolean"</code></pre>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📐 Побудова алгоритму мовою блок-схем</span>
+      <ul>
+        <li><strong>Овал:</strong> Початок</li>
+        <li><strong>Паралелограм (Ввід):</strong> Отримати дані <code>name, age, isStudent</code></li>
+        <li><strong>Ромб (Умова розгалуження):</strong> <code>age >= 18?</code></li>
+        <li><strong>Стрілка ТАК ➔ Прямокутник:</strong> <code>access = "Повний доступ"</code></li>
+        <li><strong>Стрілка НІ ➔ Прямокутник:</strong> <code>access = "Батьківський контроль"</code></li>
+        <li><strong>Паралелограм (Вивід):</strong> Надрукувати картку профілю</li>
+        <li><strong>Овал:</strong> Кінець</li>
+      </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ЧАСТИНА 3: БАГ-ФІКСИНГ -->
+    <div class="section-title">
+      <span>Розділ 3. Лабораторний баг-фіксинг: Помилки джуніора</span>
+      <span class="timing">⏱️ ~15 хв</span>
+    </div>
+
+    <div class="block block-bug">
+      <span class="block-label">⚠️ Зламаний код: знайдіть синтаксичні та логічні помилки!</span>
+      <pre><code>Const user-score = "100";
+let bonus = 50;
+user-score = user-score + bonus;
+console.log("Рахунок: " + user-score);</code></pre>
+    </div>
+
+    <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Помилка</th>
+          <th style="width: 35%;">Тип помилки</th>
+          <th style="width: 40%;">Виправлення</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Const</code> з великої літери</td>
+          <td>Синтаксична (SyntaxError)</td>
+          <td>Писати з малої <code>let userScore</code> (бо значення змінюється).</td>
+        </tr>
+        <tr>
+          <td><code>user-score</code> з дефісом</td>
+          <td>Синтаксична (SyntaxError)</td>
+          <td>Дефіс сприймається як мінус. Стиль camelCase: <code>userScore</code>.</td>
+        </tr>
+        <tr>
+          <td><code>"100"</code> у лапках</td>
+          <td><strong>Логічна (Logical Error)</strong></td>
+          <td>Склеїться в <code>"10050"</code> замість 150. Прибрати лапки: <code>100</code>.</td>
+        </tr>
+        <tr>
+          <td>Перезапис <code>const</code></td>
+          <td>Помилка виконання (TypeError)</td>
+          <td>Оголосити як <code>let</code>, оскільки значення змінюється.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ЧАСТИНА 4: БИТВА З КОДОМ -->
+    <div class="section-title">
+      <span>Розділ 4. Інтерактивна самоперевірка «Битва з кодом: A / B / C» (8 раундів)</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№</th>
+          <th style="width: 35%;">Код для аналізу</th>
+          <th style="width: 28%;">Варіанти відповідей</th>
+          <th style="width: 32%;">Правильна відповідь & Чому</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>let a = "10"; let b = 20;<br>console.log(a + b);</code></td>
+          <td>A: 30<br>B: "1020"<br>C: помилка</td>
+          <td class="qa-spoiler"><strong>B: "1020"</strong><br>Плюс склеює рядок і число.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>let x = "20"; let y = 10;<br>console.log(x - y);</code></td>
+          <td>A: 10<br>B: "10"<br>C: NaN</td>
+          <td class="qa-spoiler"><strong>A: 10 (число)</strong><br>Мінус перетворює рядок на число!</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>let isAdult = (16 >= 18) ? "Так" : "Ні";<br>console.log(isAdult);</code></td>
+          <td>A: "Так"<br>B: "Ні"<br>C: undefined</td>
+          <td class="qa-spoiler"><strong>B: "Ні"</strong><br>Тернарний оператор: $16 \ge 18$ це false.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>let score = 10; score += 5;<br>console.log(score);</code></td>
+          <td>A: 10<br>B: 15<br>C: "105"</td>
+          <td class="qa-spoiler"><strong>B: 15</strong><br>Скорочена форма додавання числа.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>console.log(typeof (+"42"));</code></td>
+          <td>A: "string"<br>B: "number"<br>C: NaN</td>
+          <td class="qa-spoiler"><strong>B: "number"</strong><br>Унарний плюс перетворив рядок на число.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>console.log(2 + 2 * 2);</code></td>
+          <td>A: 8<br>B: 6<br>C: "42"</td>
+          <td class="qa-spoiler"><strong>B: 6</strong><br>Множення має вищий пріоритет за додавання.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><code>console.log(typeof null);</code></td>
+          <td>A: "null"<br>B: "object"<br>C: "undefined"</td>
+          <td class="qa-spoiler"><strong>B: "object"</strong><br>Історичний баг JS 1995 року.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><code>console.log(true + true);</code></td>
+          <td>A: "truetrue"<br>B: 2<br>C: true</td>
+          <td class="qa-spoiler"><strong>B: 2</strong><br>В математиці true перетворюється на 1.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</body>
+</html>

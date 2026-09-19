@@ -1,127 +1,180 @@
+# 06. Умовні оператори, тернарний вираз та підсумковий проєкт
+
 <article className="lesson-card">
-      <h2>Що це таке?</h2>
-      <p><strong>Умовні оператори</strong> дозволяють виконувати різний код залежно від умови. Основні інструменти: `if/else`, тернарний оператор `?:`, та `switch` для множинного вибору.</p>
-    </article>
-    <section className="analogy-block">
-      <div className="analogy-block__title"><span className="analogy-block__icon">🚦</span> Аналогія: світлофор</div>
-      <p>Умовні оператори — як світлофор: «якщо (if) горить зелений — іди, якщо (else if) жовтий — готуйся, інакше (else) — стій». `switch` — як меню в ресторані: перевіряєш кожен пункт і виконуєш відповідну дію.</p>
-    </section>
-    <section>
-      <h2>if / else if / else</h2>
-      
+  <h2>Що таке умовні оператори?</h2>
+  <p><strong>Умовні оператори</strong> дозволяють програмі приймати рішення та обирати різні шляхи виконання алгоритму залежно від вхідних даних чи стану системи. Замість лінійного виконання код отримує розгалуження (<em>branching</em>).</p>
+  <p>Основними інструментами ухвалення рішень у JavaScript є класична конструкція <code>if / else if / else</code>, компактний <strong>тернарний оператор (<code>?:</code>)</strong> та багатоваріантний вибір <code>switch / case</code>.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🚦</span> Аналогія: Розумний світлофор та турнікет</div>
+  <p>Уявіть роботу електронного турнікета в метро:</p>
+  <ul>
+    <li><strong><code>if (hasTicket && isBalancePositive)</code></strong> — «якщо є дійсний квиток і на балансі є кошти ➔ відкрити зелений прохід».</li>
+    <li><strong><code>else if (isVipPass)</code></strong> — «інакше, якщо це спеціальний службовий пропуск ➔ відкрити сервісний коридор».</li>
+    <li><strong><code>else</code></strong> — «у всіх інших випадках ➔ заблокувати прохід та увімкнути червоний сигнал».</li>
+    <li><strong>Тернарний оператор (<code>?:</code>)</strong> — це дисплей турнікета, який миттєво підбирає напис: <code>hasTicket ? "Ласкаво просимо!" : "Поповніть карту"</code>.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Конструкція if / else if / else</h2>
 
 ```javascript
-const score = 75;
+const userAge = 17;
+let accessStatus;
 
-if (score >= 90) {
-  console.log('Відмінно');
-} else if (score >= 70) {
-  console.log('Добре');    // ← виконається
-} else if (score >= 50) {
-  console.log('Задовільно');
+if (userAge >= 18) {
+  accessStatus = "Повний доступ надано";
+} else if (userAge >= 14) {
+  accessStatus = "Доступ з обмеженнями (підлітковий профіль)";
 } else {
-  console.log('Незадовільно');
+  accessStatus = "Доступ заблоковано (потрібен дозвіл батьків)";
 }
 
-// Falsy значення в умові: false, 0, '', null, undefined, NaN
-if (0)         { /* не виконається */ }
-if ('')        { /* не виконається */ }
-if (null)      { /* не виконається */ }
-if ([])        { /* виконається — порожній масив truthy! */ }
+console.log(accessStatus);
 ```
 
-
-
-      <h2>Тернарний оператор</h2>
-      
+  <h2>Тернарний оператор (умова ? вираз1 : вираз2)</h2>
+  <p>Тернарний оператор — це єдиний оператор у JavaScript, який приймає <strong>три операнди</strong>. Він ідеально підходить для присвоєння значень у змінну в один рядок:</p>
 
 ```javascript
-// умова ? якщо_true : якщо_false
-const grade = score >= 90 ? 'A' : score >= 70 ? 'B' : 'C';
+const age = 20;
+const isAdult = age >= 18 ? "Повнолітній" : "Неповнолітній";
 
-// Зручно в JSX/шаблонах
-const label = isLoggedIn ? 'Вийти' : 'Увійти';
-const color = theme === 'dark' ? '#fff' : '#000';
-
-// ⚠️ Не вкладай більше 2 рівнів — стає нечитабельним
+// Використання для статусу студента
+const isStudent = true;
+const statusText = isStudent ? "Студент денної форми" : "Випускник / Не студент";
+console.log(`Статус: ${statusText}`);
 ```
 
+  <Callout type="warning" title="Коли не варто зловживати тернарним оператором">
+    Не вкладайте більше двох рівнів тернарних операторів (<code>a ? b : c ? d : e</code>), оскільки такий код стає важким для читання іншими розробниками. Якщо умов більше двох — використовуйте <code>if / else if</code> або <code>switch</code>.
+  </Callout>
 
-
-      <h2>switch</h2>
-      
+  <h2>Множинний вибір через switch / case</h2>
 
 ```javascript
-const day = 'Monday';
-switch (day) {
-  case 'Monday':
-  case 'Tuesday':    // fall-through — два кейси разом
-    console.log('Початок тижня'); break;
-  case 'Friday':
-    console.log('П'ятниця!'); break;
+const userRole = "editor";
+
+switch (userRole) {
+  case "admin":
+    console.log("Доступ до панелі керування та видалення користувачів");
+    break;
+  case "editor":
+    console.log("Доступ до створення та редагування статей");
+    break;
+  case "viewer":
+    console.log("Доступ лише для перегляду контенту");
+    break;
   default:
-    console.log('Середина тижня');
+    console.log("Невідома роль: доступ обмежено");
 }
-
-// Сучасна альтернатива — об'єкт-словник
-const labels = { en: 'Hello', uk: 'Привіт', de: 'Hallo' };
-const greeting = labels[lang] ?? labels.en;
 ```
 
+  <h2>Матриця значень: Falsy проти Truthy</h2>
+  <p>У JavaScript всього <strong>8 значень</strong> перетворюються на <code>false</code> у логічному контексті:</p>
+  <ul>
+    <li><code>false</code></li>
+    <li><code>0</code> та <code>-0</code>, <code>0n</code></li>
+    <li><code>""</code> (порожній рядок)</li>
+    <li><code>null</code></li>
+    <li><code>undefined</code></li>
+    <li><code>NaN</code></li>
+  </ul>
+  <p><strong>Усе інше — це Truthy!</strong> (У тому числі порожній масив <code>[]</code>, порожній об'єкт <code>{}</code> та рядок з пробілом <code>" "</code>).</p>
+</section>
 
+<section className="interactive-demo mb-10">
+  <h2>🧪 Підсумковий курсовий проєкт: Термінал оформлення замовлення</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Комплексна інтеграція: змінні (<code>let</code>/<code>const</code>), типи даних, перевірка віку, розрахунок знижки за промокодом, валідація та генерація чека за допомогою Template Literals.
+  </p>
+  <CodeRunner
+    title="CyberStore Order Terminal"
+    initialCode={`// 1. Вхідні дані клієнта
+const customerName = "Олександр";
+const customerAge = 19;
+const isClubMember = true;
+const cartSubtotal = 1200;
+const promoCode = "SAVE20";
 
-      <div className="doc-links">
-        <h4>Документація</h4>
-        <ul>
-          <li><a href="https://javascript.info/ifelse" target="_blank" rel="noopener noreferrer">if/else — javascript.info</a></li>
-          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch" target="_blank" rel="noopener noreferrer">switch — MDN</a></li>
-        </ul>
-      </div>
-    </section>
+// 2. Перевірка вікових обмежень через тернарний оператор
+const canPurchase = customerAge >= 18;
+const ageStatus = canPurchase ? "Вік підтверджено" : "Потрібен нагляд батьків";
 
-    <section className="tip-block tip-block--warn">
-      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
-      <ul>
-        <li><strong>Забути `break` у `switch`</strong>: без нього виконання «проваліться» (fall-through) у наступний case.</li>
-        <li><strong>Покладатись на truthy/falsy без розуміння</strong>: `[]` і `{}` — truthy, навіть якщо «порожні».</li>
-        <li><strong>Надміру вкладати тернарні оператори</strong>: більше 2 рівнів — використовуй `if/else`.</li>
-      </ul>
-    </section>
+// 3. Розрахунок персональної знижки
+let discountPercent = 0;
 
-    <section className="practice-block">
-      <div className="practice-block__title"><span>⚡</span> Практика</div>
-      <ol>
-        <li>Напиши функцію `getGrade(score)` що повертає 'A'/'B'/'C'/'D'/'F' залежно від балу.</li>
-        <li>Перепиши цю функцію через тернарний оператор.</li>
-        <li>Зроби `switch` що повертає назву місяця по числу (1 → 'Січень' і т.д.).</li>
-        <li>Перепиши `switch` через об'єкт-словник — яке рішення читабельніше?</li>
-      </ol>
-    </section>
+if (promoCode === "SAVE20") {
+  discountPercent = 20;
+} else if (isClubMember && cartSubtotal >= 1000) {
+  discountPercent = 15;
+} else if (isClubMember) {
+  discountPercent = 10;
+} else {
+  discountPercent = 0;
+}
 
-    <section className="homework-block">
-      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
-      <ol>
-        <li>Які значення є falsy в JavaScript?</li>
-        <li>Що відбудеться якщо не написати `break` у `switch`?</li>
-        <li>Коли краще використовувати об'єкт-словник замість `switch`?</li>
-      </ol>
-    </section>
+// 4. Математичні обчислення
+const discountAmount = (cartSubtotal * discountPercent) / 100;
+let finalTotal = cartSubtotal - discountAmount;
+const freeShipping = finalTotal >= 1000;
 
-    <section className="hw-review-block">
-      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
-      <div className="hw-review-items">
-        <article className="hw-review-item">
-          <h4 className="hw-review-item__task">Питання: «Коли використовувати switch замість if/else?»</h4>
-          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «switch швидший» — майже ніколи не вірно в JS.</p>
-          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `switch` зручний для множинного порівняння однієї змінної з кількома константами. Але сучасна альтернатива — об'єкт-словник: `const map = { key: value }; map[key]` — чистіше, без fall-through ризиків, легко розширити.</p>
-        </article>
-      </div>
-    </section>
+if (!freeShipping) {
+  finalTotal += 80; // додаємо вартість доставки
+}
 
-    <section className="pro-tips-block">
-      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
-      <ul>
-        <li>Early return pattern: замість вкладених if/else повертай раніше — код стає плоскішим і читабельнішим.</li>
-        <li>Guard clauses: перевіряй некоректні стани на початку функції і повертай одразу — основна логіка залишається без вкладеності.</li>
-      </ul>
-    </section>
+// 5. Друк фінального чека
+console.log("==================================");
+console.log(\`🛒 CyberStore Чек замовлення\`);
+console.log(\`Клієнт: \${customerName} (\${ageStatus})\`);
+console.log(\`Сума кошика: \${cartSubtotal} грн\`);
+console.log(\`Знижка (\${discountPercent}%): -\${discountAmount} грн\`);
+console.log(\`Доставка: \${freeShipping ? "Безкоштовно 🎉" : "80 грн"}\`);
+console.log(\`РАЗОМ ДО СПЛАТИ: \${finalTotal} грн\`);
+console.log("==================================");`}
+  />
+</section>
+
+<section className="quizzes-section mb-10">
+  <h2>🎯 Підсумковий бліц знань модуля</h2>
+
+  <div className="space-y-6">
+    <QuizCard
+      question="Що виведе вираз: Boolean([]) ?"
+      options="false (бо масив порожній) | true (бо будь-який об'єкт/масив є truthy) | undefined | TypeError"
+      correctIndex="1"
+      explanation="У JavaScript абсолютно ВСІ об'єкти та масиви (навіть порожні [] або {}) є truthy і при перетворенні на boolean дають true. Тільки 8 конкретних значень є falsy: false, 0, -0, 0n, '', null, undefined, NaN. Повний список truthy/falsy значень дивіться у [довіднику з логічних конструкцій](/learning-materials/lesson-4-project.html)."
+      theoryUrl="/learning-materials/lesson-4-project.html"
+      theoryTitle="Конспект: Truthy та Falsy значення у JavaScript"
+    />
+
+    <QuizCard
+      question="Який результат обчислення: (16 >= 18) ? 'Дорослий' : 'Підліток' ?"
+      options="'Дорослий' | 'Підліток' | true | false"
+      correctIndex="1"
+      explanation="Тернарний оператор (умова ? якщо_true : якщо_false) спочатку перевіряє умову 16 >= 18, яка дорівнює false. Оскільки умова хибна, виконується і повертається вираз після двокрапки (:) — рядок 'Підліток'. Як користуватися компактними тернарними виразами читайте у [матеріалах уроку](/learning-materials/lesson-4-project.html)."
+      theoryUrl="/learning-materials/lesson-4-project.html"
+      theoryTitle="Посібник: Тернарний оператор та скорочені умови"
+    />
+
+    <QuizCard
+      question="Що відбудеться, якщо в операторі switch пропустити ключове слово break?"
+      options="Виникне помилка SyntaxError під час запуску | Виконання 'провалиться' у наступний case (fall-through) | Рушій автоматично зупинить виконання switch | Комп'ютер піде у нескінченний цикл"
+      correctIndex="1"
+      explanation="В операторі switch/case інструкція break сигналізує рушію про вихід із блоку перевірок. Якщо break пропущено, виконання коду без жодних помилок переходить ('провалюється') у всі наступні гілки case незалежно від їхніх значень — це явище називається fall-through. Детальний розбір роботи switch та пастки fall-through є у [посібнику з розгалужень](/learning-materials/lesson-4-project.html)."
+      theoryUrl="/learning-materials/lesson-4-project.html"
+      theoryTitle="Конспект: Конструкція switch/case та fall-through"
+    />
+  </div>
+</section>
+
+<section className="practice-block">
+  <div className="practice-block__title"><span>⚡</span> Завдання для самостійної розробки</div>
+  <ol>
+    <li>Створіть скрипт розрахунку вартості квитка в кінотеатр залежно від віку: до 6 років — безкоштовно (0 грн), від 7 до 17 — дитячий (120 грн), від 18 до 60 — стандартний (200 грн), від 61 — пенсійний (100 грн).</li>
+    <li>Використайте тернарний оператор для визначення наявності попкорну в подарунок, якщо квиток стандартний і куплений у вихідний день.</li>
+    <li>Оформіть красивий вивід у консоль.</li>
+  </ol>
+</section>

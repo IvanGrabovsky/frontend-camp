@@ -147,46 +147,40 @@ console.log(receipt);
   <h2>🧠 Перевірте себе</h2>
   <QuizCard
     question="Який спецсимвол використовується в JavaScript для перенесення тексту на новий рядок?"
-    options={[
-      { text: "/n", isCorrect: false, explanation: "/n — це звичайний слеш з літерою n, він не є керуючою послідовністю." },
-      { text: "\\n", isCorrect: true, explanation: "\\n (зворотний слеш + n) — це escape-послідовність для New Line." },
-      { text: "\\t", isCorrect: false, explanation: "\\t використовується для горизонтальної табуляції (відступу)." },
-      { text: "<br>", isCorrect: false, explanation: "<br> — це HTML тег, але в консолі або чистому JS тексті він надрукується як звичайний текст." }
-    ]}
+    options="/n | \n | \t | <br>"
+    correctIndex="1"
+    explanation="Спецсимвол \n переносить текст на новий рядок."
   />
   <div className="mt-6">
     <QuizCard
-      question="Як правильно вивести у консоль шлях до файлу C:\\projects\\app.js?"
-      options={[
-        { text: 'console.log("C:\\projects\\app.js")', isCorrect: false, explanation: "Слеші будуть проінтерпретовані як початок екранування." },
-        { text: 'console.log("C:\\\\projects\\\\app.js")', isCorrect: true, explanation: "Кожен зворотний слеш необхідно екранувати другим зворотним слешем: \\\\." },
-        { text: 'console.log("C://projects//app.js")', isCorrect: false, explanation: "Це прямі слеші, а не зворотні." },
-        { text: 'console.log(C:\\projects\\app.js)', isCorrect: false, explanation: "Рядок обов'язково має бути взятий у лапки." }
-      ]}
+      question="Як правильно вивести у консоль шлях до файлу C:\projects\app.js?"
+      options="console.log('C:\projects\app.js') | console.log('C:\\projects\\app.js') | console.log('C://projects//app.js') | console.log(C:\projects\app.js)"
+      correctIndex="1"
+      explanation="Щоб надрукувати один зворотний слеш, його необхідно заекранувати другим слешем: \\."
     />
   </div>
 </section>
 
 <section className="practice-block">
-  <div className="practice-block__title"><span>⚡</span> Практичні завдання на занятті (💎 40)</div>
+  <div className="practice-block__title"><span>⚡</span> Практичні завдання на занятті</div>
   <ol>
     <li>
-      <strong>Завдання 1 (💎 10)</strong>: Виведіть одним рядком з <code>console.log</code> строфу вірша або цитату, де кожен рядок починається з нового рядка за допомогою <code>&#92;n</code>, а пряма мова взята у подвійні лапки <code>&#92;"</code>.
+      <strong>Завдання 1</strong>: Виведіть одним рядком з <code>console.log</code> строфу вірша або цитату, де кожен рядок починається з нового рядка за допомогою <code>&#92;n</code>, а пряма мова взята у подвійні лапки <code>&#92;"</code>.
     </li>
     <li>
-      <strong>Завдання 2 (💎 10)</strong>: Створіть консольну таблицю меню кафе з трьох колонок: <em>Назва</em>, <em>Розмір</em>, <em>Ціна</em>. Використайте <code>&#92;t</code> для акуратного вирівнювання стовпчиків.
+      <strong>Завдання 2</strong>: Створіть консольну таблицю меню кафе з трьох колонок: <em>Назва</em>, <em>Розмір</em>, <em>Ціна</em>. Використайте <code>&#92;t</code> для акуратного вирівнювання стовпчиків.
     </li>
     <li>
-      <strong>Завдання 3 (💎 10)</strong>: Надрукуйте рядок: <code>Увага! Символ зворотного слешу виглядає так: "&#92;&#92;"</code>. Переконайтеся, що ви коректно заекранували як сам слеш, так і лапки.
+      <strong>Завдання 3</strong>: Надрукуйте рядок: <code>Увага! Символ зворотного слешу виглядає так: "&#92;&#92;"</code>. Переконайтеся, що ви коректно заекранували як сам слеш, так і лапки.
     </li>
     <li>
-      <strong>Завдання 4 (💎 10)</strong>: Виведіть за допомогою кодів Unicode символ авторського права <code>&#92;u00A9</code>, знак торгової марки <code>&#92;u2122</code> та галочку <code>&#92;u2705</code>.
+      <strong>Завдання 4</strong>: Виведіть за допомогою кодів Unicode символ авторського права <code>&#92;u00A9</code>, знак торгової марки <code>&#92;u2122</code> та галочку <code>&#92;u2705</code>.
     </li>
   </ol>
 </section>
 
 <section className="homework-block mt-8">
-  <div className="practice-block__title"><span>🏠</span> Домашнє завдання (💎 40)</div>
+  <div className="practice-block__title"><span>🏠</span> Домашнє завдання</div>
   <ol>
     <li>Створіть у консолі генератор візитної картки або бейджика розробника, використовуючи рамку з символів псевдографіки (<code>+</code>, <code>-</code>, <code>|</code>), табуляцію <code>&#92;t</code> та перенесення рядків <code>&#92;n</code>.</li>
     <li>Напишіть скрипт, який виводить повний шлях до файлу конфігурації у Windows: <code>C:&#92;Program Files&#92;FrontendCamp&#92;config&#92;settings.json</code> без помилок екранування.</li>

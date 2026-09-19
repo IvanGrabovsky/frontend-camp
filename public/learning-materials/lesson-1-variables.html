@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 1: Змінні, типи даних та класифікація помилок · Навчальний посібник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./materials.css" />
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="lm-container">
+    <nav class="top-nav-bar no-print">
+      <a href="./index.html" class="back-link">← До всіх уроків</a>
+      <div class="top-actions">
+        <button id="themeToggleBtn" class="btn-secondary" type="button">🌓 Тема</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Друк матеріалу (Ctrl/Cmd+P)</button>
+      </div>
+    </nav>
+
+    <div class="doc-header">
+      <span class="lm-badge">Frontend Camp • JavaScript Основи • Урок 1 з 4</span>
+      <h1>УРОК 1: Змінні, типи даних та класифікація помилок</h1>
+      <p>Ключові теми: природа оперативної пам'яті, let/const vs застарілий var, стандарти IEEE-754 чисел, відсутність char у JS, правила camelCase, блок-схеми та 3 класи помилок</p>
+    </div>
+
+    <table class="meta-table">
+      <tr>
+        <th>⏱️ Орієнтовний час</th>
+        <td>80 хвилин (Теорія 25 хв + Практика «Паспорт» 20 хв + Блок-схеми 15 хв + Бліц і відлов багів 20 хв)</td>
+      </tr>
+      <tr>
+        <th>🎯 Рівень складності</th>
+        <td>Початковий (JavaScript Basics)</td>
+      </tr>
+      <tr>
+        <th>💡 Ключові концепції</th>
+        <td>Пам'ять як комірки, <code>let</code>/<code>const</code>, <code>number</code> (IEEE-754), <code>string</code>, <code>boolean</code>, <code>typeof</code>, SyntaxError vs TypeError vs Logical Error</td>
+      </tr>
+    </table>
+
+    <!-- ЧАСТИНА 1: ТЕОРІЯ -->
+    <div class="section-title">
+      <span>Розділ 1. Що таке змінна, let/const та природа даних</span>
+      <span class="timing">⏱️ ~25 хв</span>
+    </div>
+
+    <div class="block block-concept">
+      <span class="block-label">💡 Інтуїція та аналогія (Пам'ять та коробки)</span>
+      <p>Змінна — це іменована коробка в оперативній пам'яті комп'ютера, на яку наклеєно стікер з назвою (ідентифікатор), а всередині зберігаються дані.</p>
+      <p>У сучасному JavaScript є два ключові слова: <code>let</code> (коробка, вміст якої можна змінювати) та <code>const</code> (запечатана коробка-константа, значення якої заборонено змінювати після створення). Застарілий <code>var</code> більше не використовується через проблеми з областями видимості та hoisting.</p>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📚 Академічна теорія: Типи даних за стандартом ECMAScript</span>
+      <ul>
+        <li><strong>1. Цілі числа (Integers):</strong> Числа без дробової частини: <code>10</code>, <code>0</code>, <code>-42</code>.</li>
+        <li><strong>2. Речовинні числа (Floating point):</strong> Числа з плаваючою крапкою: <code>3.14</code>, <code>0.5</code>.
+          <br><em>Нюанс JS:</em> На відміну від мов C++ чи Java, де є окремі типи <code>int</code> та <code>double</code>, у JavaScript <strong>усі числа належать до єдиного типу <code>number</code></strong> (64-бітний стандарт IEEE-754).
+        </li>
+        <li><strong>3. Розмір та діапазон значень:</strong> Безпечний діапазон цілих чисел у JS лежить у межах від $-(2^{53} - 1)$ до $+(2^{53} - 1)$ (від <code>-9007199254740991</code> до <code>9007199254740991</code>). У JS є константа <code>Number.MAX_SAFE_INTEGER</code>.</li>
+        <li><strong>4. Символьний vs Строковий тип:</strong> В інших мовах один символ — це тип <code>char</code>. <strong>У JS окремого символьного типу немає!</strong> Будь-який окремий символ (наприклад, <code>"A"</code> або <code>"%"</code>) — це просто рядок (<code>string</code>) довжиною 1.</li>
+        <li><strong>5. Логічний тип (boolean):</strong> Тільки два значення: <code>true</code> (істина) та <code>false</code> (хибність).</li>
+      </ul>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📚 Правила іменування змінних (Code Style)</span>
+      <ul>
+        <li><strong>Заборонено:</strong> починати з цифри (<code>let 1user;</code> ❌), використовувати дефіси (<code>user-name</code> ❌ — це знак мінуса!), використовувати зарезервовані слова (<code>let class;</code> ❌).</li>
+        <li><strong>Обов'язковий стандарт:</strong> стиль <strong><code>camelCase</code></strong> (наприклад: <code>userAge</code>, <code>isHeroAlive</code>, <code>totalScorePoints</code>).</li>
+      </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ЧАСТИНА 2: РОБОТА З ПОМИЛКАМИ -->
+    <div class="section-title">
+      <span>Розділ 2. Класифікація помилок у коді</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-bug">
+      <span class="block-label">⚠️ Три типи помилок — як їх розпізнавати та виправляти</span>
+      <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">Тип помилки</th>
+            <th style="width: 35%;">Коли виникає?</th>
+            <th style="width: 40%;">Приклад у коді</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Синтаксична (SyntaxError)</strong></td>
+            <td>Порушено правила граматики мови. <strong>Код взагалі не стартує!</strong></td>
+            <td><code>let 1player = "Ivan";</code> або незакрита лапка <code>"Hello</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Помилка виконання (TypeError / ReferenceError)</strong></td>
+            <td>Код синтаксично коректний, але під час роботи виникає неприпустима дія.</td>
+            <td><code>const city = "Lviv"; city = "Kyiv";</code> ➔ <code>TypeError: Assignment to constant variable</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Логічна помилка (Logical Error)</strong></td>
+            <td><strong>Найпідступніша!</strong> Код працює без збоїв у консолі, але результат обчислень хибний.</td>
+            <td>Хотіли додати <code>50 + 100</code>, але написали <code>"50" + 100</code> ➔ вийшло <code>"50100"</code> замість <code>150</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ЧАСТИНА 3: ПРАКТИКУМ ТА БЛОК-СХЕМИ -->
+    <div class="section-title">
+      <span>Розділ 3. Практикум: Паспорт розробника та Блок-схема</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-interactive">
+      <span class="block-label">🛠️ Завдання 1: «Паспорт розробника»</span>
+      <p>Оголосіть змінні про себе та виведіть їх разом із типами:</p>
+      <pre><code>const firstName = "Ivan";     // string (текст)
+const symbolTest = "A";       // string (у JS окремого char немає!)
+let age = 17;                 // number (ціле число)
+let height = 1.78;            // number (речовинне / дробове число)
+let isStudent = true;         // boolean (логічний)
+
+console.log("Ім'я: " + firstName + " | тип: " + typeof firstName);
+console.log("Вік: " + age + " | тип: " + typeof age);
+console.log("Зріст: " + height + " | тип: " + typeof height);
+console.log("Студент: " + isStudent + " | тип: " + typeof isStudent);</code></pre>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📐 Блок-схема програми зі змінними</span>
+      <p>Як змінні та перевірки відображаються у блок-схемах алгоритмів:</p>
+      <ul>
+        <li><strong>Овал:</strong> Початок</li>
+        <li><strong>Паралелограм (Введення):</strong> Отримати <code>name, age, height</code></li>
+        <li><strong>Прямокутник (Обчислення):</strong> Зберегти <code>isAdult = age >= 18</code></li>
+        <li><strong>Паралелограм (Виведення):</strong> Надрукувати паспорт на екран</li>
+        <li><strong>Овал:</strong> Кінець</li>
+      </ul>
+    </div>
+
+    <!-- ЧАСТИНА 4: БЛІЦ ТА ПІДСУМКИ -->
+    <div class="section-title">
+      <span>Розділ 4. Бліц-самоперевірка «Типи та помилки» (10 питань)</span>
+      <span class="timing">⏱️ ~15 хв</span>
+    </div>
+
+    <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№</th>
+          <th style="width: 35%;">Запитання / Код</th>
+          <th style="width: 25%;">Відповідь</th>
+          <th style="width: 35%;">Чому саме так?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Чи є в JS окремий тип для чисел з комою (float)?</td>
+          <td class="qa-spoiler">Ні, єдиний тип <code>number</code></td>
+          <td class="qa-spoiler">І цілі, і дробові числа — це 64-бітний float IEEE-754.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Який тип має символ <code>"$"</code> у JS?</td>
+          <td class="qa-spoiler"><code>"string"</code></td>
+          <td class="qa-spoiler">У JS немає типу char, окремий символ — це рядок довжиною 1.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>let user-name = "Max";</code> — яка це помилка?</td>
+          <td class="qa-spoiler">Синтаксична (SyntaxError)</td>
+          <td class="qa-spoiler">Дефіс заборонений, він трактується як знак мінуса.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>const a = 10; a = 20;</code> — яка це помилка?</td>
+          <td class="qa-spoiler">Помилка виконання (TypeError)</td>
+          <td class="qa-spoiler">Заборонено перезаписувати константу під час роботи.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Хотіли порахувати площу $S = a \cdot b$, але написали $S = a + b$. Що це?</td>
+          <td class="qa-spoiler">Логічна помилка (Logical Error)</td>
+          <td class="qa-spoiler">Код працює без виключень, але бізнес-результат хибний.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Що поверне <code>typeof (10 > 5)</code>?</td>
+          <td class="qa-spoiler"><code>"boolean"</code></td>
+          <td class="qa-spoiler">Вираз у дужках дорівнює <code>true</code>.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Як за стандартом назвати змінну для максимальної кількості спроб?</td>
+          <td class="qa-spoiler"><code>maxAttemptsCount</code></td>
+          <td class="qa-spoiler">Стиль camelCase, зрозуміла самодокументована назва.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Що поверне <code>typeof Number.MAX_SAFE_INTEGER</code>?</td>
+          <td class="qa-spoiler"><code>"number"</code></td>
+          <td class="qa-spoiler">Це найбільше безпечне ціле число: $9007199254740991$.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Що виведе <code>let x; console.log(typeof x);</code>?</td>
+          <td class="qa-spoiler"><code>"undefined"</code></td>
+          <td class="qa-spoiler">Змінну створили, але значення не присвоїли.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Яка різниця між <code>"false"</code> та <code>false</code>?</td>
+          <td class="qa-spoiler">Перше — рядок, друге — boolean</td>
+          <td class="qa-spoiler">Лапки завжди створюють рядок (string).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</body>
+</html>

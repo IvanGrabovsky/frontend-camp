@@ -126,24 +126,18 @@ console.table([
 <section className="quiz-section mb-12">
   <h2>🧠 Перевірте себе</h2>
   <QuizCard
-    question="Хто і за скільки днів створив першу версію JavaScript у 1995 році?"
-    options={[
-      { text: "Гвідо ван Россум за 1 місяць", isCorrect: false, explanation: "Гвідо ван Россум створив мову Python." },
-      { text: "Брендан Айк за 10 днів", isCorrect: true, explanation: "Саме Брендан Айк у компанії Netscape створив Mocha (JavaScript) за 10 днів." },
-      { text: "Джеймс Ґослінг за 1 рік", isCorrect: false, explanation: "Джеймс Ґослінг був ключовим автором мови Java." },
-      { text: "Тім Бернерс-Лі за 1 тиждень", isCorrect: false, explanation: "Тім Бернерс-Лі винайшов протокол HTTP та мову розмітки HTML." }
-    ]}
-  />
+  question="Хто і за скільки днів створив першу версію JavaScript у 1995 році?"
+  options="Гвідо ван Россум за 1 місяць | Брендан Айк за 10 днів | Джеймс Ґослінг за 1 рік | Тім Бернерс-Лі за 1 тиждень"
+  correctIndex="1"
+  explanation="Гвідо ван Россум створив мову Python."
+/>
   <div className="mt-6">
     <QuizCard
-      question="Який атрибут тега <script> дозволяє завантажувати зовнішній JS файл асинхронно без блокування побудови HTML?"
-      options={[
-        { text: "hidden", isCorrect: false, explanation: "hidden — це атрибут видимості HTML елемента." },
-        { text: "defer", isCorrect: true, explanation: "defer завантажує скрипт паралельно і виконує після готовності DOM." },
-        { text: "lazy", isCorrect: false, explanation: "lazy використовується в атрибуті loading для зображень та iframes." },
-        { text: "preload", isCorrect: false, explanation: "preload вказується в тегу <link rel='preload'> для ресурсу." }
-      ]}
-    />
+  question="Який атрибут тега <script> дозволяє завантажувати зовнішній JS файл асинхронно без блокування побудови HTML?"
+  options="hidden | defer | lazy | preload"
+  correctIndex="1"
+  explanation="hidden — це атрибут видимості HTML елемента."
+/>
   </div>
 </section>
 

@@ -4,14 +4,13 @@ import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Lock, Sparkles, CheckCircle, ArrowRight, UserPlus, LogIn } from 'lucide-react';
+import { Lock, BookOpen, CheckCircle, ArrowRight, UserPlus, LogIn } from 'lucide-react';
 import { withBasePath } from '@/lib/paths';
 
 interface LessonAuthGateProps {
   courseSlug: string;
   lessonSlug: string;
   lessonIndex: number;
-  crystals?: number;
   firstLessonSlug?: string;
   children: React.ReactNode;
 }
@@ -20,7 +19,6 @@ export function LessonAuthGate({
   courseSlug,
   lessonSlug,
   lessonIndex,
-  crystals = 10,
   firstLessonSlug,
   children,
 }: LessonAuthGateProps) {
@@ -31,7 +29,6 @@ export function LessonAuthGate({
 
   // During initial mount hydration
   if (isLoading) {
-    // If it's the first lesson, show it right away
     if (isFreeLesson) {
       return <div>{children}</div>;
     }
@@ -52,21 +49,27 @@ export function LessonAuthGate({
         {/* Completion status bar */}
         <div className="my-10 p-5 rounded-2xl border border-border/80 bg-card/70 backdrop-blur-sm shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-left">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${isCompleted ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-primary/10 text-primary'}`}>
-              {isCompleted ? <CheckCircle className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${
+                isCompleted
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-primary/10 text-primary'
+              }`}
+            >
+              {isCompleted ? <CheckCircle className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
-                {isCompleted ? 'Урок успішно пройдено!' : 'Завершили вивчення теми?'}
+                {isCompleted ? 'Урок успішно завершено!' : 'Опанували матеріал уроку?'}
               </p>
               <p className="text-xs text-muted-foreground">
-                {isCompleted ? 'Нагороду 💎 додано до вашого профілю' : `Отримайте +${crystals} 💎 за виконання завдань`}
+                {isCompleted ? 'Прогрес зафіксовано у вашому кабінеті' : 'Позначте тему для збереження прогресу'}
               </p>
             </div>
           </div>
 
           <Button
-            onClick={() => toggleLessonCompleted(courseSlug, lessonSlug, crystals)}
+            onClick={() => toggleLessonCompleted(courseSlug, lessonSlug)}
             variant={isCompleted ? 'outline' : 'default'}
             className={`w-full sm:w-auto font-semibold gap-2 transition-all ${
               isCompleted
@@ -80,7 +83,7 @@ export function LessonAuthGate({
               </>
             ) : (
               <>
-                Позначити як пройдено (+{crystals} 💎)
+                Позначити як пройдено
               </>
             )}
           </Button>
@@ -102,39 +105,30 @@ export function LessonAuthGate({
             <Lock className="w-7 h-7" />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mb-3">
-            Урок доступний після авторизації
-          </h2>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-foreground mb-3">
+            Урок доступний після входу
+          </h3>
 
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6">
-            Перший урок модуля завжди безкоштовний. Щоб відкрити наступні уроки, зберігати прогрес та отримувати кристали 💎 — увійдіть або зареєструйтесь.
+          <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+            Перший урок кожного модуля відкритий для всіх. Для доступу до наступних уроків, збереження прогресу та інтерактивних тестів увійдіть у свій акаунт.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
             <Button
               onClick={openAuthModal}
               size="lg"
-              className="h-11 px-8 text-base font-semibold shadow-lg shadow-primary/25 gap-2"
+              className="w-full sm:w-auto font-semibold shadow-md shadow-primary/20 gap-2"
             >
               <LogIn className="w-4 h-4" /> Увійти / Зареєструватися
             </Button>
 
             {firstLessonSlug && (
-              <Button asChild variant="outline" size="lg" className="h-11 px-6 text-sm">
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
                 <Link href={withBasePath(`/courses/${courseSlug}/${firstLessonSlug}/`)}>
-                  ← До 1-го уроку модуля
+                  До першого уроку
                 </Link>
               </Button>
             )}
-          </div>
-
-          <div className="pt-6 border-t border-border/60 w-full flex items-center justify-center gap-6 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-accent" /> +100 💎 за реєстрацію
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-4 h-4 text-emerald-500" /> 100% безкоштовно
-            </span>
           </div>
         </div>
       </div>

@@ -1,127 +1,218 @@
+# 05. Оператори, вирази та таємниці зведення типів
+
 <article className="lesson-card">
-      <h2>Що це таке?</h2>
-      <p><strong>Оператори</strong> — символи або ключові слова що виконують дії над значеннями. JS має арифметичні, порівняльні, логічні, присвоювання та спеціальні оператори. Розуміння <strong>суворого порівняння</strong> (`===` vs `==`) та <strong>короткого замикання</strong> є ключовим для уникнення типових багів.</p>
-    </article>
-    <section className="analogy-block">
-      <div className="analogy-block__title"><span className="analogy-block__icon">⚖️</span> Аналогія: операторові як правила гри</div>
-      <p>Уяви гру де є правила: «+» додає очки, «===» — суворий суддя що перевіряє і значення і тип, «==» — ліберальний суддя що спочатку конвертує типи. Логічний `&&` — як «і те, і це», `||` — «або те, або це».</p>
-    </section>
-    <section>
-      <h2>Арифметичні та присвоювання</h2>
-      
+  <h2>Що таке оператори та вирази?</h2>
+  <p><strong>Оператор</strong> — це спеціальний знак або ключове слово, яке виконує операцію над одним чи кількома значеннями (<strong>операндами</strong>). Вираз (<code>expression</code>) — це будь-яка комбінація змінних, констант та операторів, яка обчислюється рушієм у єдине результуюче значення.</p>
+  <p>Усі оператори поділяються за кількістю учасників на <strong>унарні</strong> (1 операнд) та <strong>бінарні</strong> (2 операнди). Розуміння неявного зведення типів (<em>Type Coercion</em>), пріоритетів дій та суворого порівняння (<code>===</code>) рятує від 90% типових багів початківців.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">⚖️</span> Аналогія: Оператори як судді та правила гри</div>
+  <p>Уявіть футбольний матч:</p>
+  <ul>
+    <li><strong>Суворе порівняння (<code>===</code>)</strong> — це строгий суддя з VAR: він перевіряє і колір форми (тип даних), і номер гравця (значення). Якщо хоч щось не сходиться — фол (<code>false</code>).</li>
+    <li><strong>Нестроге порівняння (<code>==</code>)</strong> — ліберальний суддя, який намагається перевдягнути одного з гравців (неявно конвертує тип), що призводить до казусів на полі.</li>
+    <li><strong>Унарний плюс (<code>+x</code>)</strong> — чарівний пропуск, який миттєво перетворює текстовий квиток <code>"42"</code> на справжнє число <code>42</code>.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Класифікація: Унарні та Бінарні оператори</h2>
 
 ```javascript
-let x = 10;
-x + 3   // 13    x - 3  // 7
-x * 2   // 20    x / 4  // 2.5
-x % 3   // 1  ← залишок від ділення
-x ** 2  // 100 ← степінь
+// 1. УНАРНІ ОПЕРАТОРИ (1 операнд)
+const strNum = "42";
+console.log(+strNum);       // 42 (унарний плюс: швидке зведення до number)
+console.log(-(-10));        // 10 (унарний мінус: інверсія знаку)
+console.log(!true);         // false (логічне заперечення NOT)
+console.log(typeof 100);    // "number" (унарний оператор перевірки типу)
 
-// Скорочені присвоювання
-x += 5;  // x = x + 5 = 15
-x -= 3;  // x = 12
-x++;     // x = 13 (після виразу)
-++x;     // x = 14 (до виразу)
+// 2. БІНАРНІ ОПЕРАТОРИ (2 операнди)
+const sum = 10 + 5;         // 15
+const product = 4 * 8;      // 32
+const remainder = 10 % 3;   // 1 (залишок від ділення)
+const power = 2 ** 8;       // 256 (піднесення до степеня)
+
+// 3. ОПЕРАТОР ПРИСВОЮВАННЯ (=)
+let score = 100; // значення справа записується в коробку зліва
 ```
 
-
-
-      <h2>Порівняння: === vs ==</h2>
-      
+  <h2>Скорочені форми присвоювання та інкремент</h2>
 
 ```javascript
-// === суворе — перевіряє значення І тип
-1 === 1     // true
-1 === '1'   // false ← різні типи
-0 === false // false
+let balance = 100;
 
-// == нестрогe — конвертує типи (не рекомендоване)
-1 == '1'   // true  ← JavaScript зробив '1' → 1
-0 == false // true  ← false → 0
-null == undefined // true  ← особливий випадок
+balance += 50; // balance = balance + 50 (150)
+balance -= 20; // balance = balance - 20 (130)
+balance *= 2;  // balance = balance * 2  (260)
+balance /= 4;  // balance = balance / 4  (65)
 
-// ЗАВЖДИ використовуй === і !==
+// Інкремент (++) та декремент (--)
+let level = 1;
+level++; // 2 (постфіксний: збільшує на 1)
+++level; // 3 (префіксний: спочатку збільшує, потім повертає)
 ```
 
+  <h2>Офіційна таблиця пріоритетів дій (Precedence)</h2>
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Рівень</th>
+          <th>Категорія</th>
+          <th>Оператори</th>
+          <th>Асоціативність</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1 (Найвищий)</strong></td>
+          <td>Групування</td>
+          <td><code>( ... )</code></td>
+          <td>Зсередини назовні</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Унарні оператори</td>
+          <td><code>typeof</code>, <code>+x</code>, <code>-x</code>, <code>!x</code>, <code>++</code>, <code>--</code></td>
+          <td>Справа наліво ($\leftarrow$)</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Множення, ділення, остача, степінь</td>
+          <td><code>*</code>, <code>/</code>, <code>%</code>, <code>**</code></td>
+          <td>Зліва направо ($\rightarrow$)</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>Додавання та віднімання</td>
+          <td><code>+</code>, <code>-</code></td>
+          <td>Зліва направо ($\rightarrow$)</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Порівняння</td>
+          <td><code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>===</code>, <code>!==</code></td>
+          <td>Зліва направо ($\rightarrow$)</td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td>Логічні оператори</td>
+          <td><code>&&</code> (AND), потім <code>||</code> (OR), потім <code>??</code></td>
+          <td>Зліва направо ($\rightarrow$)</td>
+        </tr>
+        <tr>
+          <td><strong>7 (Найнижчий)</strong></td>
+          <td>Присвоювання</td>
+          <td><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code></td>
+          <td>Справа наліво ($\leftarrow$)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-
-      <h2>Логічні оператори та коротке замикання</h2>
-      
+  <h2>Неявне зведення типів (Type Coercion) та монстр NaN</h2>
+  <p>Коли ви змішуєте різні типи, JS намагається автоматично перетворити їх:</p>
 
 ```javascript
-// && — AND: повертає перше falsy або останнє значення
-true && 'hello'   // 'hello'
-false && 'hello'  // false  ← зупинився на false
-const user = { name: 'Іван' };
-user && user.name  // 'Іван'  ← безпечний доступ
+// ⚠️ Плюс поруч із рядком ПЕРЕМАГАЄ як конкатенація:
+console.log("10" + 5);      // "105" (рядок!)
+console.log(10 + "5");      // "105" (рядок!)
+console.log(10 + 20 + "5"); // "305" (спочатку 10+20=30, потім 30+"5"="305")
 
-// || — OR: повертає перше truthy або останнє значення
-null || 'default'   // 'default'
-'value' || 'default' // 'value'
+// Але мінус, множення та ділення ПРИМУСОВО роблять рядок числом:
+console.log("20" - 5);      // 15 (number!)
+console.log("6" * "2");     // 12 (number!)
 
-// ?? — Nullish Coalescing: тільки null/undefined
-0 || 'default'  // 'default' ← 0 falsy!
-0 ?? 'default'  // 0         ← 0 не null/undefined
-
-// ?. — Optional Chaining
-const city = user?.address?.city; // undefined замість помилки
+// Монстр NaN (Not-a-Number)
+console.log("Привіт" * 3);  // NaN
+console.log(typeof NaN);    // "number"
+console.log(NaN === NaN);   // false (NaN не дорівнює нічому у світі, навіть самому собі!)
+console.log(Number.isNaN(NaN)); // true (надійний спосіб перевірки)
 ```
 
+  <h2>Сучасні оператори: ?? (Nullish) та ?. (Optional Chaining)</h2>
 
+```javascript
+// 1. ?? (Nullish Coalescing) — підставляє дефолтне значення ТІЛЬКИ для null або undefined
+const userScore = 0;
+const displayScore = userScore ?? 10; 
+console.log(displayScore); // 0 (бо 0 — це дійсне число, а не null!)
 
-      <div className="doc-links">
-        <h4>Документація</h4>
-        <ul>
-          <li><a href="https://javascript.info/operators" target="_blank" rel="noopener noreferrer">Оператори — javascript.info</a></li>
-          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators" target="_blank" rel="noopener noreferrer">Operators — MDN</a></li>
-        </ul>
-      </div>
-    </section>
+// Для порівняння оператор || вважає 0 за хибне:
+console.log(userScore || 10); // 10 (помилка: втратили реальний нуль!)
 
-    <section className="tip-block tip-block--warn">
-      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
-      <ul>
-        <li><strong>Використовувати `==` замість `===`</strong>: неявна конверсія типів — джерело важко відловлюваних багів.</li>
-        <li><strong>Плутати `||` і `??`</strong>: `||` вважає `0`, `''`, `false` falsy-значеннями. `??` — тільки `null`/`undefined`.</li>
-        <li><strong>Не використовувати `?.`</strong>: доступ до властивості без перевірки (`user.address.city`) кидає помилку якщо `address` є `undefined`.</li>
-      </ul>
-    </section>
+// 2. ?. (Optional Chaining) — безпечний доступ до вкладених полів
+const user = { name: "Іван" };
+console.log(user?.address?.city); // undefined (не викидає фатальну помилку TypeError)
+```
+</section>
 
-    <section className="practice-block">
-      <div className="practice-block__title"><span>⚡</span> Практика</div>
-      <ol>
-        <li>Перевір в консолі: `0 == false`, `0 === false`, `'' == false`, `null == undefined`.</li>
-        <li>Напиши вираз що повертає ім'я користувача або `'Гість'` якщо ім'я не задане (використай `??`).</li>
-        <li>Створи об'єкт `user` без поля `address`. Безпечно отримай `user?.address?.city`.</li>
-      </ol>
-    </section>
+<section className="interactive-demo mb-10">
+  <h2>🧪 Інтерактивна лабораторія: Битва зведення типів</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Протестуйте комбінації операторів та спостерігайте, як мова зводить типи на льоту.
+  </p>
+  <CodeRunner
+    title="Експерименти з операторами"
+    initialCode={`// 1. Унарний плюс проти конкатенації
+const a = "10";
+const b = 5;
 
-    <section className="homework-block">
-      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
-      <ol>
-        <li>Що поверне `null == undefined` і `null === undefined`?</li>
-        <li>Яка різниця між `||` і `??`?</li>
-        <li>Що таке «коротке замикання» в логічних операторах?</li>
-        <li>Навіщо `?.` і яку помилку він запобігає?</li>
-      </ol>
-    </section>
+console.log("Звичайна склейка:", a + b);         // "105"
+console.log("Унарний плюс:", +a + b);             // 15
 
-    <section className="hw-review-block">
-      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
-      <div className="hw-review-items">
-        <article className="hw-review-item">
-          <h4 className="hw-review-item__task">Питання: «Яка різниця між == і ===?»</h4>
-          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «== швидший, тому я його і використовую».</p>
-          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `===` — суворе рівність: перевіряє і значення і тип без конверсії. `==` виконує type coercion перед порівнянням (`'1' == 1 → true`). Завжди використовуй `===` — поведінка передбачувана і явна.</p>
-        </article>
-      </div>
-    </section>
+// 2. Пріоритети дій
+console.log("2 + 2 * 2 =", 2 + 2 * 2);           // 6
+console.log("(2 + 2) * 2 =", (2 + 2) * 2);       // 8
 
-    <section className="pro-tips-block">
-      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
-      <ul>
-        <li>Оператор `!` (NOT) конвертує значення в boolean: `!!'text' === true`, `!!'' === false`. Подвійний `!!` — швидкий спосіб перетворити на boolean.</li>
-        <li>`??=` (Logical Nullish Assignment): `x ??= 'default'` — присвоює тільки якщо `x` є `null`/`undefined`.</li>
-        <li>`x ||= y` та `x &&= y` — логічне присвоювання (ES2021).</li>
-      </ul>
-    </section>
+// 3. Nullish coalescing
+const serverResponse = null;
+const fallback = serverResponse ?? "Дані за замовчуванням";
+console.log("Fallback:", fallback);`}
+  />
+</section>
+
+<section className="quizzes-section mb-10">
+  <h2>🎯 Турнір «Битва прогнозів»</h2>
+
+  <div className="space-y-6">
+    <QuizCard
+      question="Що виведе вираз: console.log(10 + (+'5')) ?"
+      options="105 | 15 | NaN | TypeError"
+      correctIndex="1"
+      explanation="Унарний плюс (+'5') має найвищий пріоритет. Він перетворює рядок '5' на число 5, після чого виконується додавання: 10 + 5 = 15. Якби унарного плюса не було (10 + '5'), сталася б конкатенація рядків із результатом '105'. Докладніше про приведення типів читайте у [посібнику зі значень та операторів](/learning-materials/lesson-3-values.html)."
+      theoryUrl="/learning-materials/lesson-3-values.html"
+      theoryTitle="Конспект: Унарний плюс та приведення типів"
+    />
+
+    <QuizCard
+      question="Що виведе вираз: console.log('20' - 5) ?"
+      options="15 (число) | '15' (рядок) | '20-5' | NaN"
+      correctIndex="0"
+      explanation="Оператор мінус (-) не застосовується до тексту, тому JavaScript неявно примусово конвертує рядок '20' у число 20 і виконує звичайне віднімання: 20 - 5 = 15 (тип number). Матрицю правил перетворення дивіться у [довіднику з операторів](/learning-materials/lesson-3-values.html)."
+      theoryUrl="/learning-materials/lesson-3-values.html"
+      theoryTitle="Довідник: Арифметичні оператори та неявне приведення"
+    />
+
+    <QuizCard
+      question="Що виведе вираз: console.log(0 ?? 100) ?"
+      options="100 | 0 | null | undefined"
+      correctIndex="1"
+      explanation="Оператор Nullish Coalescing (??) повертає значення справа ТІЛЬКИ якщо зліва null або undefined. Оскільки 0 є повноцінним числом (хоч і falsy для оператора ||), оператор ?? повертає 0. Порівняльну таблицю ?? vs || дивіться у [конспекті уроку](/learning-materials/lesson-3-values.html)."
+      theoryUrl="/learning-materials/lesson-3-values.html"
+      theoryTitle="Конспект: Оператор Nullish Coalescing (??) vs OR (||)"
+    />
+  </div>
+</section>
+
+<section className="practice-block">
+  <div className="practice-block__title"><span>⚡</span> Практикум: «Калькулятор замовлення в кафе зі знижкою»</div>
+  <ol>
+    <li>Оголосіть константи <code>pizzaPrice = 180</code> та <code>colaPrice = 40</code>.</li>
+    <li>Оголосіть змінні для кількості: <code>pizzaCount = 2</code>, <code>colaCount = 3</code>.</li>
+    <li>Обчисліть початкову суму через арифметичний вираз із пріоритетами.</li>
+    <li>Застосуйте знижку 50 грн, використовуючи скорочений оператор <code>-=</code>.</li>
+    <li>Виведіть підсумковий рахунок у консоль.</li>
+  </ol>
+</section>

@@ -114,7 +114,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
         courseSlug={courseSlug}
         lessonSlug={lessonSlug}
         lessonIndex={currentIndex}
-        crystals={lesson.crystals || 10}
         firstLessonSlug={lessons[0]?.slug}
       >
         <div className="prose dark:prose-invert max-w-none mb-16">

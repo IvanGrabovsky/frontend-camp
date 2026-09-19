@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Навчальні матеріали · Frontend Camp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./materials.css" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="lm-wrapper">
+    <header class="lm-hub-header">
+      <div class="lm-badge">Frontend Camp • Навчальні матеріали</div>
+      <h1 class="lm-hub-title">Посібник: Змінні, Типи даних та Оператори JavaScript</h1>
+      <p class="lm-hub-subtitle">
+        Повний комплект адаптованих навчальних матеріалів для опанування базового синтаксису JavaScript: зрозумілі аналогії, академічна теорія за стандартами ECMAScript, покрокові практикуми, розбір типових помилок, бліц-тести та підсумковий курсовий проєкт.
+      </p>
+      <div class="lm-theme-toggle">
+        <button id="themeToggleBtn" class="btn-secondary" type="button">🌓 Перемкнути тему</button>
+      </div>
+    </header>
+
+    <div class="lm-grid">
+      <!-- Lesson 1 Card -->
+      <a href="./lesson-1-variables.html" class="lm-card">
+        <div class="lm-card__num">01</div>
+        <div class="lm-card__tag lm-tag--blue">Урок 1 • 80 хв</div>
+        <h2 class="lm-card__title">Змінні, типи даних та класифікація помилок</h2>
+        <p class="lm-card__desc">
+          Аналогія коробок пам'яті, <code>let</code>/<code>const</code>/<code>var</code>, числа IEEE-754, відсутність типу char, правила camelCase, блок-схеми, класифікація помилок (SyntaxError vs TypeError vs Logical Error), практикум «Паспорт розробника».
+        </p>
+        <span class="lm-card__link">Читати навчальний матеріал →</span>
+      </a>
+
+      <!-- Lesson 2 Card -->
+      <a href="./lesson-2-data-types.html" class="lm-card">
+        <div class="lm-card__num">02</div>
+        <div class="lm-card__tag lm-tag--emerald">Урок 2 • 80 хв</div>
+        <h2 class="lm-card__title">Унарні та бінарні оператори, глибини типів</h2>
+        <p class="lm-card__desc">
+          Класифікація операторів за кількістю операндів, чарівний унарний плюс <code>+x</code>, неявне зведення типів, особливості JS (<code>undefined</code> vs <code>null</code>, монстр <code>NaN</code>, баг 1995 року), інтерактивний турнір прогнозів на 12 раундів.
+        </p>
+        <span class="lm-card__link">Читати навчальний матеріал →</span>
+      </a>
+
+      <!-- Lesson 3 Card -->
+      <a href="./lesson-3-values.html" class="lm-card">
+        <div class="lm-card__num">03</div>
+        <div class="lm-card__tag lm-tag--indigo">Урок 3 • 80 хв</div>
+        <h2 class="lm-card__title">Арифметичні оператори, скорочені форми та пріоритети</h2>
+        <p class="lm-card__desc">
+          Конкатенація vs додавання, скорочені форми <code>+=</code>, <code>-=</code>, префіксний vs постфіксний інкремент <code>++x</code> / <code>x++</code>, офіційна таблиця пріоритетів дій, практикум розрахунку чека кафе зі знижкою.
+        </p>
+        <span class="lm-card__link">Читати навчальний матеріал →</span>
+      </a>
+
+      <!-- Lesson 4 Card -->
+      <a href="./lesson-4-project.html" class="lm-card">
+        <div class="lm-card__num">04</div>
+        <div class="lm-card__tag lm-tag--rose">Урок 4 • 80 хв</div>
+        <h2 class="lm-card__title">Практичний проєкт, розгалуження та тернарний оператор</h2>
+        <p class="lm-card__desc">
+          Умовні оператори <code>if/else</code>, лаконічний тернарний оператор <code>?:</code>, блок-схеми зі змінними, лабораторний баг-фіксинг, інтерактивна перевірка «A / B / C» та курсовий проєкт терміналу профілю та замовлень.
+        </p>
+        <span class="lm-card__link">Читати навчальний матеріал →</span>
+      </a>
+    </div>
+
+    <footer style="text-align: center; margin-top: 30px;">
+      <a href="/blocks/javascript-basics/" class="btn-primary">← Повернутися до курсу на платформі</a>
+    </footer>
+  </div>
+
+  <script>
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 2: Унарні та бінарні оператори, таємниці типів · Навчальний посібник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./materials.css" />
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="lm-container">
+    <nav class="top-nav-bar no-print">
+      <a href="./index.html" class="back-link">← До всіх уроків</a>
+      <div class="top-actions">
+        <button id="themeToggleBtn" class="btn-secondary" type="button">🌓 Тема</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Друк матеріалу (Ctrl/Cmd+P)</button>
+      </div>
+    </nav>
+
+    <div class="doc-header">
+      <span class="lm-badge">Frontend Camp • JavaScript Основи • Урок 2 з 4</span>
+      <h1>УРОК 2: Класифікація операторів та глибини типів</h1>
+      <p>Ключові теми: унарні та бінарні оператори, оператор присвоювання, неявне зведення типів (Type Coercion), undefined, null, NaN, typeof та особливості рушія JS</p>
+    </div>
+
+    <table class="meta-table">
+      <tr>
+        <th>⏱️ Орієнтовний час</th>
+        <td>80 хвилин (Класифікація операторів 25 хв + Дослідження null/undefined/NaN 20 хв + Турнір «Битва прогнозів» 35 хв)</td>
+      </tr>
+      <tr>
+        <th>🎯 Рівень складності</th>
+        <td>Початковий (JavaScript Basics)</td>
+      </tr>
+      <tr>
+        <th>💡 Ключовий акцент</th>
+        <td>Унарний плюс <code>+x</code> як швидке зведення до числа; оператор присвоювання кладе значення справа наліво; null — усвідомлена порожнеча, а не збій.</td>
+      </tr>
+    </table>
+
+    <!-- ЧАСТИНА 1: КЛАСИФІКАЦІЯ ОПЕРАТОРІВ -->
+    <div class="section-title">
+      <span>Розділ 1. Унарні та бінарні оператори</span>
+      <span class="timing">⏱️ ~25 хв</span>
+    </div>
+
+    <div class="block block-concept">
+      <span class="block-label">💡 Основи операторів та операндів</span>
+      <p>Знаки дій (<code>+</code>, <code>-</code>, <code>=</code>) називаються <strong>операторами</strong>, а значення, над якими вони працюють — <strong>операндами</strong>.</p>
+      <p>Усі оператори у програмуванні поділяються за кількістю учасників: унарні працюють з одним операндом, бінарні — з двома.</p>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📚 Академічна теорія: Класифікація за кількістю операндів</span>
+      <ul>
+        <li><strong>1. Унарні оператори (1 операнд):</strong>
+          <ul>
+            <li><strong>Унарний плюс (<code>+x</code>)</strong> — швидкий та лаконічний спосіб перетворити рядок у число: <code>+"10"</code> дає число <code>10</code>!</li>
+            <li><strong>Унарний мінус (<code>-x</code>)</strong> — змінює знак числа на протилежний: <code>-(-5)</code> дає <code>5</code>.</li>
+            <li><strong>Логічне заперечення (<code>!x</code>)</strong> — перевертає булеве значення: <code>!true</code> стає <code>false</code>.</li>
+            <li><strong>Інкремент / декремент (<code>++</code>, <code>--</code>)</strong> — збільшують чи зменшують змінну на 1.</li>
+          </ul>
+        </li>
+        <li><strong>2. Бінарні оператори (2 операнди):</strong> Знаходяться МІЖ двома значеннями: додавання <code>a + b</code>, множення <code>a * b</code>, ділення <code>a / b</code>.</li>
+        <li><strong>3. Оператор присвоювання (<code>=</code>):</strong> Бере значення СПРАВА і записує його в коробку ЗЛІВА: <code>let score = 100;</code>. (Не плутати з суворою рівністю <code>===</code>!).</li>
+      </ul>
+    </div>
+
+    <!-- ЧАСТИНА 2: ПРИВИДИ ТА БАГИ -->
+    <div class="section-title">
+      <span>Розділ 2. Особливості примітивів: undefined, null, NaN та баг 1995 року</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-interactive">
+      <span class="block-label">⚡ Експерименти з примітивами</span>
+      <pre><code>let a;
+console.log(a);        // undefined (коробку створили, але значення не надали)
+console.log(typeof a); // "undefined"
+
+let user = null;
+console.log(user);     // null (свідомо зафіксовано: "порожньо")
+console.log(typeof user); // "object" (відомий баг 1995 року в рушії JS!)
+
+let calc = "Привіт" * 3;
+console.log(calc);        // NaN (Not-a-Number — не число)
+console.log(typeof calc); // "number" (Парадокс: тип у NaN — це number!)
+console.log(NaN === NaN); // false! (NaN не дорівнює навіть самому собі!)
+console.log(Number.isNaN(calc)); // true (надійний спосіб перевірки)</code></pre>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ЧАСТИНА 3: ТУРНІР ПРОГНОЗІВ -->
+    <div class="section-title">
+      <span>Розділ 3. Турнір «Битва прогнозів: Оператори та типи» (12 раундів)</span>
+      <span class="timing">⏱️ ~25 хв</span>
+    </div>
+
+    <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№</th>
+          <th style="width: 33%;">Рядок коду</th>
+          <th style="width: 22%;">Результат консолі</th>
+          <th style="width: 40%;">Пояснення принципу</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>console.log(+"25");</code></td>
+          <td class="qa-spoiler"><code>25 (число)</code></td>
+          <td class="qa-spoiler"><strong>Унарний плюс</strong> швидко перетворив рядок <code>"25"</code> на число.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>console.log(+"Hello");</code></td>
+          <td class="qa-spoiler"><code>NaN</code></td>
+          <td class="qa-spoiler">Унарний плюс не зміг перетворити текст ➔ Not-a-Number.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>console.log(typeof (+"25"));</code></td>
+          <td class="qa-spoiler"><code>"number"</code></td>
+          <td class="qa-spoiler">Тип результату — number.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>console.log(-(-10));</code></td>
+          <td class="qa-spoiler"><code>10</code></td>
+          <td class="qa-spoiler">Унарний мінус змінив знак числа на протилежний.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>console.log(!true);</code></td>
+          <td class="qa-spoiler"><code>false</code></td>
+          <td class="qa-spoiler">Унарний оператор логічного заперечення (NOT).</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>console.log(10 + "5");</code></td>
+          <td class="qa-spoiler"><code>"105"</code></td>
+          <td class="qa-spoiler">Бінарний плюс поруч із рядком працює як конкатенація (склеювання).</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><code>console.log(10 + (+"5"));</code></td>
+          <td class="qa-spoiler"><code>15</code></td>
+          <td class="qa-spoiler">Унарний плюс спочатку перетворив <code>"5"</code> на 5, а потім $10 + 5 = 15$.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><code>console.log(typeof null);</code></td>
+          <td class="qa-spoiler"><code>"object"</code></td>
+          <td class="qa-spoiler">Легендарний баг 1995 року в рушії JavaScript.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><code>console.log(typeof undefined);</code></td>
+          <td class="qa-spoiler"><code>"undefined"</code></td>
+          <td class="qa-spoiler">Тип значення undefined є рядком "undefined".</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><code>console.log(typeof NaN);</code></td>
+          <td class="qa-spoiler"><code>"number"</code></td>
+          <td class="qa-spoiler">За стандартом IEEE-754, NaN є числом зі спеціальним значенням.</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><code>console.log("20" - 5);</code></td>
+          <td class="qa-spoiler"><code>15</code></td>
+          <td class="qa-spoiler">Бінарний мінус автоматично конвертує рядок у число.</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><code>console.log(typeof (typeof 10));</code></td>
+          <td class="qa-spoiler"><code>"string"</code></td>
+          <td class="qa-spoiler"><code>typeof 10</code> дає <code>"number"</code>, а будь-яка назва типу — це <code>string</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ЧАСТИНА 4: РЕФЛЕКСІЯ -->
+    <div class="section-title">
+      <span>Розділ 4. Головні висновки уроку</span>
+      <span class="timing">⏱️ ~10 хв</span>
+    </div>
+
+    <div class="block block-concept">
+      <span class="block-label">💡 Підсумковий конспект</span>
+      <p>1) Оператори бувають унарні (для 1 операнда) та бінарні (для 2).<br>
+         2) Унарний плюс <code>+"10"</code> — улюблений прийом розробників для приведення типів.<br>
+         3) null — це усвідомлена порожнеча, а undefined — коли про значення забули.<br>
+         4) NaN — спеціальне значення з типом number, яке не дорівнює навіть самому собі.</p>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
-import { Sparkles, BookCheck, Trophy, ArrowRight, User as UserIcon, LogIn, CheckCircle2, ShieldCheck, Flame, LogOut } from 'lucide-react';
+import { BookCheck, Trophy, ArrowRight, User as UserIcon, LogIn, CheckCircle2, ShieldCheck, Flame, LogOut } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading, openAuthModal, logout } = useAuth();
@@ -87,7 +87,7 @@ export default function ProfilePage() {
           </div>
           <h1 className="text-3xl font-extrabold mb-3">Особистий кабінет</h1>
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            Увійдіть або зареєструйтесь, щоб відстежувати власний прогрес, збирати кристали 💎 та відкривати всі модулі курсу.
+            Увійдіть або зареєструйтесь, щоб відстежувати власний прогрес та відкривати всі модулі курсу.
           </p>
           <Button onClick={openAuthModal} size="lg" className="h-12 px-8 font-semibold shadow-lg shadow-primary/25 gap-2">
             <LogIn className="w-4 h-4" /> Увійти / Зареєструватися
@@ -144,125 +144,89 @@ export default function ProfilePage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-        <Card className="border-border/80 bg-gradient-to-br from-amber-500/10 via-card to-card shadow-sm">
+        <Card className="border-border/80 bg-gradient-to-br from-primary/10 via-card to-card shadow-sm">
           <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Баланс кристалів</CardTitle>
-            <span className="text-2xl">💎</span>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
-              {user.crystals}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Отримуйте +10 💎 за кожне виконане завдання</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/80 bg-gradient-to-br from-emerald-500/10 via-card to-card shadow-sm">
-          <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Пройдено уроків</CardTitle>
-            <BookCheck className="w-5 h-5 text-emerald-500" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Завершено уроків</CardTitle>
+            <BookCheck className="w-5 h-5 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-extrabold text-foreground font-mono">
               {completedTotal} <span className="text-base text-muted-foreground font-normal">/ {totalLessonsCount}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{progressPercent}% усього навчального шляху</p>
+            <p className="text-xs text-muted-foreground mt-1">Опановано тем на платформі</p>
           </CardContent>
         </Card>
 
-        <Card className="border-border/80 bg-gradient-to-br from-primary/10 via-card to-card shadow-sm">
+        <Card className="border-border/80 bg-gradient-to-br from-emerald-500/10 via-card to-card shadow-sm">
           <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Рівень навичок</CardTitle>
-            <Trophy className="w-5 h-5 text-primary" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Загальний прогрес</CardTitle>
+            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-primary">
+            <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+              {progressPercent}%
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">усього навчального шляху</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/80 bg-gradient-to-br from-purple-500/10 via-card to-card shadow-sm">
+          <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Рівень навичок</CardTitle>
+            <Trophy className="w-5 h-5 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-extrabold text-purple-600 dark:text-purple-400">
               {completedTotal >= 20 ? 'Middle' : completedTotal >= 5 ? 'Junior' : 'Trainee'}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {completedTotal >= 20 ? 'Впевнений рівень розробки' : 'Початковий етап навчання'}
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Автоматично оновлюється з прогресом</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Course Modules Progress */}
-      <section id="progress" className="mb-16">
-        <h2 className="text-2xl font-bold mb-6">Прогрес за модулями</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Modules Progress Table */}
+      <section>
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-foreground flex items-center gap-2">
+          <span>📊</span> Прогрес за навчальними модулями
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {courseModules.map((mod) => {
-            const modPercent = mod.total > 0 ? Math.round((mod.completed / mod.total) * 100) : 0;
-            const isDone = mod.completed === mod.total && mod.total > 0;
-
+            const pct = mod.total > 0 ? Math.round((mod.completed / mod.total) * 100) : 0;
             return (
-              <Card key={mod.slug} className="border-border hover:shadow-md transition-all p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-base text-foreground">{mod.title}</h3>
-                    {isDone && (
-                      <span className="text-emerald-500 text-xs flex items-center gap-0.5 font-semibold">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Завершено
-                      </span>
-                    )}
+              <Card key={mod.slug} className="border-border/70 hover:border-primary/40 transition-colors">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-sm sm:text-base text-foreground truncate max-w-[200px] sm:max-w-xs">
+                      {mod.title}
+                    </h3>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {mod.completed} / {mod.total}
+                    </span>
                   </div>
-                  <span className="font-mono text-xs font-semibold text-muted-foreground">
-                    {mod.completed} / {mod.total}
-                  </span>
-                </div>
 
-                {/* Progress bar */}
-                <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden mb-4">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      isDone
-                        ? 'bg-emerald-500'
-                        : modPercent > 0
-                        ? 'bg-gradient-to-r from-primary to-accent'
-                        : 'bg-transparent'
-                    }`}
-                    style={{ width: `${modPercent}%` }}
-                  />
-                </div>
+                  <div className="w-full bg-muted rounded-full h-2 overflow-hidden mb-3">
+                    <div
+                      className="bg-primary h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
 
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground">{modPercent}% пройдено</span>
-                  <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-primary hover:text-primary">
-                    <Link href={`/blocks/${mod.slug}/`}>Перейти до модуля →</Link>
-                  </Button>
-                </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{pct}% завершено</span>
+                    <Link
+                      href={`/blocks/${mod.slug}/`}
+                      className="text-primary hover:underline font-medium inline-flex items-center gap-1"
+                    >
+                      Перейти <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </CardContent>
               </Card>
             );
           })}
         </div>
       </section>
-
-      {/* Completed Lessons List */}
-      {completedTotal > 0 && (
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-6">Останні вивчені теми</h2>
-          <div className="rounded-2xl border border-border bg-card divide-y divide-border/60 overflow-hidden shadow-sm">
-            {user.completedLessons.map((item) => {
-              const [courseSlug, lessonSlug] = item.split('/');
-              return (
-                <div key={item} className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                    <div>
-                      <span className="font-semibold text-sm text-foreground capitalize">
-                        {lessonSlug.replace(/-/g, ' ')}
-                      </span>
-                      <span className="text-xs text-muted-foreground ml-2 font-mono">({courseSlug})</span>
-                    </div>
-                  </div>
-                  <Button asChild variant="ghost" size="sm" className="text-xs">
-                    <Link href={withBasePath(`/courses/${courseSlug}/${lessonSlug}/`)}>Відкрити урок ↗</Link>
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
     </HubLayout>
   );
 }

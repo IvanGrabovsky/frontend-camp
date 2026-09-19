@@ -167,7 +167,7 @@ export function AuthModal() {
             </div>
 
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Перейдіть за посиланням у листі, щоб завершити реєстрацію, отримати <strong>+100 💎</strong> та відкрити доступ до всіх уроків.
+              Перейдіть за посиланням у листі, щоб завершити реєстрацію та відкрити доступ до всіх уроків платформи.
             </p>
 
             {resendSuccess && (
@@ -180,12 +180,11 @@ export function AuthModal() {
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || loading}
-                className="w-full text-xs gap-1.5 h-9"
+                className="w-full text-xs font-semibold h-10 gap-2"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
                 {resendCooldown > 0
                   ? `Надіслати повторно через ${resendCooldown}с`
                   : 'Надіслати лист повторно'}
@@ -211,7 +210,7 @@ export function AuthModal() {
               </DialogTitle>
               <DialogDescription className="text-center text-sm text-muted-foreground">
                 {tab === 'register'
-                  ? 'Отримай повний доступ до всіх уроків та збирай кристали 💎'
+                  ? 'Отримай повний доступ до всіх уроків та зберігай власний прогрес'
                   : 'Увійди, щоб продовжити навчання з місця зупинки'}
               </DialogDescription>
             </DialogHeader>

@@ -46,7 +46,7 @@ npm run build    # статичний export у out/
 - **Hub блоку:** `/blocks/js-arrays/`
 - **Урок 01:** `/courses/js-arrays/01-intro/` (статичні HTML-уроки)
 - **Пісочниця:** `/courses/js-arrays/playground/`
-- **Кристали:** `/courses/js-arrays/crystals/`
+- **Навчальні посібники:** `/learning-materials/`
 
 ### Сучасні API в курсі
 

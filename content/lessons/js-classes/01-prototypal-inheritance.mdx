@@ -71,12 +71,7 @@ console.log("Чи рухається прототип vehicle:", vehicle.isMovin
 
 <QuizCard
   question="Що відбудеться, якщо викликати rabbit.walk(), якщо методу walk немає у rabbit, але він є в animal (__proto__)?"
-  options={[
-    "Виникне TypeError: rabbit.walk is not a function",
-    "Метод виконається, причому this всередині методу вказуватиме на rabbit",
-    "Метод виконається, але this вказуватиме на animal",
-    "Повернеться undefined"
-  ]}
-  correctIndex={1}
+  options="Виникне TypeError: rabbit.walk is not a function | Метод виконається, причому this всередині методу вказуватиме на rabbit | Метод виконається, але this вказуватиме на animal | Повернеться undefined"
+  correctIndex="1"
   explanation="Рушій знайде метод walk у прототипі animal, але викличе його з context this = rabbit (об'єкт перед крапкою)."
 />

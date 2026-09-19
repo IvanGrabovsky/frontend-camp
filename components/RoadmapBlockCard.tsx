@@ -52,7 +52,6 @@ export function LessonCard({
   title,
   methods,
   difficulty,
-  crystals,
 }: {
   courseSlug: string;
   num: string;
@@ -60,7 +59,7 @@ export function LessonCard({
   title: string;
   methods: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  crystals: number;
+  crystals?: number;
 }) {
   const href = withBasePath(`/courses/${courseSlug}/${slug}/`);
   const { isLessonCompleted, isAuthenticated } = useAuth();
@@ -89,19 +88,20 @@ export function LessonCard({
               </span>
             )}
           </div>
-          <span className="text-accent font-bold text-sm">💎 {crystals}</span>
+          <Badge variant="outline" className="text-[0.65rem] uppercase font-mono tracking-wider">
+            {difficulty}
+          </Badge>
         </CardHeader>
         <CardContent className="flex-1 pb-4">
           <CardTitle className="text-lg font-medium mb-1 group-hover:text-accent transition-colors">{title}</CardTitle>
           <CardDescription className="text-sm font-mono text-muted-foreground">{methods}</CardDescription>
         </CardContent>
         <CardFooter className="pt-4 border-t border-border/50 group-hover:border-accent/30 transition-colors">
-          <span className="text-xs text-muted-foreground font-mono">
-            Складність: <strong className="text-foreground uppercase">{difficulty}</strong>
+          <span className="text-xs text-primary font-medium group-hover:underline">
+            Перейти до уроку →
           </span>
         </CardFooter>
       </Card>
     </a>
   );
 }
-

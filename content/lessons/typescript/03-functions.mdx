@@ -92,12 +92,7 @@ function handleResponse(res: ApiResponse) {
 
 <QuizCard
   question="Який предикат повернення вказує компілятору TypeScript, що функція є користувацьким Type Guard?"
-  options={[
-    "function isCat(animal: Animal): animal === Cat",
-    "function isCat(animal: Animal): animal is Cat",
-    "function isCat(animal: Animal): boolean as Cat",
-    "function isCat(animal: Animal): asserts animal"
-  ]}
-  correctIndex={1}
+  options="function isCat(animal: Animal): animal === Cat | function isCat(animal: Animal): animal is Cat | function isCat(animal: Animal): boolean as Cat | function isCat(animal: Animal): asserts animal"
+  correctIndex="1"
   explanation="Синтаксис 'param is Type' — це офіційний спосіб створити кастомний звужувач типу (Type Predicate) у TypeScript."
 />

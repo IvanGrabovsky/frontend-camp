@@ -93,12 +93,7 @@ console.log("Після оновлення:", updated);`}
 
 <QuizCard
   question="Яка утиліта дозволяє створити тип, який бере всі поля з інтерфейсу Todo, крім поля 'id'?"
-  options={[
-    "Pick<Todo, 'id'>",
-    "Omit<Todo, 'id'>",
-    "Exclude<Todo, 'id'>",
-    "Extract<Todo, 'id'>"
-  ]}
-  correctIndex={1}
+  options="Pick<Todo, 'id'> | Omit<Todo, 'id'> | Exclude<Todo, 'id'> | Extract<Todo, 'id'>"
+  correctIndex="1"
   explanation="Omit<Type, Keys> конструює тип, вилучаючи зазначені ключі з вихідного типу. (Exclude використовується для Union типів, а не об'єктних інтерфейсів)."
 />

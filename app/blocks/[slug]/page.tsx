@@ -79,8 +79,8 @@ export default async function BlockPage({ params }: BlockPageProps) {
                 <Button asChild variant="outline" size="lg" className="h-12 px-6">
                   <Link href="/playground/">🧪 Пісочниця</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="h-12 px-6 text-accent border-accent/30 hover:bg-accent/10 hover:text-accent">
-                  <a href={withBasePath('/courses/js-arrays/crystals/')}>💎 Кристали</a>
+                <Button asChild variant="outline" size="lg" className="h-12 px-6">
+                  <a href={withBasePath('/learning-materials/')}>📖 Навчальні посібники</a>
                 </Button>
               </>
             )}
@@ -117,8 +117,8 @@ export default async function BlockPage({ params }: BlockPageProps) {
                 <ul className="space-y-4 text-muted-foreground list-none">
                   <li className="flex items-center"><span className="text-accent mr-3">■</span> Теорія з практичними прикладами та поясненнями</li>
                   <li className="flex items-center"><span className="text-accent mr-3">■</span> Жива пісочниця в браузері для тестування коду</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Практичні завдання з автоматичною перевіркою (💎 кристали)</li>
-                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Домашні завдання та розбір типових помилок</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Інтерактивні бліц-тести для швидкої самоперевірки</li>
+                  <li className="flex items-center"><span className="text-accent mr-3">■</span> Практичні завдання та розбір типових помилок</li>
                 </ul>
               </CardContent>
             </Card>

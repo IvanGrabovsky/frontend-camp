@@ -68,7 +68,7 @@ export default function HomePage() {
               <CardTitle className="text-xl">Активний контент</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground leading-relaxed">21 урок масивів — теорія, пісочниця, практика, ДЗ, розбір помилок.</p>
+              <p className="text-muted-foreground leading-relaxed">Теорія з аналогіями, інтерактивні приклади, бліц-тести та самоперевірка.</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-md bg-card/50 hover:shadow-lg transition-all hover:-translate-y-1 relative overflow-hidden group">
@@ -76,14 +76,14 @@ export default function HomePage() {
             <CardHeader className="relative z-10">
               <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center font-bold text-xl mb-4">03</div>
               <CardTitle className="text-xl flex justify-between items-center">
-                Кристали
+                Посібники
                 <Button variant="ghost" size="sm" asChild className="text-accent hover:text-accent hover:bg-accent/10">
-                  <a href={withBasePath('/courses/js-arrays/crystals/')}>Дізнатися ↗</a>
+                  <a href={withBasePath('/learning-materials/')}>Відкрити ↗</a>
                 </Button>
               </CardTitle>
             </CardHeader>
             <CardContent className="relative z-10">
-              <p className="text-muted-foreground leading-relaxed">Система мотивації за практику та домашні завдання.</p>
+              <p className="text-muted-foreground leading-relaxed">Автономні навчальні матеріали з підтримкою друку та тем.</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-md bg-card/50 hover:shadow-lg transition-all hover:-translate-y-1">
@@ -97,7 +97,7 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground leading-relaxed">Приклади з усіх 21 тем одним кліком.</p>
+              <p className="text-muted-foreground leading-relaxed">Живий запуск коду та експерименти в браузері.</p>
             </CardContent>
           </Card>
         </div>

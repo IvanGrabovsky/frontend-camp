@@ -1,136 +1,207 @@
+# 04. Змінні та типи даних
+
 <article className="lesson-card">
-      <h2>Що це таке?</h2>
-      <p><strong>Змінна</strong> — це іменоване місце в пам'яті, де зберігається значення. JavaScript має три способи оголосити змінну: `var` (застарілий), `let` (для значень що змінюються) і `const` (для констант).</p>
-      <p><strong>Тип даних</strong> визначає що може зберігатись у змінній: число, рядок, булеве значення, `null`, `undefined`, об'єкт, або `Symbol`.</p>
+  <h2>Що таке змінна та типи даних?</h2>
+  <p><strong>Змінна</strong> — це іменована комірка в оперативній пам'яті комп'ютера (RAM), яка зберігає певне значення під час роботи програми. JavaScript має три способи оголошення змінних: сучасні <code>const</code> (для констант) і <code>let</code> (для значень, що змінюються), а також застарілий <code>var</code> (який не рекомендується використовувати у сучасному коді).</p>
+  <p><strong>Тип даних</strong> визначає природу інформації, що зберігається: число (<code>number</code>), текстовий рядок (<code>string</code>), логічне значення (<code>boolean</code>), навмисна порожнеча (<code>null</code>), невизначений стан (<code>undefined</code>), великі цілі числа (<code>bigint</code>), унікальні ідентифікатори (<code>symbol</code>) або складні структури (<code>object</code>).</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Аналогія: Коробки з підписами на складі пам'яті</div>
+  <p>Уявіть оперативну пам'ять комп'ютера як гігантський поштовий склад:</p>
+  <ul>
+    <li><strong>Ідентифікатор (назва змінної)</strong> — це яскрава наклейка на коробці (наприклад, <code>playerName</code>).</li>
+    <li><strong><code>const</code></strong> — це запечатана металева коробка із замком: поклавши туди значення один раз, замінити його неможливо.</li>
+    <li><strong><code>let</code></strong> — це відкрита картонна коробка: вміст можна діставати й класти новий будь-яку кількість разів.</li>
+    <li><strong>Значення та тип</strong> — це сам предмет усередині коробки (числове табло, роздрукований текст або пустий простір).</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Оголошення змінних: const проти let проти var</h2>
+
+```javascript
+// 1. const — безпечне значення за замовчуванням (неможливо переприсвоїти)
+const maxLives = 3;
+const serverUrl = "https://api.frontendcamp.dev";
+const pi = 3.14159;
+
+// 2. let — значення, яке змінюється у ході алгоритму
+let currentScore = 0;
+currentScore += 10; // OK: рахунок збільшився до 10
+currentScore = 25;  // OK: перезапис значення
+
+// ❌ Спроба перезаписати const викличе помилку виконання:
+// maxLives = 5; // TypeError: Assignment to constant variable.
+```
+
+  <Callout type="tip" title="Золоте правило професійного розробника">
+    Завжди починайте оголошення будь-якої змінної з <code>const</code>. Якщо далі в алгоритмі виникає реальна необхідність змінити значення — лише тоді змінюйте на <code>let</code>. Це запобігає випадковим мутаціям даних і робить код передбачуваним.
+  </Callout>
+
+  <h2>Правила іменування змінних (Code Style)</h2>
+  <ul>
+    <li><strong>Стандарт вебу:</strong> стиль <code>camelCase</code> (перше слово з малої літери, кожне наступне — з великої: <code>userProfileAge</code>, <code>totalOrderPrice</code>).</li>
+    <li><strong>Заборонено:</strong> починати назву з цифри (<code>let 1player;</code> ❌), використовувати дефіси чи пробіли (<code>let user-name;</code> ❌ — дефіс сприймається як знак мінуса), використовувати зарезервовані слова (<code>let class;</code> ❌).</li>
+    <li><strong>Самодокументованість:</strong> уникайте однолітерних назв (<code>let a = 10;</code> ❌) на користь зрозумілих (<code>let remainingAttempts = 10;</code> ✅).</li>
+  </ul>
+
+  <h2>Система типів даних у JavaScript</h2>
+
+```javascript
+// 1. number — єдиний числовий тип (цілі та дробові числа IEEE-754)
+const age = 17;
+const price = 299.99;
+const negative = -42;
+
+// 2. string — текст будь-якої довжини (окремого типу char у JS НЕМАЄ!)
+const userName = "Олексій";
+const singleChar = "A"; // це також звичайний рядок довжиною 1
+
+// 3. boolean — логічний перемикач
+const isOnline = true;
+const hasPremium = false;
+
+// 4. undefined — змінну створено, але значення ще не присвоєно
+let notAssigned; // undefined
+
+// 5. null — усвідомлена порожнеча (розробник явно вказав "тут нічого немає")
+const avatarUrl = null;
+
+// 6. bigint — для чисел, що виходять за безпечні межі Number.MAX_SAFE_INTEGER
+const giantNumber = 9007199254740993n;
+
+// 7. symbol — унікальний примітивний ідентифікатор
+const secretKey = Symbol("token");
+```
+
+  <Callout type="warning" title="Особливості чисел та відомий баг typeof null">
+    <p>1. Усі числа в JS — це 64-бітні числа з плаваючою крапкою за стандартом <strong>IEEE-754</strong>. Безпечний діапазон цілих чисел обмежений <code>Number.MIN_SAFE_INTEGER</code> ($-(2^{53}-1)$) та <code>Number.MAX_SAFE_INTEGER</code> ($+(2^{53}-1)$).</p>
+    <p>2. <code>typeof null === "object"</code> — це історичний баг мови з 1995 року. Насправді <code>null</code> є повноцінним примітивом. Для перевірки на null завжди пишіть <code>value === null</code>.</p>
+  </Callout>
+
+  <h2>Шаблонні рядки (Template Literals)</h2>
+  <p>Замість застарілої склейки рядків плюсом, використовуйте зворотні лапки <code>` `</code> та вирази <code>${"..."}</code>:</p>
+
+```javascript
+const studentName = "Марія";
+const course = "Frontend Development";
+const grade = 98;
+
+// Сучасна інтерполяція рядків
+const message = `Студент ${studentName} успішно завершив модуль "${course}" з результатом ${grade}%!`;
+console.log(message);
+```
+
+  <h2>Класифікація трьох типів помилок у програмуванні</h2>
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead>
+        <tr>
+          <th>Тип помилки</th>
+          <th>Характеристика</th>
+          <th>Приклад у коді</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. SyntaxError</strong></td>
+          <td>Порушено синтаксичні правила мови. Код взагалі не стартує.</td>
+          <td><code>let 1user = "Max";</code> або <code>const a = ;</code></td>
+        </tr>
+        <tr>
+          <td><strong>2. TypeError / Runtime</strong></td>
+          <td>Код синтаксично правильний, але впав під час виконання неприпустимої дії.</td>
+          <td><code>const x = 5; x = 10;</code> (перезапис константи)</td>
+        </tr>
+        <tr>
+          <td><strong>3. Logical Error</strong></td>
+          <td>Код працює без виключень, але бізнес-результат підрахунків хибний.</td>
+          <td><code>"50" + 100</code> дає <code>"50100"</code> замість <code>150</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section className="interactive-demo mb-10">
+  <h2>🧪 Практикум: Паспорт розробника та дослідження типів</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Запустіть код, дослідіть типи значень за допомогою <code>typeof</code>, а потім спробуйте спровокувати <code>TypeError</code> переприсвоєнням константи.
+  </p>
+  <CodeRunner
+    title="Паспорт розробника та typeof"
+    initialCode={`// 1. Оголошуємо змінні
+const developerName = "Іван";
+let developerAge = 19;
+let isStudent = true;
+const techStack = "JavaScript & React";
+let currentBudget = null;
+
+// 2. Виводимо типи
+console.log("Ім'я:", developerName, "| тип:", typeof developerName);
+console.log("Вік:", developerAge, "| тип:", typeof developerAge);
+console.log("Студент:", isStudent, "| тип:", typeof isStudent);
+console.log("Стек:", techStack, "| тип:", typeof techStack);
+console.log("Бюджет:", currentBudget, "| тип:", typeof currentBudget);
+
+// 3. Формуємо красивий рядок
+console.log(\`Привіт, я \${developerName}! Мій вік: \${developerAge}. Працюю з \${techStack}.\`);`}
+  />
+</section>
+
+<section className="quizzes-section mb-10">
+  <h2>🎯 Бліц-перевірка знань</h2>
+
+  <div className="space-y-6">
+    <QuizCard
+      question="Який тип даних поверне вираз: typeof (10 > 5) ?"
+      options="number | boolean | string | undefined"
+      correctIndex="1"
+      explanation="Спершу виконується операція порівняння в дужках: 10 > 5 дає логічне значення true. Потім оператор typeof перевіряє тип цього значення (typeof true) і повертає рядок 'boolean'. Детальніше про логічні типи та порівняння читайте у [конспекті про примітивні типи даних](/learning-materials/lesson-2-data-types.html)."
+      theoryUrl="/learning-materials/lesson-2-data-types.html"
+      theoryTitle="Конспект: 7 примітивних типів даних у JS"
+    />
+
+    <QuizCard
+      question="Яка назва змінної відповідає стандарту camelCase для 'кількість балів користувача'?"
+      options="user_score_count | UserScoreCount | userScoreCount | user-score-count"
+      correctIndex="2"
+      explanation="За стандартом JavaScript (стиль camelCase) назва починається з малої літери, а кожне наступне слово пишеться з великої без пробілів, дефісів чи підкреслень: userScoreCount. Стиль snake_case характерний для Python/C, а PascalCase — для класів та React-компонентів. Читайте правила неймінгу у [довіднику зі змінних](/learning-materials/lesson-1-variables.html)."
+      theoryUrl="/learning-materials/lesson-1-variables.html"
+      theoryTitle="Довідник: Оголошення змінних та правила іменування"
+    />
+
+    <QuizCard
+      question="Що виведе вираз: typeof null ?"
+      options="null | undefined | object | boolean"
+      correctIndex="2"
+      explanation="Це історичний баг реалізації рушія JS 1995 року. При створенні мови для об'єктів використовувався бінарний маркер типу 000, а null позначався як нульовий вказівник (NULL-pointer, 0x00). Через це typeof помилково вважає null об'єктом. Насправді null — це окремий примітивний тип даних. Дізнайтеся більше про особливості null у [конспекті уроку](/learning-materials/lesson-2-data-types.html)."
+      theoryUrl="/learning-materials/lesson-2-data-types.html"
+      theoryTitle="Конспект: Особливі значення та баг typeof null"
+    />
+  </div>
+</section>
+
+<section className="practice-block">
+  <div className="practice-block__title"><span>⚡</span> Практичне завдання: «Картка товару інтернет-магазину»</div>
+  <ol>
+    <li>Створіть константу <code>productName</code> з назвою смартфона або консолі.</li>
+    <li>Створіть змінну <code>productPrice</code> зі значенням ціни (число).</li>
+    <li>Створіть змінну <code>inStockCount</code> з кількістю на складі.</li>
+    <li>Створіть булеву змінну <code>hasFreeShipping</code>.</li>
+    <li>Змоделюйте покупку: зменшіть кількість на складі на 1 за допомогою <code>inStockCount--</code>.</li>
+    <li>Виведіть підсумковий чек у консоль за допомогою шаблонного рядка (Template Literals).</li>
+  </ol>
+</section>
+
+<section className="hw-review-block">
+  <div className="hw-review-block__title"><span>📋</span> Типові питання на технічній співбесіді</div>
+  <div className="hw-review-items">
+    <article className="hw-review-item">
+      <h4 className="hw-review-item__task">Питання: «У чому принципова різниця між let, const та var?»</h4>
+      <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> Поверхнева відповідь: «const не міняється, let міняється, а var старий».</p>
+      <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Професійна відповідь: «<code>const</code> та <code>let</code> мають блочну область видимості (Block Scope) і знаходяться у Temporal Dead Zone (TDZ) до моменту ініціалізації. <code>const</code> забороняє переприсвоєння ідентифікатора. <code>var</code> має функціональну область видимості, піддається hoisting (піднімається зі значенням <code>undefined</code>) та засмічує глобальний об'єкт».</p>
     </article>
-
-    <section className="analogy-block">
-      <div className="analogy-block__title"><span className="analogy-block__icon">📦</span> Аналогія: коробки з підписами</div>
-      <p>Змінна — як підписана коробка. `const` — запаяна коробка (не можна змінити вміст). `let` — відкрита коробка (вміст можна замінити). Тип даних — це те що всередині: число, текст, або «нічого» (`null`).</p>
-    </section>
-
-    <section>
-      <h2>let та const</h2>
-      
-
-```javascript
-// const — значення не змінюється (рекомендований за замовчуванням)
-const name = 'Іван';
-const age  = 25;
-const PI   = 3.14159;
-
-// let — значення може змінитись
-let score = 0;
-score = 10;   // OK
-score += 5;   // OK → 15
-
-// ❌ const — не можна перевизначити
-const MAX = 100;
-MAX = 200; // TypeError: Assignment to constant variable
-```
-
-
-
-      <h2>Типи даних</h2>
-      
-
-```javascript
-// Примітивні типи
-const str  = 'Привіт, світе!';   // string
-const num  = 42;                  // number
-const big  = 9007199254740993n;   // bigint
-const bool = true;                // boolean
-const empty = null;               // null — навмисна відсутність
-let notSet;                       // undefined — ще не задано
-const id = Symbol('unique');      // symbol
-
-// typeof — визначити тип
-typeof 'text'   // 'string'
-typeof 42       // 'number'
-typeof true     // 'boolean'
-typeof null     // 'object' ← відома помилка JS!
-typeof undefined // 'undefined'
-
-// Template literals — рядки з виразами
-const greeting = `Привіт, ${name}! Тобі ${age} років.`;
-const multiline = `
-  Рядок перший
-  Рядок другий
-`;
-```
-
-
-
-      <div className="syntax-params">
-        <h4>Порівняння let / const / var</h4>
-        <table className="params-table">
-          <thead><tr><th></th><th>const</th><th>let</th><th>var</th></tr></thead>
-          <tbody>
-            <tr><td>Перевизначення</td><td>❌</td><td>✅</td><td>✅</td></tr>
-            <tr><td>Область видимості</td><td>block</td><td>block</td><td>function</td></tr>
-            <tr><td>Hoisting</td><td>TDZ</td><td>TDZ</td><td>undefined</td></tr>
-            <tr><td>Рекомендований</td><td>✅ завжди</td><td>✅ якщо змінюється</td><td>❌ не використовуй</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div className="doc-links">
-        <h4>Документація</h4>
-        <ul>
-          <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures" target="_blank" rel="noopener noreferrer">JavaScript data types — MDN</a></li>
-          <li><a href="https://javascript.info/variables" target="_blank" rel="noopener noreferrer">Variables — javascript.info</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <section className="tip-block tip-block--warn">
-      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
-      <ul>
-        <li><strong>Використовувати `var`</strong>: function-scope і hoisting створюють несподівані баги. Завжди використовуй `const`/`let`.</li>
-        <li><strong>Плутати `null` і `undefined`</strong>: `null` — ти навмисно встановив «нічого». `undefined` — значення ще не задано.</li>
-        <li><strong>`typeof null === 'object'`</strong>: відома помилка JS з 1995 року. Для перевірки null використовуй `=== null`.</li>
-        <li><strong>Перевизначати `const` об'єкти</strong>: `const arr = []` — не можна змінити <em>посилання</em> на масив, але можна змінювати його <em>вміст</em>: `arr.push(1)` — це OK.</li>
-      </ul>
-    </section>
-
-    <section className="practice-block">
-      <div className="practice-block__title"><span>⚡</span> Практика</div>
-      <p className="practice-block__intro">Відкрий консоль браузера (F12) або <a href="https://codepen.io/pen/" target="_blank" rel="noopener">CodePen</a>:</p>
-      <ol>
-        <li>Оголоси `const` для свого імені та року народження. Обрахуй вік через `new Date().getFullYear()`.</li>
-        <li>Виведи `typeof` для 5 різних значень. Перевір `typeof null` — це сюрприз!</li>
-        <li>Створи template literal з привітанням: «Привіт, [ім'я]! Тобі [вік] років.»</li>
-        <li>Спробуй перевизначити `const` і подивись на помилку в консолі.</li>
-      </ol>
-    </section>
-
-    <section className="homework-block">
-      <div className="homework-block__title"><span>📝</span> Запитання для самоперевірки</div>
-      <ol>
-        <li>Яка різниця між `let` і `const`?</li>
-        <li>Чому не варто використовувати `var`?</li>
-        <li>Що поверне `typeof null` і чому це дивно?</li>
-        <li>Як написати багаторядковий рядок без конкатенації?</li>
-        <li>Чи можна додати елемент до `const arr = []`?</li>
-      </ol>
-    </section>
-
-    <section className="hw-review-block">
-      <div className="hw-review-block__title"><span>📋</span> Типові помилки на співбесідах</div>
-      <div className="hw-review-items">
-        <article className="hw-review-item">
-          <h4 className="hw-review-item__task">Питання: «В чому різниця між let, const та var?»</h4>
-          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «const — для констант, let — для змінних, var — застарілий» — поверхнево.</p>
-          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> `const`/`let` — block scope (видимі тільки в межах блоку `{}`). `var` — function scope і hoisting (підіймається на початок функції зі значенням `undefined`). `const` не дозволяє перевизначення (але мутацію об'єктів — дозволяє). TDZ (Temporal Dead Zone) — звернення до `let`/`const` до їх оголошення кидає `ReferenceError`.</p>
-        </article>
-      </div>
-    </section>
-
-    <section className="pro-tips-block">
-      <div className="pro-tips-block__title"><span>✨</span> Цікаві фішки</div>
-      <ul>
-        <li>Правило: <strong>завжди починай з `const`</strong>. Якщо потрібно перевизначити — зміни на `let`. Це мінімізує мутації і робить код передбачуваним.</li>
-        <li>`Number.isNaN()` — надійніший спосіб перевірити NaN ніж `isNaN()`: `isNaN('text') === true`, а `Number.isNaN('text') === false`.</li>
-        <li>Nullish coalescing: `const val = input ?? 'default'` — повертає `'default'` тільки якщо `input` є `null` або `undefined` (не `0` або `''`).</li>
-      </ul>
-    </section>
+  </div>
+</section>

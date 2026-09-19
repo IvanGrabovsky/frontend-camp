@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Урок 3: Арифметичні оператори, скорочені форми та пріоритети · Навчальний посібник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./materials.css" />
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="lm-container">
+    <nav class="top-nav-bar no-print">
+      <a href="./index.html" class="back-link">← До всіх уроків</a>
+      <div class="top-actions">
+        <button id="themeToggleBtn" class="btn-secondary" type="button">🌓 Тема</button>
+        <button class="btn-print" onclick="window.print()">🖨️ Друк матеріалу (Ctrl/Cmd+P)</button>
+      </div>
+    </nav>
+
+    <div class="doc-header">
+      <span class="lm-badge">Frontend Camp • JavaScript Основи • Урок 3 з 4</span>
+      <h1>УРОК 3: Арифметичні оператори, скорочені форми та пріоритети</h1>
+      <p>Ключові теми: арифметичні оператори, скорочені форми присвоювання (+=, -=), префіксний/постфіксний інкремент (++x / x++), таблиця пріоритетів та порядок виконання дій</p>
+    </div>
+
+    <table class="meta-table">
+      <tr>
+        <th>⏱️ Орієнтовний час</th>
+        <td>80 хвилин (Рядки та числа 20 хв + Скорочені форми 20 хв + Таблиця пріоритетів 20 хв + Практика «Чек у кафе» 20 хв)</td>
+      </tr>
+      <tr>
+        <th>🎯 Рівень складності</th>
+        <td>Початковий (JavaScript Basics)</td>
+      </tr>
+      <tr>
+        <th>💡 Ключовий інсайт</th>
+        <td>Оператори мають строгу ієрархію виконання; скорочені форми <code>+=</code> роблять код професійним; круглі дужки <code>()</code> завжди перемагають у пріоритеті.</td>
+      </tr>
+    </table>
+
+    <!-- ЧАСТИНА 1: РЯДКИ ТА ЧИСЛА -->
+    <div class="section-title">
+      <span>Розділ 1. Поведінка значень: Рядки проти Чисел</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-concept">
+      <span class="block-label">💡 Конкатенація проти додавання</span>
+      <p>Знак <code>+</code> у мові JS виконує дві різні операції залежно від типів: для чисел він рахує математичну суму, а якщо хоч один операнд рядок — він склеює їх докупи (конкатенація)!</p>
+      <pre><code>console.log(5 + 5);     // 10 (число)
+console.log("5" + "5"); // "55" (рядок)
+console.log("5" + 5);   // "55" (рядок: число 5 автоматично стало рядком!)</code></pre>
+    </div>
+
+    <!-- ЧАСТИНА 2: СКОРОЧЕНІ ФОРМИ -->
+    <div class="section-title">
+      <span>Розділ 2. Скорочені форми операторів (Compound Assignment)</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📚 Академічна теорія: Комбіноване присвоювання та інкремент</span>
+      <p>У реальних проєктах розробники уникають довгих записів <code>score = score + 10;</code>. Для цього існують <strong>скорочені форми</strong>:</p>
+      <ul>
+        <li><code>x += 5;</code> ➔ те саме, що <code>x = x + 5;</code> (додати 5 до поточного значення).</li>
+        <li><code>x -= 3;</code> ➔ те саме, що <code>x = x - 3;</code> (зменшити на 3).</li>
+        <li><code>x *= 2;</code> ➔ те саме, що <code>x = x * 2;</code> (подвоїти значення).</li>
+        <li><code>x /= 4;</code> ➔ те саме, що <code>x = x / 4;</code> (поділити на 4).</li>
+        <li><code>x %= 2;</code> ➔ знайти залишок від ділення і зберегти.</li>
+      </ul>
+      <p><strong>Інкремент (<code>++</code>) та Декремент (<code>--</code>):</strong></p>
+      <ul>
+        <li><code>score++;</code> ➔ збільшити на 1 (постфіксний інкремент).</li>
+        <li><code>score--;</code> ➔ зменшити на 1 (постфіксний декремент).</li>
+        <li><em>Різниця префіксної та постфіксної форми:</em> <code>++x</code> спочатку збільшує значення і одразу повертає нове, а <code>x++</code> спочатку повертає старе значення, а збільшує вже після виконання поточної дії!</li>
+      </ul>
+    </div>
+
+    <div class="block block-interactive">
+      <span class="block-label">🛠️ Міні-практика: «Оновлення балансу гравця»</span>
+      <pre><code>let playerHp = 100;
+playerHp -= 20; // Отримав удар, HP стало 80
+playerHp++;     // Випив зілля регенерації, HP стало 81
+playerHp *= 2;  // Отримав бафф сили, стало 162
+console.log("Поточне HP: " + playerHp); // 162</code></pre>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ЧАСТИНА 3: ПРІОРИТЕТИ ОПЕРАТОРІВ -->
+    <div class="section-title">
+      <span>Розділ 3. Пріоритети операторів (Precedence & Associativity)</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-theory">
+      <span class="block-label">📊 Офіційна таблиця пріоритетів операторів JavaScript</span>
+      <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+        <thead>
+          <tr>
+            <th style="width: 15%;">Пріоритет</th>
+            <th style="width: 25%;">Тип оператора</th>
+            <th style="width: 30%;">Оператори</th>
+            <th style="width: 30%;">Порядок (Асоціативність)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1 (Найвищий)</strong></td>
+            <td>Групування</td>
+            <td><code>( ... )</code></td>
+            <td>Зсередини назовні</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>Унарні оператори</td>
+            <td><code>typeof</code>, <code>+x</code>, <code>-x</code>, <code>!x</code>, <code>++</code>, <code>--</code></td>
+            <td>Справа наліво ($\leftarrow$)</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td>Множення, ділення, остача</td>
+            <td><code>*</code>, <code>/</code>, <code>%</code>, <code>**</code></td>
+            <td>Зліва направо ($\rightarrow$)</td>
+          </tr>
+          <tr>
+            <td><strong>4</strong></td>
+            <td>Додавання та віднімання</td>
+            <td><code>+</code>, <code>-</code></td>
+            <td>Зліва направо ($\rightarrow$)</td>
+          </tr>
+          <tr>
+            <td><strong>5</strong></td>
+            <td>Порівняння</td>
+            <td><code>></code>, <code><</code>, <code>>=</code>, <code><=</code>, <code>===</code></td>
+            <td>Зліва направо ($\rightarrow$)</td>
+          </tr>
+          <tr>
+            <td><strong>6 (Найнижчий)</strong></td>
+            <td>Присвоювання</td>
+            <td><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code></td>
+            <td>Справа наліво ($\leftarrow$)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ЧАСТИНА 4: ПРАКТИКА ТА БЛІЦ -->
+    <div class="section-title">
+      <span>Розділ 4. Практика: Чек у кафе та Бліц-самоперевірка</span>
+      <span class="timing">⏱️ ~20 хв</span>
+    </div>
+
+    <div class="block block-interactive">
+      <span class="block-label">🛠️ Практичний міні-проєкт: «Розрахунок чеку зі знижкою»</span>
+      <pre><code>const pizzaPrice = 180;
+let pizzaCount = 2;
+const colaPrice = 40;
+let colaCount = 3;
+
+let total = (pizzaPrice * pizzaCount) + (colaPrice * colaCount); // 360 + 120 = 480
+total -= 50; // Застосували купон на знижку 50 грн (скорочена форма!)
+console.log("До сплати зі знижкою: " + total + " грн"); // 430 грн</code></pre>
+    </div>
+
+    <p class="qa-hint-text no-print">💡 Відповіді та пояснення приховані за замовчуванням. Натисніть на будь-який рядок або наведіть курсор, щоб перевірити себе.</p>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№</th>
+          <th style="width: 35%;">Вираз для обчислення</th>
+          <th style="width: 20%;">Результат</th>
+          <th style="width: 40%;">Пояснення за таблицею пріоритетів</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>console.log(10 + 5 * 2);</code></td>
+          <td class="qa-spoiler"><code>20</code></td>
+          <td class="qa-spoiler">Множення $5 \cdot 2 = 10$ виконується раніше за додавання.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>console.log((10 + 5) * 2);</code></td>
+          <td class="qa-spoiler"><code>30</code></td>
+          <td class="qa-spoiler">Дужки мають найвищий пріоритет: спочатку $10 + 5 = 15$.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>let a = 5; a += 10; console.log(a);</code></td>
+          <td class="qa-spoiler"><code>15</code></td>
+          <td class="qa-spoiler">Скорочена форма $a = a + 10$.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>let b = 10; b++; console.log(b);</code></td>
+          <td class="qa-spoiler"><code>11</code></td>
+          <td class="qa-spoiler">Оператор інкременту збільшив значення на 1.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>console.log(20 - 10 - 5);</code></td>
+          <td class="qa-spoiler"><code>5</code></td>
+          <td class="qa-spoiler">Асоціативність зліва направо: $(20 - 10) - 5 = 5$.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    }
+
+    // QA Table interactive click reveal
+    document.querySelectorAll('.qa-table tbody tr').forEach(row => {
+      row.title = 'Клікніть, щоб зафіксувати показ відповіді';
+      row.addEventListener('click', () => {
+        row.classList.toggle('is-revealed');
+      });
+    });
+  </script>
+</body>
+</html>
