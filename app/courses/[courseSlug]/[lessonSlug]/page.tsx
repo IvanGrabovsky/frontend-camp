@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CodeRunner } from '@/components/mdx/CodeRunner';
 import { QuizCard } from '@/components/mdx/QuizCard';
 import { Callout } from '@/components/mdx/Callout';
+import { GitHubTaskCard } from '@/components/mdx/GitHubTaskCard';
 
 const components = {
   Card,
@@ -31,6 +32,7 @@ const components = {
   CodeRunner,
   QuizCard,
   Callout,
+  GitHubTaskCard,
 };
 
 interface LessonPageProps {

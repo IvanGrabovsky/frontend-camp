@@ -2,44 +2,58 @@
 
 <article className="lesson-card">
   <h2>Що таке JavaScript?</h2>
-  <p><strong>JavaScript (JS)</strong> — це повноцінна динамічна мова програмування, яка є головною рушійною силою сучасного вебу. Якщо <strong>HTML</strong> відповідає за скелет і структуру сторінки, а <strong>CSS</strong> — за її зовнішній вигляд та стиль, то <strong>JavaScript</strong> «оживляє» інтерфейс: реагує на кліки користувача, відправляє та отримує дані без перезавантаження, створює анімації та керує бізнес-логікою.</p>
-  <p>Сьогодні JavaScript працює не лише у браузері, але й на серверах (Node.js, Deno, Bun), у мобільних додатках (React Native), настільних програмах (Electron, Tauri) та навіть у пристроях IoT.</p>
+  <p><strong>JavaScript (JS)</strong> — це повноцінна динамічна мова програмування, яка є головною рушійною силою сучасного вебу. Якщо <strong>HTML</strong> відповідає за скелет і структуру сторінки, а <strong>CSS</strong> — за її зовнішній вигляд та стиль, то <strong>JavaScript</strong> «оживляє» інтерфейс: реагує на кліки користувача, відправляє та отримує дані без перезавантаження (AJAX / Fetch), створює динамічні анімації та керує бізнес-логікою.</p>
+  <p>Сьогодні JavaScript працює не лише у браузері, але й на серверах (Node.js, Deno, Bun), у мобільних додатках (React Native), настільних програмах (Electron, Tauri) та хмарних serverless функціях.</p>
 </article>
 
 <section className="analogy-block">
   <div className="analogy-block__title"><span className="analogy-block__icon">🚗</span> Аналогія: Автомобіль</div>
-  <p>Уявіть створення автомобіля:</p>
+  <p>Уявіть створення сучасного автомобіля:</p>
   <ul>
     <li><strong>HTML</strong> — це металевий каркас, кузов, двері, сидіння та кермо.</li>
     <li><strong>CSS</strong> — це колір фарби, шкіряний салон, підсвічування панелі та тонування скла.</li>
-    <li><strong>JavaScript</strong> — це двигун, трансмісія, бортовий комп'ютер, натискання на педаль газу та спрацьовування подушок безпеки.</li>
+    <li><strong>JavaScript</strong> — це двигун, трансмісія, бортовий комп'ютер, реакція на натискання педалі газу та автопілот.</li>
   </ul>
 </section>
 
 <section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">ECMAScript (ES)</div>
+      <div className="text-xs text-muted-foreground mt-1">Міжнародний стандарт специфікації мови, розроблений комітетом TC39. JavaScript є його головною реалізацією.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">JavaScript Engine (V8, Nitro)</div>
+      <div className="text-xs text-muted-foreground mt-1">Спеціальна програма у браузері, яка парсить вихідний код JS, компілює його в машинний код та виконує.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">JIT (Just-In-Time) Compilation</div>
+      <div className="text-xs text-muted-foreground mt-1">Метод оптимізації, коли інтерпретатор перетворює гарячий (часто повторюваний) JS код у надшвидкий машинний код на льоту.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Case Sensitivity</div>
+      <div className="text-xs text-muted-foreground mt-1">Чутливість до регістру літер. Змінні <code>userName</code> та <code>username</code> — це два абсолютно різні ідентифікатори.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Single-Threaded</div>
+      <div className="text-xs text-muted-foreground mt-1">Однопотоковість — JS виконує лише одну операцію за раз в основному потоці (Call Stack) з неблокуючим Event Loop.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Script Attributes (defer vs async)</div>
+      <div className="text-xs text-muted-foreground mt-1"><code>defer</code> завантажує скрипт у фоні та виконує після розбору DOM у порядку черги. <code>async</code> виконує скрипт миттєво після завантаження.</div>
+    </div>
+  </div>
+
   <h2>Коротка історія та стандарти ECMAScript</h2>
   <p>
-    JavaScript був створений у 1995 році програмістом <strong>Бренданом Айком (Brendan Eich)</strong> у компанії Netscape всього за <strong>10 днів</strong>. Спочатку мова називалася <em>Mocha</em>, потім <em>LiveScript</em>, і зрештою отримала маркетингову назву <em>JavaScript</em> (на хвилі популярності мови Java, хоча ці дві мови зовсім різні за філософією).
+    JavaScript був створений у 1995 році програмістом <strong>Бренданом Айком (Brendan Eich)</strong> у компанії Netscape всього за <strong>10 днів</strong>. Спочатку мова називалася <em>Mocha</em>, потім <em>LiveScript</em>, і зрештою отримала маркетингову назву <em>JavaScript</em> (на хвилі популярності Java, хоча ці мови абсолютно різні).
   </p>
   <p>
-    Сьогодні розвитком мови займається міжнародний комітет <strong>TC39</strong> під стандартом <strong>ECMAScript</strong>. Щороку виходить нова версія стандарту (наприклад, ES6/ES2015 став фундаментальним оновленням мови, додавши <code>let</code>/<code>const</code>, стрілкові функції, класи та модулі).
-  </p>
-
-  <h2>Де і як виконується JavaScript?</h2>
-  <p>
-    JavaScript виконується спеціальною програмою — <strong>рушієм (JS Engine)</strong>:
-  </p>
-  <ul>
-    <li><strong>V8</strong> — рушій від Google у Chrome, Brave, Edge та Node.js.</li>
-    <li><strong>SpiderMonkey</strong> — рушій у Mozilla Firefox.</li>
-    <li><strong>JavaScriptCore (Nitro)</strong> — рушій від Apple у Safari.</li>
-  </ul>
-  <p>
-    Рушій читає вихідний код, транслює його у машинний код за допомогою <strong>JIT-компіляції (Just-In-Time)</strong> та блискавично виконує.
+    Сьогодні розвитком мови займається міжнародний комітет <strong>TC39</strong> під стандартом <strong>ECMAScript</strong>. Щороку виходить нова версія стандарту (наприклад, ES6/ES2015 став фундаментальним стрибком мови, додавши <code>let</code>/<code>const</code>, стрілкові функції, класи та модулі).
   </p>
 
   <h2>Підключення JavaScript до веб-сторінки</h2>
-  <p>Є три основні способи підключити JS до HTML:</p>
 
 ```html
 <!-- 1. Вбудований скрипт у тілі HTML -->
@@ -59,9 +73,6 @@
   </Callout>
 
   <h2>Консоль розробника та методи виводу</h2>
-  <p>
-    Консоль браузера (відкривається клавішею <strong>F12</strong> або <strong>Cmd+Option+I</strong> у вкладці <em>Console</em>) — це головний інструмент дебагу та швидких експериментів розробника.
-  </p>
 
 ```javascript
 // 1. Стандартний вивід інформації
@@ -82,19 +93,6 @@ console.table([
   { id: 2, name: 'Максим', role: 'UI/UX Designer' }
 ]);
 ```
-
-  <h2>Коментарі в коді</h2>
-  <p>Коментарі не виконуються рушієм і служать для пояснення логіки або тимчасового відключення коду:</p>
-
-```javascript
-// Однорядковий коментар — пояснює наступний рядок
-
-/*
-  Багаторядковий коментар:
-  Тут можна описати деталі алгоритму,
-  авторство або складну математичну формулу.
-*/
-```
 </section>
 
 <section className="interactive-demo mb-12">
@@ -114,56 +112,61 @@ console.table([
   />
 </section>
 
-<section className="tip-block tip-block--warn">
-  <div className="tip-block__title"><span>⚠️</span> Типові помилки початківців</div>
-  <ul>
-    <li><strong>Регістрозалежність (Case Sensitivity)</strong>: <code>console.log</code> та <code>Console.Log</code> — це різні речі! У JS регістр має вирішальне значення. <code>Console</code> з великої літери викличе помилку <code>ReferenceError</code>.</li>
-    <li><strong>Плутанина між одинарними, подвійними лапками та апострофами</strong>: переконайтеся, що відкриваюча лапка збігається із закриваючою: <code>"текст'</code> — це синтаксична помилка.</li>
-    <li><strong>Спроба маніпулювати DOM до його завантаження</strong>: якщо викликати скрипт у <code>&lt;head&gt;</code> без <code>defer</code>, елементи сторінки ще не існують, і JS їх не знайде.</li>
-  </ul>
-</section>
+<section className="quizzes-section mb-12">
+  <h2>🎯 Бліц-перевірка знань: Вступ до JavaScript</h2>
 
-<section className="quiz-section mb-12">
-  <h2>🧠 Перевірте себе</h2>
-  <QuizCard
-  question="Хто і за скільки днів створив першу версію JavaScript у 1995 році?"
-  options="Гвідо ван Россум за 1 місяць | Брендан Айк за 10 днів | Джеймс Ґослінг за 1 рік | Тім Бернерс-Лі за 1 тиждень"
-  correctIndex="1"
-  explanation="Гвідо ван Россум створив мову Python."
-/>
-  <div className="mt-6">
+  <div className="space-y-6">
     <QuizCard
-  question="Який атрибут тега <script> дозволяє завантажувати зовнішній JS файл асинхронно без блокування побудови HTML?"
-  options="hidden | defer | lazy | preload"
-  correctIndex="1"
-  explanation="hidden — це атрибут видимості HTML елемента."
-/>
+      question="Хто і за скільки днів створив першу версію JavaScript у 1995 році?"
+      options="Гвідо ван Россум за 1 місяць | Брендан Айк за 10 днів | Джеймс Ґослінг за 1 рік | Тім Бернерс-Лі за 1 тиждень"
+      correctIndex="1"
+      explanation="Брендан Айк створив прототип мови Mocha (пізніше перейменованої на JavaScript) у травні 1995 року для браузера Netscape Navigator всього за 10 днів."
+    />
+
+    <QuizCard
+      question="Який атрибут тега <script> завантажує файл у фоновому режимі та гарантує виконання ПІСЛЯ повного парсингу HTML, зберігаючи порядок скриптів?"
+      options="async | defer | preload | lazy"
+      correctIndex="1"
+      explanation="Атрибут `defer` не блокує побудову DOM-дерева під час скачування і виконує скрипти строго по черзі після завершення завантаження HTML документа."
+    />
+
+    <QuizCard
+      question="Що відбудеться при виконанні команди: Console.Log('Hello') ?"
+      options="У консоль виведеться текст Hello | Виникне помилка ReferenceError, оскільки JavaScript є чутливим до регістру (Case Sensitive) | Створиться новий об'єкт | Браузер автоматично виправить регістр"
+      correctIndex="1"
+      explanation="JavaScript є строго Case-Sensitive мовою. Об'єкт `console` та його метод `log` пишуться виключно з маленької літери. Написання `Console.Log` призведе до помилки ReferenceError: Console is not defined."
+    />
   </div>
 </section>
 
-<section className="practice-block">
-  <div className="practice-block__title"><span>⚡</span> Практичні завдання на занятті (💎 40)</div>
-  <ol>
-    <li>
-      <strong>Завдання 1 (💎 10)</strong>: Виведіть у консоль привітання: <code>"Мене звати [Ваше Ім'я], і я вивчаю JavaScript!"</code> та окремим викликом свій рік народження.
-    </li>
-    <li>
-      <strong>Завдання 2 (💎 10)</strong>: Виведіть попередження <code>console.warn</code> про низький заряд батареї (наприклад, <code>"Батарея: 15%! Підключіть зарядний пристрій."</code>) та повідомлення про помилку <code>console.error("404: Сторінку не знайдено")</code>.
-    </li>
-    <li>
-      <strong>Завдання 3 (💎 10)</strong>: Створіть та виведіть за допомогою <code>console.table</code> список із трьох ваших улюблених фільмів або книг із полями <code>назва</code>, <code>рік</code>, <code>рейтинг</code>.
-    </li>
-    <li>
-      <strong>Завдання 4 (💎 10)</strong>: Напишіть у <code>console.log</code> вираз, який обчислює скільки секунд у 24 годинах (<code>24 * 60 * 60</code>) і виводить результат із текстовим поясненням.
-    </li>
-  </ol>
-</section>
+<GitHubTaskCard
+  title="Практикум: Створення першого JS-модуля з перевіркою автотестами Vitest"
+  difficulty="easy"
+  testRunner="Vitest & GitHub Actions"
+  repoTemplate="https://github.com/IvanGrabovsky/js-basics-starter"
+  description="Створіть свій перший модуль JavaScript, реалізуйте базові функції привітання та форматування інформації про розробника, та перевірте їх автотестами."
+  files={`src/greeting.js: Функції greetUser та getCourseInfo
+test/greeting.test.js: Автотести для перевірки результатів функцій`}
+  criteria={`Функція greetUser('Іван') повертає рядок 'Привіт, Іван! Вітаємо у Frontend Camp.'
+Функція getCourseInfo повертає обʼєкт із полями title, year, lessonsCount
+Скрипт успішно експортує функції через ESM синтаксис (export)
+Усі юніт-тести npm test успішно проходять у Vitest`}
+  testFileCode={`// test/greeting.test.js
+import { describe, it, expect } from 'vitest';
+import { greetUser, getCourseInfo } from '../src/greeting.js';
 
-<section className="homework-block mt-8">
-  <div className="practice-block__title"><span>🏠</span> Домашнє завдання (💎 40)</div>
-  <ol>
-    <li>Створіть базовий HTML-документ <code>index.html</code>, підключіть до нього зовнішній файл <code>main.js</code> через атрибут <code>defer</code>.</li>
-    <li>У файлі <code>main.js</code> напишіть міні-візитку розробника з декількома викликами <code>console.log</code>, <code>console.info</code> та <code>console.table</code>, використовуючи однорядкові та багаторядкові коментарі.</li>
-    <li>Перевірте роботу скрипта через Developer Tools у Google Chrome або Firefox, переконайтеся у відсутності червоних помилок у консолі.</li>
-  </ol>
-</section>
+describe('First JS Assignment', () => {
+  it('має повертати персоніфіковане привітання', () => {
+    expect(greetUser('Олексій')).toBe('Привіт, Олексій! Вітаємо у Frontend Camp.');
+  });
+
+  it('повинен повертати обʼєкт з інформацією про курс', () => {
+    const info = getCourseInfo();
+    expect(info).toHaveProperty('title');
+    expect(info.year).toBe(2026);
+  });
+});`}
+  testFileName="greeting.test.js"
+  tips={`Використовуйте сучасні шаблонні рядки (Template Literals) зі зворотними лапками \`Привіт, \${name}!\`
+Завжди перевіряйте експорт функцій через export function ...`}
+/>

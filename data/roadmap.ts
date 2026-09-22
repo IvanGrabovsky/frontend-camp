@@ -24,6 +24,7 @@ export interface RoadmapBlock {
   startHref?: string;
   topics?: string[];
   children?: RoadmapBlock[];
+  hidden?: boolean;
 }
 
 export const ARRAYS_LESSONS: LessonMeta[] = [
@@ -293,10 +294,10 @@ export const NEXTJS_LESSONS: LessonMeta[] = [
 export const ROADMAP_BLOCKS: RoadmapBlock[] = [
   {
     slug: 'how-internet-works',
-    order: 0,
+    order: 1,
     title: 'Як працює інтернет',
-    subtitle: 'Від URL у браузері до протоколів, рендерингу та безпеки',
-    status: 'planned',
+    subtitle: 'Від URL у браузері до протоколів, рендерингу та безпеки — 8 уроків',
+    status: 'active',
     level: 'Початківець',
     readmePath: 'blocks/00-how-internet-works/README.md',
     courseSlug: 'how-internet-works',
@@ -314,50 +315,11 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     ],
   },
   {
-    slug: 'html',
-    order: 1,
-    title: 'HTML',
-    subtitle: 'Семантична розмітка, доступність, форми — 8 уроків',
-    status: 'planned',
-    level: 'Початківець',
-    readmePath: 'blocks/01-html-css/README.md',
-    courseSlug: 'html',
-    lessons: HTML_LESSONS,
-    startHref: '/courses/html/01-structure/',
-  },
-  {
-    slug: 'css',
-    order: 2,
-    title: 'CSS',
-    subtitle: 'Стилі, лейаут, адаптивність, анімації — 8 уроків',
-    status: 'planned',
-    level: 'Початківець',
-    readmePath: 'blocks/01-html-css/README.md',
-    courseSlug: 'css',
-    lessons: CSS_LESSONS,
-    startHref: '/courses/css/01-selectors/',
-    children: [
-      {
-        slug: 'tailwind-css',
-        order: 2.1,
-        title: 'Tailwind CSS & UI системи',
-        subtitle: 'Утилітарний CSS, дизайн-токени, анімації, JIT та Shadcn UI',
-        status: 'planned',
-        level: 'Початківець → середній',
-        readmePath: 'blocks/01-css-tailwind/README.md',
-        courseSlug: 'tailwind-css',
-        lessons: TAILWIND_LESSONS,
-        startHref: '/courses/tailwind-css/01-utility-first/',
-        topics: ['Utility-First підхід', 'Адаптивність sm/md/lg', 'Стани hover/focus/dark', 'Flexbox & Grid', 'Кастомізація теми', 'Shadcn UI & Radix'],
-      }
-    ]
-  },
-  {
     slug: 'git-workflow',
-    order: 3,
+    order: 2,
     title: 'Git & Командна розробка',
     subtitle: 'Контроль версій, гілкування, Pull Requests, вирішення конфліктів та CI/CD — 8 уроків',
-    status: 'planned',
+    status: 'active',
     level: 'Початківець → середній',
     readmePath: 'blocks/02-git/README.md',
     courseSlug: 'git',
@@ -375,10 +337,11 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     children: [
       {
         slug: 'github-actions',
-        order: 3.1,
+        order: 2.1,
         title: 'CI/CD & GitHub Actions',
         subtitle: 'Автоматизовані пайплайни, тестування, preview deploy та безпека',
         status: 'planned',
+        hidden: true,
         level: 'Середній → просунутий',
         readmePath: 'blocks/02-git-actions/README.md',
         courseSlug: 'github-actions',
@@ -389,8 +352,48 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     ]
   },
   {
-    slug: 'javascript',
+    slug: 'html',
+    order: 3,
+    title: 'HTML',
+    subtitle: 'Семантична розмітка, доступність (a11y), форми та SEO — 8 уроків',
+    status: 'active',
+    level: 'Початківець',
+    readmePath: 'blocks/01-html-css/README.md',
+    courseSlug: 'html',
+    lessons: HTML_LESSONS,
+    startHref: '/courses/html/01-structure/',
+  },
+  {
+    slug: 'css',
     order: 4,
+    title: 'CSS',
+    subtitle: 'Стилі, Box Model, Flexbox, Grid, адаптивність та анімації — 8 уроків',
+    status: 'active',
+    level: 'Початківець',
+    readmePath: 'blocks/01-html-css/README.md',
+    courseSlug: 'css',
+    lessons: CSS_LESSONS,
+    startHref: '/courses/css/01-selectors/',
+    children: [
+      {
+        slug: 'tailwind-css',
+        order: 4.1,
+        title: 'Tailwind CSS & UI системи',
+        subtitle: 'Утилітарний CSS, дизайн-токени, анімації, JIT та Shadcn UI',
+        status: 'planned',
+        hidden: true,
+        level: 'Початківець → середній',
+        readmePath: 'blocks/01-css-tailwind/README.md',
+        courseSlug: 'tailwind-css',
+        lessons: TAILWIND_LESSONS,
+        startHref: '/courses/tailwind-css/01-utility-first/',
+        topics: ['Utility-First підхід', 'Адаптивність sm/md/lg', 'Стани hover/focus/dark', 'Flexbox & Grid', 'Кастомізація теми', 'Shadcn UI & Radix'],
+      }
+    ]
+  },
+  {
+    slug: 'javascript',
+    order: 5,
     title: 'JavaScript',
     subtitle: 'Повний курс сучасної мови JavaScript за структурою uk.javascript.info',
     status: 'active',
@@ -411,7 +414,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     children: [
       {
         slug: 'js-basics',
-        order: 4.1,
+        order: 5.1,
         title: '1. Основи JavaScript',
         subtitle: 'Вступ до JS, алгоритми, спецсимволи \\n/\\t, змінні, оператори, цикли та функції — 11 уроків',
         status: 'active',
@@ -436,7 +439,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-strings-numbers',
-        order: 4.2,
+        order: 5.2,
         title: '2. Рядки та числа',
         subtitle: 'Методи чисел, форматування, пошук підрядків, slice та маніпуляції з текстом — 8 уроків',
         status: 'active',
@@ -449,7 +452,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-arrays',
-        order: 4.3,
+        order: 5.3,
         title: '3. Масиви (21 урок)',
         subtitle: 'Всі 21 метод масивів з інтерактивними пісочницями та практикою',
         status: 'active',
@@ -462,7 +465,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-objects-structs',
-        order: 4.4,
+        order: 5.4,
         title: '4. Обʼєкти та структури даних',
         subtitle: 'Обʼєкти, this, new, деструктуризація, Map, Set, WeakMap та JSON — 8 уроків',
         status: 'active',
@@ -475,7 +478,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-functions-deep',
-        order: 4.5,
+        order: 5.5,
         title: '5. Просунуті функції та замикання',
         subtitle: 'Замикання (Closures), Rest/Spread, call, apply, bind, NFE та планування — 8 уроків',
         status: 'active',
@@ -488,7 +491,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-classes-oop',
-        order: 4.6,
+        order: 5.6,
         title: '6. Прототипи, класи та ООП',
         subtitle: 'Прототипне успадкування, синтаксис class, extends, приватні поля #, instanceof — 8 уроків',
         status: 'active',
@@ -501,7 +504,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-async',
-        order: 4.7,
+        order: 5.7,
         title: '7. Асинхронний JS, Promises & Event Loop',
         subtitle: 'Event Loop, Microtasks, Promises, Promise API, async/await та AbortController — 8 уроків',
         status: 'active',
@@ -514,7 +517,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
       },
       {
         slug: 'js-dom-events',
-        order: 4.8,
+        order: 5.8,
         title: '8. DOM, події та браузерні APIs',
         subtitle: 'DOM-дерево, querySelector, модифікація, спливання подій (Bubbling) та делегування — 8 уроків',
         status: 'active',
@@ -533,6 +536,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'TypeScript',
     subtitle: 'Статична типізація, інтерфейси, generics, utility types та типізація React — 8 уроків',
     status: 'planned',
+    hidden: true,
     level: 'Середній',
     readmePath: 'blocks/05-typescript/README.md',
     courseSlug: 'typescript',
@@ -555,6 +559,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Next.js',
     subtitle: 'React, App Router, Server Components, deploy — 8 уроків',
     status: 'planned',
+    hidden: true,
     level: 'Середній',
     readmePath: 'blocks/04-nextjs/README.md',
     courseSlug: 'nextjs',
@@ -567,6 +572,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
         title: 'Керування станом (State Management)',
         subtitle: 'Zustand, TanStack Query, Server vs Client State, Оптимістичні оновлення',
         status: 'planned',
+        hidden: true,
         level: 'Середній → просунутий',
         readmePath: 'blocks/04-state-management/README.md',
         courseSlug: 'state-management',
@@ -582,6 +588,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Node.js & Fullstack Backend',
     subtitle: 'Runtime, Hono/Express, REST API, PostgreSQL, Prisma ORM, WebSockets та Docker — 8 уроків',
     status: 'planned',
+    hidden: true,
     level: 'Середній → просунутий',
     readmePath: 'blocks/09-nodejs-fullstack/README.md',
     courseSlug: 'nodejs',
@@ -604,6 +611,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
         title: 'Бази даних & ORM (PostgreSQL & Prisma)',
         subtitle: 'SQL, реляційні схеми, Prisma & Drizzle ORM, транзакції, Redis та оптимізація',
         status: 'planned',
+        hidden: true,
         level: 'Середній → просунутий',
         readmePath: 'blocks/09-databases-orm/README.md',
         courseSlug: 'databases-orm',
@@ -619,6 +627,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Безпека браузера',
     subtitle: 'Приховані вразливості сучасних API: fingerprinting, DoS, UI spoofing, CSS-only attacks — 4 уроки',
     status: 'planned',
+    hidden: true,
     level: 'Середній → просунутий',
     readmePath: 'blocks/06-web-security/README.md',
     courseSlug: 'web-security',
@@ -644,6 +653,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
         title: 'Автентифікація & Безпека сесій',
         subtitle: 'JWT, Session Cookies, OAuth 2.0 / OIDC, CSRF, PKCE та безпечне збереження',
         status: 'planned',
+        hidden: true,
         level: 'Середній → просунутий',
         readmePath: 'blocks/06-auth-security/README.md',
         courseSlug: 'auth-security',
@@ -659,6 +669,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Web Performance & Оптимізація',
     subtitle: 'Core Web Vitals (LCP, CLS, INP), аналіз бандлу, ледаче завантаження та кешування — 8 уроків',
     status: 'planned',
+    hidden: true,
     level: 'Середній → просунутий',
     readmePath: 'blocks/07-web-performance/README.md',
     courseSlug: 'web-performance',
@@ -680,6 +691,7 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Тестування Frontend',
     subtitle: 'Unit, інтеграційні та E2E тести: Vitest, React Testing Library, Playwright — 8 уроків',
     status: 'planned',
+    hidden: true,
     level: 'Середній → просунутий',
     readmePath: 'blocks/08-testing/README.md',
     courseSlug: 'testing',
@@ -702,11 +714,14 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
     title: 'Фінальний проект',
     subtitle: 'Повноцінний Fullstack додаток з усіма блоками курсу',
     status: 'planned',
+    hidden: true,
     level: 'Середній → просунутий',
     readmePath: 'blocks/07-capstone/README.md',
     topics: ['Fullstack архітектура', 'API та база даних', 'Автентифікація та безпека', 'Тестування та CI/CD', 'Production deploy з Docker'],
   },
 ];
+
+export const VISIBLE_ROADMAP_BLOCKS: RoadmapBlock[] = ROADMAP_BLOCKS.filter((b) => !b.hidden);
 
 export function getBlock(slug: string): RoadmapBlock | undefined {
   for (const block of ROADMAP_BLOCKS) {

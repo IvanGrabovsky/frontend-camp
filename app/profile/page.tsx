@@ -7,7 +7,7 @@ import { HubLayout } from '@/components/HubLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ROADMAP_BLOCKS } from '@/data/roadmap';
+import { VISIBLE_ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 import { BookCheck, Trophy, ArrowRight, User as UserIcon, LogIn, CheckCircle2, ShieldCheck, Flame, LogOut } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export default function ProfilePage() {
     completed: number;
   }[] = [];
 
-  for (const block of ROADMAP_BLOCKS) {
+  for (const block of VISIBLE_ROADMAP_BLOCKS) {
     if (block.lessons && block.courseSlug) {
       totalLessonsCount += block.lessons.length;
       const completedCount = block.lessons.filter((l) =>
@@ -42,7 +42,7 @@ export default function ProfilePage() {
 
     if (block.children) {
       for (const child of block.children) {
-        if (child.lessons && child.courseSlug) {
+        if (!child.hidden && child.lessons && child.courseSlug) {
           totalLessonsCount += child.lessons.length;
           const completedCount = child.lessons.filter((l) =>
             user?.completedLessons.includes(`${child.courseSlug}/${l.slug}`)

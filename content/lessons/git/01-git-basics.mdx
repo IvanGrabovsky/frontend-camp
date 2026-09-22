@@ -1,18 +1,46 @@
 <article className="lesson-card">
   <h2>Що таке Git і чому він незамінний?</h2>
   <p>
-    <strong>Git</strong> — це розподілена система контролю версій (DVCS), створена Лінусом Торвальдсом у 2005 році. Вона дозволяє зберігати повну історію змін кожного файлу у вашому проекті, легко перемикатися між версіями, експериментувати у безпечних гілках та ефективно працювати в команді.
+    <strong>Git</strong> — це розподілена система контролю версій (<em>Distributed Version Control System — DVCS</em>), створена Лінусом Торвальдсом у 2005 році. Вона дозволяє зберігати повну історію змін кожного файлу у вашому проекті, легко перемикатися між версіями, експериментувати у безпечних гілках та ефективно працювати в команді.
   </p>
 </article>
 
 <section className="analogy-block">
   <div className="analogy-block__title"><span className="analogy-block__icon">📸</span> Git — як машина часу з точками збереження у грі</div>
   <p>
-    Уяви проходження складної компʼютерної гри: перед боєм із босом ти робиш <strong>Save Point (комміт)</strong>. Якщо щось піде не так — ти завжди можеш завантажити збереження і спробувати іншу стратегію (гілку). При цьому гра зберігає не всю гру заново, а лише різницю між станами.
+    Уяви проходження складної компʼютерної гри: перед боєм із босом ти робиш <strong>Save Point (комміт / Commit)</strong>. Якщо щось піде не так — ти завжди можеш завантажити збереження і спробувати іншу стратегію (гілку / Branch). При цьому гра зберігає не всю гру заново, а лише різницю між станами (<em>delta / diff</em>).
   </p>
 </section>
 
 <section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Working Tree (Directory)</div>
+      <div className="text-xs text-muted-foreground mt-1">Робоча директорія — поточні файли проекту на вашому диску, які ви бачите і редагуєте в IDE.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Staging Area (Index)</div>
+      <div className="text-xs text-muted-foreground mt-1">Зона підготовки (індекс) — буферний стан, куди потрапляють зміни після команди <code>git add</code> перед фіксацією.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Commit (Snapshot)</div>
+      <div className="text-xs text-muted-foreground mt-1">Знімок стану проекту в конкретний момент часу з унікальним SHA-1/SHA-256 хешем та автором.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Repository (Repo)</div>
+      <div className="text-xs text-muted-foreground mt-1">Репозиторій — прихована папка <code>.git</code>, що містить повну базу даних історії, гілок, тегів та коммітів.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Untracked files</div>
+      <div className="text-xs text-muted-foreground mt-1">Невідстежувані файли — нові файли, які Git ще ніколи не індексував і про які ще не знає історія.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Conventional Commits</div>
+      <div className="text-xs text-muted-foreground mt-1">Загальноприйнятий стандарт повідомлень коммітів (наприклад: <code>feat:</code>, <code>fix:</code>, <code>chore:</code>).</div>
+    </div>
+  </div>
+
   <h2>Три стани файлів у Git</h2>
   <p>Кожен файл у проекті під керуванням Git проходить через 3 основні зони:</p>
 
@@ -41,7 +69,7 @@ git commit -m "feat: add hero section and navigation bar"
   <h2>Корисні команди для щоденної роботи</h2>
 
 ```bash
-# Перегляд історії коммітів
+# Перегляд історії коммітів в один рядок
 git log --oneline --graph --decorate
 
 # Перегляд різниці між робочою директорією та останнім коммітом
@@ -54,10 +82,91 @@ git diff --staged
   <h2>Найкращі практики повідомлень коммітів (Conventional Commits)</h2>
   <p>Пишіть комміти зрозумілою англійською або українською мовою з префіксами типу змін:</p>
   <ul>
-    <li><code>feat:</code> — нова функціональність для користувача</li>
-    <li><code>fix:</code> — виправлення багу</li>
-    <li><code>refactor:</code> — рефакторинг коду без зміни поведінки</li>
-    <li><code>docs:</code> — оновлення документації</li>
-    <li><code>style:</code> — форматування, відступи (без зміни логіки)</li>
+    <li><code>feat:</code> — нова функціональність для користувача (<em>feature</em>)</li>
+    <li><code>fix:</code> — виправлення багу чи дефекту (<em>bug fix</em>)</li>
+    <li><code>refactor:</code> — рефакторинг коду без зміни поведінки (<em>refactoring</em>)</li>
+    <li><code>docs:</code> — оновлення документації чи README (<em>documentation</em>)</li>
+    <li><code>style:</code> — форматування, відступи, крапки з комою (<em>formatting</em>)</li>
+    <li><code>test:</code> — додавання або виправлення автотестів (<em>testing</em>)</li>
   </ul>
 </section>
+
+<section className="quizzes-section my-10">
+  <h2>🎯 Бліц-перевірка знань: Основи Git</h2>
+
+  <div className="space-y-6">
+    <QuizCard
+      question="Яка команда переміщує зміни з Working Directory (робочої директорії) до Staging Area (індексу)?"
+      options="git commit | git add | git push | git status"
+      correctIndex="1"
+      explanation="Команда `git add <file>` (або `git add .`) додає файли до Staging Area (Index), готуючи їх до фіксації в наступному комміті. `git commit` уже зберігає підготовлений стан у репозиторій."
+    />
+
+    <QuizCard
+      question="Що станеться, якщо змінити файл index.html після виконання 'git add index.html', але ДО виконання 'git commit'?"
+      options="У комміт потраплять найновіші зміни автоматично | У комміт потрапить лише той стан файлу, який був на момент виконання git add | Git видасть фатальну помилку | Файл index.html буде видалено"
+      correctIndex="1"
+      explanation="Staging Area фіксує точний знімок файлу на момент виклику `git add`. Якщо після цього ви внесете нові правки, вони залишаться у Working Directory як unstaged. Щоб зберегти їх у майбутньому комміті, потрібно викликати `git add index.html` повторно."
+    />
+
+    <QuizCard
+      question="Який префікс у стандарті Conventional Commits слід використати для комміту, що додає нову кнопку авторизації?"
+      options="fix: add login button | feat: add login button | chore: add login button | style: add login button"
+      correctIndex="1"
+      explanation="Префікс `feat:` (від feature) використовується щоразу, коли для користувача додається нова функціональність або компонент."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практикум: Ініціалізація репозиторію та перший Conventional Commit"
+  difficulty="easy"
+  testRunner="Git CI & Commitlint"
+  repoTemplate="https://github.com/frontend-camp/git-basics-starter"
+  description="Створіть свій перший локальний репозиторій, налаштуйте ігнорування системних файлів через .gitignore та зробіть перші комміти відповідно до стандарту Conventional Commits."
+  files={`README.md: Опис вашого проекту з заголовком H1 та описом
+.gitignore: Файл ігнорування системних файлів (node_modules, .DS_Store, *.log)
+index.html: Базова розмітка вашої веб-сторінки`}
+  criteria={`Ініціалізовано репозиторій командою git init
+Створено файл .gitignore з правилами для node_modules та .DS_Store
+Створено файл README.md з описом проекту
+Виконано перший комміт з правильним префіксом: git commit -m "feat: initial commit with project structure"
+Перевірено статус командою git status (робоча директорія чиста)`}
+  testFileCode={`// test/git-basics.test.js
+import { execSync } from 'child_process';
+import fs from 'fs';
+import { describe, it, expect } from 'vitest';
+
+describe('Git Basics Assignment', () => {
+  it('має бути ініціалізований git репозиторій (.git папка)', () => {
+    expect(fs.existsSync('.git')).toBe(true);
+  });
+
+  it('має містити файл .gitignore з необхідними патернами', () => {
+    expect(fs.existsSync('.gitignore')).toBe(true);
+    const gitignoreContent = fs.readFileSync('.gitignore', 'utf8');
+    expect(gitignoreContent).toContain('node_modules');
+  });
+
+  it('останній комміт повинен слідувати стандарту Conventional Commits', () => {
+    const lastCommitMsg = execSync('git log -1 --pretty=%B').toString().trim();
+    const regex = /^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?:\s.+/;
+    expect(regex.test(lastCommitMsg)).toBe(true);
+  });
+});`}
+  testFileName="git-basics.test.js"
+  workflowYaml={`name: Autograding Tests
+on: [push, pull_request]
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm test`}
+  tips={`Ніколи не додавайте node_modules у git! Завжди перевіряйте .gitignore перед виконанням git add .
+Використовуйте команду git status на кожному етапі, щоб бачити стан індексу.`}
+/>

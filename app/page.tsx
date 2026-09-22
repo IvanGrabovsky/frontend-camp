@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HeroQuote } from '@/components/HeroQuote';
 import { HubLayout } from '@/components/HubLayout';
 import { RoadmapBlockCard } from '@/components/RoadmapBlockCard';
-import { ROADMAP_BLOCKS } from '@/data/roadmap';
+import { VISIBLE_ROADMAP_BLOCKS } from '@/data/roadmap';
 import { withBasePath } from '@/lib/paths';
 
 export default function HomePage() {
-  const jsBlock = ROADMAP_BLOCKS.find((b) => b.slug === 'javascript');
+  const firstBlock = VISIBLE_ROADMAP_BLOCKS[0];
 
   return (
     <HubLayout>
@@ -17,7 +17,7 @@ export default function HomePage() {
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <div className="inline-flex items-center space-x-2 bg-muted/50 rounded-full px-4 py-1.5 mb-8 text-sm font-medium text-muted-foreground border border-border">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span>v1.0 is live</span>
+            <span>v1.0 Core Program</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight mb-6">
             Frontend Learning <br className="hidden md:block"/>
@@ -26,10 +26,10 @@ export default function HomePage() {
           <div className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
             <HeroQuote />
           </div>
-          {jsBlock?.startHref && (
+          {firstBlock?.startHref && (
             <Button asChild size="lg" className="h-12 px-8 text-base font-semibold shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all">
-              <Link href={`/blocks/${jsBlock.slug}/`}>
-                Почати з JavaScript →
+              <Link href={`/blocks/${firstBlock.slug}/`}>
+                Почати навчання з нуля →
               </Link>
             </Button>
           )}
@@ -40,11 +40,11 @@ export default function HomePage() {
         <div className="flex flex-col mb-12">
           <h2 id="roadmap-title" className="text-3xl md:text-4xl font-bold mb-4">Шлях навчання</h2>
           <p className="text-muted-foreground text-lg max-w-2xl">
-            Курс будується блоками. Зараз доступний повний блок <strong className="text-foreground font-semibold">JavaScript</strong> (8 підмодулів, 77 уроків).
+            Фундаментальна програма підготовки: <strong className="text-foreground font-semibold">Як працює інтернет, Git, HTML, CSS та JavaScript</strong> з інтерактивними квізами та GitHub-автотестами.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
-          {ROADMAP_BLOCKS.map((block) => (
+          {VISIBLE_ROADMAP_BLOCKS.map((block) => (
             <RoadmapBlockCard key={block.slug} block={block} />
           ))}
         </div>

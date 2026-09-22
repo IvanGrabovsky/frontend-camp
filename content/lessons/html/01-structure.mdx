@@ -1,17 +1,43 @@
 <article className="lesson-card">
-      <h2>Що це таке?</h2>
-      <p><strong>HTML (HyperText Markup Language)</strong> — мова розмітки, якою описується структура і зміст веб-сторінки. Кожен HTML-документ має обов'язкову базову структуру. Відхилення не завжди помилка (браузери толерантні), але це погана практика.</p>
-    </article>
+  <h2>Що це таке?</h2>
+  <p><strong>HTML (HyperText Markup Language)</strong> — мова розмітки, якою описується структура і зміст веб-сторінки. Кожен HTML-документ має обов'язкову базову структуру. Відхилення не завжди призводить до помилки (браузери толерантні завдяки механізму <em>error recovery</em>), але це погана практика, яка ламає доступність (a11y) та SEO.</p>
+</article>
 
-    <section className="analogy-block">
-      <div className="analogy-block__title"><span className="analogy-block__icon">🏠</span> Аналогія з будинком</div>
-      <p><strong>DOCTYPE</strong> — дозвіл на будівництво. <strong>`<html>`</strong> — сам будинок. <strong>`<head>`</strong> — комунікації всередині стін (невидимі зовні). <strong>`<body>`</strong> — все що видно мешканцям.</p>
-    </section>
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🏠</span> Аналогія з будинком</div>
+  <p><strong>DOCTYPE</strong> — дозвіл на будівництво та архітектурний стандарт. <strong>`<html>`</strong> — сам каркас будинку. <strong>`<head>`</strong> — внутрішні приховані комунікації (електрика, вентиляція). <strong>`<body>`</strong> — житловий простір та меблі, якими користуються мешканці.</p>
+</section>
 
-    <section>
-      <h2>Мінімальна правильна структура</h2>
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Standards Mode vs Quirks Mode</div>
+      <div className="text-xs text-muted-foreground mt-1">Режими рендерингу браузера. <code>&lt;!DOCTYPE html&gt;</code> вмикає Standards Mode (сучасний W3C стандарт), без нього вмикається застарілий Quirks Mode для сумісності з сайтами 90-х.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Viewport Meta Tag</div>
+      <div className="text-xs text-muted-foreground mt-1">Мета-тег <code>name="viewport"</code>, що задає віртуальне вікно перегляду для коректного масштабування верстки на мобільних пристроях.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Character Encoding (UTF-8)</div>
+      <div className="text-xs text-muted-foreground mt-1">Кодування символів (Unicode), яке підтримує всі мови світу (включно з кирилицею та emoji) без виникнення «кракозябр».</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Root Element</div>
+      <div className="text-xs text-muted-foreground mt-1">Кореневий елемент <code>&lt;html&gt;</code>, який огортає весь вміст веб-документа.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">DOM (Document Object Model)</div>
+      <div className="text-xs text-muted-foreground mt-1">Об'єктне деревоподібне представлення HTML-документа у пам'яті браузера, доступне для маніпуляцій через JavaScript.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Self-Closing (Void) Elements</div>
+      <div className="text-xs text-muted-foreground mt-1">Порожні теги без закриваючого парного тега та без вкладеного тексту (наприклад: <code>&lt;img&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;br&gt;</code>).</div>
+    </div>
+  </div>
 
-      
+  <h2>Мінімальна правильна структура</h2>
 
 ```html
 <!DOCTYPE html>
@@ -19,119 +45,109 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Моя перша сторінка</title>
+    <title>Моя перша веб-сторінка</title>
   </head>
   <body>
-    <h1>Привіт, світ!</h1>
-    <p>Це мій перший HTML-документ.</p>
+    <h1>Привіт, світе!</h1>
+    <p>Це мій перший валідний HTML5 документ.</p>
   </body>
 </html>
 ```
 
+  <h2>Кожна частина — детально</h2>
 
+  <h3>`<!DOCTYPE html>`</h3>
+  <p>Не тег — <strong>декларація типу документа (Document Type Declaration)</strong>, яка змушує браузер працювати у сучасному Standards mode. Завжди повинна бути першим рядком будь-якого HTML файлу.</p>
 
-      <h2>Кожна частина — детально</h2>
+  <h3>`<html lang="uk">`</h3>
+  <p>Кореневий елемент. Атрибут <code>lang</code> критично важливий для скрін-рідерів людей з порушенням зору (Accessibility / a11y) та для пошукових роботів Google.</p>
 
-      <h3>`<!DOCTYPE html>`</h3>
-      <p>Не тег — <strong>декларація</strong>, яка вмикає Standards mode замість Quirks mode. Завжди перший рядок файлу.</p>
+  <h3>`<head>` — мета-інформація</h3>
+  <div className="syntax-params">
+    <table className="params-table">
+      <thead><tr><th>Тег</th><th>Призначення</th><th>Обов'язковий?</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;meta charset="UTF-8"&gt;</code></td><td>Кодування. Без нього кирилиця перетвориться на нечитабельні символи.</td><td>Так</td></tr>
+        <tr><td><code>&lt;meta name="viewport"&gt;</code></td><td>Забезпечує правильне відображення масштабу 1:1 на смартфонах.</td><td>Так</td></tr>
+        <tr><td><code>&lt;title&gt;</code></td><td>Назва вкладки у браузері та заголовок у пошуковій видачі Google.</td><td>Так</td></tr>
+        <tr><td><code>&lt;link rel="stylesheet"&gt;</code></td><td>Підключення зовнішнього CSS файлу.</td><td>Рекомендовано</td></tr>
+        <tr><td><code>&lt;meta name="description"&gt;</code></td><td>Короткий опис сторінки для пошукового снипета SEO.</td><td>Рекомендовано</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-      <h3>`<html lang="uk">`</h3>
-      <p>Кореневий елемент. Атрибут `lang` обов'язковий для скрін-рідерів, пошукових систем і CSS-властивостей типу `quotes`.</p>
+<section className="quizzes-section my-10">
+  <h2>🎯 Бліц-перевірка знань: Структура HTML</h2>
 
-      <h3>`<head>` — мета-інформація</h3>
-      <div className="syntax-params">
-        <table className="params-table">
-          <thead><tr><th>Тег</th><th>Призначення</th><th>Обов'язковий?</th></tr></thead>
-          <tbody>
-            <tr><td>`<meta charset="UTF-8">`</td><td>Кодування. Без нього кирилиця — «кракозябри».</td><td>Так</td></tr>
-            <tr><td>`<meta name="viewport">`</td><td>Реальна ширина пристрою на мобільних.</td><td>Так</td></tr>
-            <tr><td>`<title>`</td><td>Назва вкладки і сніпет у Google.</td><td>Так</td></tr>
-            <tr><td>`<link rel="stylesheet">`</td><td>Підключення CSS.</td><td>Ні</td></tr>
-            <tr><td>`<meta name="description">`</td><td>Опис для пошукових систем.</td><td>Рекомендовано</td></tr>
-          </tbody>
-        </table>
-      </div>
+  <div className="space-y-6">
+    <QuizCard
+      question="Що відбудеться, якщо повністю прибрати рядок <!DOCTYPE html> з початку файлу?"
+      options="Сторінка взагалі не відкриється у браузері | Браузер увімкне Quirks Mode, через що сучасні CSS правила (Box Model, flex/grid) можуть відображатися некоректно | Файл автоматично видалиться | JavaScript перестане виконуватися"
+      correctIndex="1"
+      explanation="Без <!DOCTYPE html> рушій браузера перемикається у Quirks Mode для сумісності зі старими веб-сайтами кінця 1990-х років, що ламає розрахунки розмірів Box Model та сучасний лейаут."
+    />
 
-      <h3>DOM-дерево</h3>
-      
+    <QuizCard
+      question="Для чого обов'язково потрібен мета-тег <meta name='viewport' content='width=device-width, initial-scale=1.0'>?"
+      options="Для підключення шрифтів Google Fonts | Для того, щоб мобільний браузер відображав сторінку у реальному масштабі пристрою 1:1, а не стискав десктопний макет у 980px | Для прискорення завантаження картинок | Для роботи темної теми"
+      correctIndex="1"
+      explanation="За замовчуванням мобільні браузери відкривають сторінку на віртуальному екрані 980px та масштабують її дрібним шрифтом. Viewport meta tag повідомляє браузеру використовувати фізичну ширину екрана смартфона (width=device-width)."
+    />
 
-```html
-// DOM-дерево для прикладу вище
-Document
-└─ html[lang="uk"]
-   ├─ head
-   │  ├─ meta[charset="UTF-8"]
-   │  ├─ meta[name="viewport"]
-   │  └─ title "Моя перша сторінка"
-   └─ body
-      ├─ h1 "Привіт, світ!"
-      └─ p "Це мій перший HTML-документ."
-```
+    <QuizCard
+      question="Який із наведених елементів є Void (самозакриваючим) елементом в HTML5?"
+      options="<div> | <p> | <img> | <section>"
+      correctIndex="2"
+      explanation="Тег <img> є Void-елементом (як і <meta>, <link>, <input>, <br>, <hr>). Він не містить вкладеного текстового контенту і не потребує закриваючого тега </img>."
+    />
+  </div>
+</section>
 
+<GitHubTaskCard
+  title="Практикум: Створення персональної HTML5-візитки з перевіркою валідності"
+  difficulty="easy"
+  testRunner="HTML-validate & Vitest"
+  repoTemplate="https://github.com/frontend-camp/html-basics-starter"
+  description="Створіть валідну базову HTML5 розмітку сторінки розробника з правильною структурою мета-тегів, семантичними блоками та посиланням на стилі."
+  files={`index.html: Головний HTML-документ візитки
+assets/avatar.png: Зображення профілю
+README.md: Опис проекту та автора`}
+  criteria={`Присутня декларація <!DOCTYPE html> та атрибут lang="uk" у тезі <html>
+Налаштовані обов'язкові мета-теги charset="UTF-8" та viewport
+Тег <title> містить ім'я та професію розробника
+Вміст сторінки у <body> містить заголовки <h1>, <h2>, параграфи <p> та зображення <img> з обов'язковим атрибутом alt
+Документ проходить автоматичну перевірку валідатором без помилок`}
+  testFileCode={`// test/html-structure.test.js
+import { describe, it, expect } from 'vitest';
+import fs from 'fs';
+import { JSDOM } from 'jsdom';
 
+describe('HTML5 Structure Validation', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const dom = new JSDOM(html);
+  const { document } = dom.window;
 
-      <div className="doc-links">
-        <h4>Документація</h4>
-        <ul>
-          <li><a href="https://developer.mozilla.org/uk/docs/Web/HTML/Reference/Elements/html" target="_blank" rel="noopener">html — MDN</a></li>
-          <li><a href="https://validator.w3.org/" target="_blank" rel="noopener">W3C Validator</a></li>
-        </ul>
-      </div>
-    </section>
+  it('повинен містити коректний DOCTYPE та lang атрибут', () => {
+    expect(html.trim().toLowerCase().startsWith('<!doctype html>')).toBe(true);
+    expect(document.documentElement.getAttribute('lang')).toBeTruthy();
+  });
 
-    <section className="tip-block tip-block--warn">
-      <div className="tip-block__title"><span>⚠️</span> Типові помилки</div>
-      <ul>
-        <li><strong>Без DOCTYPE</strong> — Quirks mode, CSS поводиться інакше (box model!).</li>
-        <li><strong>Без charset</strong> — кирилиця відображається «кракозябрами».</li>
-        <li><strong>Без viewport</strong> — мобільний браузер симулює ширину 980px.</li>
-        <li><strong>Без lang</strong> — скрін-рідери читають неправильною мовою.</li>
-      </ul>
-    </section>
+  it('повинен містити обовʼязкові мета-теги charset та viewport', () => {
+    const charset = document.querySelector('meta[charset]');
+    const viewport = document.querySelector('meta[name="viewport"]');
+    expect(charset).not.toBeNull();
+    expect(viewport).not.toBeNull();
+  });
 
-    <section className="practice-block">
-      <div className="practice-block__title"><span>⚡</span> Практика</div>
-      <ol>
-        <li>Створи файл `index.html` з мінімальною структурою. В `<body>` — `<h1>` зі своїм ім'ям.</li>
-        <li>Навмисно видали DOCTYPE. Чи щось змінилось у браузері? Перевір DevTools → Console.</li>
-        <li>Перевір файл на <a href="https://validator.w3.org/#validate_by_input" target="_blank" rel="noopener">W3C Validator</a>. Виправ всі помилки.</li>
-        <li>Введи `!` + Tab у VS Code — Emmet вставить базову структуру.</li>
-        <li>DevTools → Elements: знайди `<html>` → `<head>` → `<body>`.</li>
-      </ol>
-    </section>
-
-    <section className="homework-block">
-      <div className="homework-block__title"><span>📝</span> Самоперевірка</div>
-      <ol>
-        <li>Навіщо `<!DOCTYPE html>`? Що без нього?</li>
-        <li>Чому `lang` важливий для доступності?</li>
-        <li>Яка різниця між `<head>` і `<body>`?</li>
-        <li>Що таке DOM і як він пов'язаний з HTML?</li>
-      </ol>
-    </section>
-
-    <section className="hw-review-block">
-      <div className="hw-review-block__title"><span>📋</span> Розбір на співбесідах</div>
-      <div className="hw-review-items">
-        <article className="hw-review-item">
-          <h4 className="hw-review-item__task">«Що таке DOCTYPE?»</h4>
-          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Перший рядок в HTML» — без пояснення навіщо.</p>
-          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Вмикає Standards mode замість Quirks mode. Без нього CSS box model поводиться по-іншому.</p>
-        </article>
-        <article className="hw-review-item">
-          <h4 className="hw-review-item__task">«Навіщо meta viewport?»</h4>
-          <p className="hw-review-item__bad"><span className="hw-review-label">❌</span> «Для мобільних» — занадто розмито.</p>
-          <p className="hw-review-item__good"><span className="hw-review-label">✅</span> Без нього мобільний браузер симулює 980px і зменшує сторінку. `width=device-width` — реальна ширина. `initial-scale=1` — без масштабування.</p>
-        </article>
-      </div>
-    </section>
-
-    <section className="pro-tips-block">
-      <div className="pro-tips-block__title"><span>✨</span> Фішки</div>
-      <ul>
-        <li>`!` + Tab у VS Code — Emmet вставляє мінімальну структуру.</li>
-        <li>Браузери додають `<html>`, `<head>`, `<body>` автоматично, навіть якщо їх немає в коді.</li>
-        <li>`<meta charset>` має бути в перших 1024 байтах файлу.</li>
-        <li>`lang` можна ставити на будь-який елемент: `<span lang="en">Hello</span>`.</li>
-      </ul>
-    </section>
+  it('повинен мати заповнений заголовок title та h1 у body', () => {
+    expect(document.title.trim().length).toBeGreaterThan(3);
+    const h1 = document.querySelector('h1');
+    expect(h1).not.toBeNull();
+    expect(h1.textContent.trim().length).toBeGreaterThan(2);
+  });
+});`}
+  testFileName="html-structure.test.js"
+  tips={`Завжди додавайте осмислений опис у alt до кожного зображення — це критично для a11y.
+Перевіряйте свій код онлайн через офіційний W3C Markup Validation Service.`}
+/>
