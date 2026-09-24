@@ -1,0 +1,175 @@
+# 04. Отримання частини рядка та заміна
+
+<article className="lesson-card">
+  <h2>Маніпуляції з підрядками</h2>
+  <p>Часто виникає потреба вирізати частину тексту (наприклад, перші 100 символів статті для превʼю) або замінити застарілі слова чи шаблони на нові значення. У JavaScript для цього призначені методи <strong>slice</strong>, <strong>replace</strong> та сучасний <strong>replaceAll</strong>.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">✂️</span> Аналогія: Ножиці та трафарет</div>
+  <p>Метод <code>slice(start, end)</code> працює як канцелярські ножиці: ви вказуєте початкову та кінцеву позначки на лінійці, і отримуєте вирізаний шматочок тексту. А <code>replace</code> — це трафарет: він знаходить збіг і накладає зверху новий шар тексту.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Slice / Substring Extraction</div>
+      <div className="text-xs text-muted-foreground mt-1">Вирізання частини рядка у діапазоні індексів <code>[start, end)</code> (включаючи <code>start</code>, не включаючи <code>end</code>).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Truncation / Ellipsis</div>
+      <div className="text-xs text-muted-foreground mt-1">Усікання довгого тексту з додаванням трикрапки (<code>...</code>) для карток або превʼю.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">String Replacement (replaceAll)</div>
+      <div className="text-xs text-muted-foreground mt-1">Заміна одного входження або всіх збігів підрядка новим значенням.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Delimiter / Split</div>
+      <div className="text-xs text-muted-foreground mt-1">Розділювач, за яким рядок розбивається на масив елементів (<code>str.split(',')</code>).</div>
+    </div>
+  </div>
+
+  <h2>1. Вирізання: str.slice(start, end)</h2>
+
+```javascript
+const sentence = "Frontend Development";
+
+// slice(start, end) — end НЕ включається у результат!
+console.log(sentence.slice(0, 8)); // "Frontend"
+console.log(sentence.slice(9));    // "Development" (від 9 до кінця)
+
+// Підтримка від'ємних індексів (рахунок з кінця):
+console.log(sentence.slice(-11));    // "Development"
+console.log(sentence.slice(0, -12)); // "Frontend"
+```
+
+  <Callout type="info" title="Чому завжди обирають slice замість substring / substr?">
+    Історично в JS існували три схожі методи: <code>slice</code>, <code>substring</code> та <code>substr</code> (застарілий). Сучасний стандарт та спільнота рекомендують завжди використовувати <strong>slice</strong>, оскільки він повністю підтримує від'ємні індекси і працює однаково як на рядках, так і на масивах.
+  </Callout>
+
+  <h2>2. Заміна підрядків: replace та replaceAll</h2>
+
+```javascript
+const text = "Я люблю JavaScript. JavaScript — це круто!";
+
+// 1. replace замінює ТІЛЬКИ ПЕРШИЙ збіг:
+console.log(text.replace("JavaScript", "TypeScript"));
+// "Я люблю TypeScript. JavaScript — це круто!"
+
+// 2. replaceAll замінює ВСІ збіги у всьому тексті:
+console.log(text.replaceAll("JavaScript", "TypeScript"));
+// "Я люблю TypeScript. TypeScript — це круто!"
+```
+
+  <h2>3. Розбиття на масив: str.split(delimiter, limit)</h2>
+
+```javascript
+const tags = "react, nextjs, typescript, tailwind";
+
+// Розбиття за розділювачем:
+const tagList = tags.split(", ");
+console.log(tagList); // ["react", "nextjs", "typescript", "tailwind"]
+
+// Розбиття по літерах:
+const word = "Код";
+console.log(word.split("")); // ["К", "о", "д"]
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Напишіть функцію генерації скороченого опису (truncate) для карток каталогу:
+  </p>
+
+  <CodeRunner
+    initialCode={`function truncateText(text, maxLength = 30) {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trimEnd() + '...';
+}
+
+const description = "Сучасний веб-стек включає React 19, Next.js App Router, Tailwind CSS та TypeScript.";
+
+console.log("Оригінал (довжина " + description.length + "):");
+console.log(description);
+
+console.log("\\nПревʼю на 25 символів:");
+console.log(truncateText(description, 25));
+
+console.log("\\nПревʼю на 50 символів:");
+console.log(truncateText(description, 50));
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Що поверне вираз 'Developer'.slice(0, 3)?"
+      options={[
+        "'Dev'",
+        "'Deve'",
+        "'De'",
+        "'velo'"
+      ]}
+      correctIndex={0}
+      explanation="slice(0, 3) бере символи з індексами 0, 1 та 2 (індекс 3 не включається), що дає 'Dev'."
+    />
+    <QuizCard
+      question="Яка різниця між str.replace('a', 'b') та str.replaceAll('a', 'b')?"
+      options={[
+        "replace швидший, але робить те саме",
+        "replace замінює лише перше входження, replaceAll — усі входження",
+        "replaceAll працює лише з регулярними виразами",
+        "replace ігнорує регістр, а replaceAll чутливий до регістру"
+      ]}
+      correctIndex={1}
+      explanation="Метод replace() без глобального регулярного виразу замінює лише перше знайдене входження, тоді як replaceAll() замінює кожен знайдений підрядок."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Генератор URL-слагів та утиліти тексту"
+  slug="04-slug-generator"
+  difficulty="easy"
+  timeEstimate="25 хвилин"
+  description="Створіть модуль text-tools.js для генерації читабельних URL-слагів зі заголовків статей, цензурування заборонених слів та скорочення текстів."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У src/text-tools.js реалізуйте функцію slugify(title), яка переводить текст у нижній регістр, замінює всі пробіли на дефіси і прибирає зайві символи.",
+    "Створіть censorWords(text, bannedWords), яка замінює всі заборонені слова з масиву на '***'.",
+    "Реалізуйте extractDomain(email), яка повертає назву домену з email-адреси за допомогою slice/split.",
+    "Запустіть npm test і перевірте проходження тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function slugify(title) {
+  if (!title) return '';
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9а-яіїєґ\\s-]/gi, '')
+    .replace(/\\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+export function censorWords(text, bannedWords = []) {
+  if (!text) return '';
+  let result = text;
+  for (const word of bannedWords) {
+    result = result.replaceAll(word, '***');
+  }
+  return result;
+}
+
+export function extractDomain(email) {
+  if (!email || !email.includes('@')) return null;
+  return email.split('@')[1].toLowerCase();
+}`}
+/>

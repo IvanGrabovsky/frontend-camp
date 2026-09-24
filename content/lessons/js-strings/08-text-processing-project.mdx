@@ -1,0 +1,189 @@
+# 08. Практикум: Текстовий процесор
+
+<article className="lesson-card">
+  <h2>Підсумковий проект модуля: Текстовий аналізатор</h2>
+  <p>У цьому підсумковому уроці ви обʼєднаєте всі вивчені знання: роботу з кодуванням UTF-16, методами <code>slice</code>/<code>replace</code>, регулярними виразами, шаблонними рядками та міжнародним форматуванням <code>Intl</code> для створення повноцінного <strong>Text Processing Engine</strong>.</p>
+  <p>Такі утиліти є фундаментом для редакторів блогів (Medium, Dev.to), CMS-систем та панелей адміністрування.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🏭</span> Архітектура: Конвеєр обробки тексту</div>
+  <p>Текстовий процесор працює як конвеєр: на вході ми маємо «брудний» сирий текст від користувача, який проходить через станції очищення (trim / regex sanitize), підрахунку метрик (words, reading time), автоформатування та фінальної генерації HTML превʼю.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Reading Time Estimation</div>
+      <div className="text-xs text-muted-foreground mt-1">Оцінка часу читання статті (середня швидкість читання людини ~ 200 слів за хвилину).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Word Count / Lexical Density</div>
+      <div className="text-xs text-muted-foreground mt-1">Підрахунок унікальних слів та статистичний аналіз тексту.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">HTML Entity Escaping</div>
+      <div className="text-xs text-muted-foreground mt-1">Захист від XSS-ін'єкцій шляхом заміни небезпечних символів на безпечні HTML-сутності.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Markdown Parser / Formatter</div>
+      <div className="text-xs text-muted-foreground mt-1">Перетворення базового Markdown синтаксису (<code>**bold**</code>, <code>*italic*</code>, <code># заголовки</code>) у чистий HTML.</div>
+    </div>
+  </div>
+
+  <h2>Архітектура проекту: TextProcessor</h2>
+
+```javascript
+class TextProcessor {
+  constructor(rawText = '') {
+    this.text = rawText.trim();
+  }
+
+  // 1. Статистика слів та символів
+  getStats() {
+    const characters = this.text.length;
+    const charactersWithoutSpaces = this.text.replace(/\s+/g, '').length;
+    const words = this.text ? this.text.match(/[\wа-яіїєґ'-]+/gi)?.length || 0 : 0;
+    const readingTimeMinutes = Math.max(1, Math.ceil(words / 200));
+
+    return {
+      characters,
+      charactersWithoutSpaces,
+      words,
+      readingTimeMinutes,
+    };
+  }
+
+  // 2. Генерація безпечного HTML прев'ю
+  toSafeHtml() {
+    return this.text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+}
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Протестуйте аналізатор тексту в дії на реальному фрагменті статті:
+  </p>
+
+  <CodeRunner
+    initialCode={`function analyzeArticle(text) {
+  const words = text.match(/[\\wа-яіїєґ'-]+/gi) || [];
+  const wordCount = words.length;
+  const readingMinutes = Math.ceil(wordCount / 180);
+  
+  // Частотний аналіз найпопулярніших слів
+  const freqMap = {};
+  for (const w of words) {
+    const cleanWord = w.toLowerCase();
+    if (cleanWord.length > 3) { // ігноруємо сполучники
+      freqMap[cleanWord] = (freqMap[cleanWord] || 0) + 1;
+    }
+  }
+  
+  const topWords = Object.entries(freqMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([word, count]) => \`\${word} (\${count})\`);
+
+  return {
+    "Слів": wordCount,
+    "Час читання": \`~\${readingMinutes} хв\`,
+    "Топ слова": topWords.join(', ')
+  };
+}
+
+const sample = \`JavaScript — найпопулярніша мова програмування у світі. 
+Сучасний JavaScript дозволяє створювати надшвидкі веб-додатки. 
+Мова JavaScript розвивається щороку стандартом ECMAScript.\`;
+
+console.log("Аналіз тексту:");
+console.table(analyzeArticle(sample));
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Яка середня швидкість читання (слів/хв) зазвичай використовується для розрахунку Reading Time статті?"
+      options={[
+        "50 слів на хвилину",
+        "200 слів на хвилину",
+        "800 слів на хвилину",
+        "1500 слів на хвилину"
+      ]}
+      correctIndex={1}
+      explanation="Стандартом у веб-інтерфейсах (Medium, Hashnode, Dev.to) вважається швидкість приблизно 180-220 слів на хвилину."
+    />
+    <QuizCard
+      question="Чому важливо екранувати спецсимволи (&, &lt;, &gt;, &quot;) перед вставкою тексту користувача у DOM?"
+      options={[
+        "Щоб зменшити розмір тексту в пам'яті",
+        "Для захисту веб-додатка від Cross-Site Scripting (XSS) атак",
+        "Щоб браузер швидше завантажував сторінку",
+        "Це вимога CSS Grid"
+      ]}
+      correctIndex={1}
+      explanation="Якщо не екранувати '<' та '>', користувач може надіслати небезпечний тег <script> або шкідливий атрибут onerror, що призведе до виконання довільного коду (XSS атака)."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Комплексний модуль TextProcessor"
+  slug="08-text-processor-project"
+  difficulty="hard"
+  timeEstimate="45 хвилин"
+  description="Створіть повнофункціональний модуль processor.js, який аналізує текст, генерує слаги, рахує статистику та конвертує простий Markdown у безпечний HTML."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "Створіть клас TextProcessor(text) у src/processor.js.",
+    "Реалізуйте методи getStats(), sanitize(), slugify() та convertMarkdownToHtml().",
+    "Додайте метод getReadingTimeText(locale = 'uk-UA') з використанням Intl.PluralRules.",
+    "Запустіть npm test і переконайтеся, що всі модульні тести проходять успішно."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export class TextProcessor {
+  constructor(text = '') {
+    this.text = String(text);
+  }
+
+  getStats() {
+    const trimmed = this.text.trim();
+    const words = trimmed ? (trimmed.match(/[\\wа-яіїєґ'-]+/gi) || []) : [];
+    return {
+      chars: this.text.length,
+      words: words.length,
+      readingMinutes: Math.max(1, Math.ceil(words.length / 200))
+    };
+  }
+
+  sanitize() {
+    return this.text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  convertMarkdownToHtml() {
+    return this.sanitize()
+      .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
+      .replace(/\\*(.*?)\\*/g, '<em>$1</em>');
+  }
+}`}
+/>

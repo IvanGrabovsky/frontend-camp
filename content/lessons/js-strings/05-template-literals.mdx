@@ -1,0 +1,201 @@
+# 05. Шаблонні рядки та Tagged Templates
+
+<article className="lesson-card">
+  <h2>Шаблонні рядки (Template Literals)</h2>
+  <p>Шаблонні рядки (<strong>Template Literals</strong>), які зʼявилися в ES6 і позначаються зворотними лапками (<strong>`backticks`</strong>), докорінно змінили роботу з текстом у JavaScript. Вони дозволяють легко вставляти будь-які JS-вирази через синтаксис <code>${`{...}`}</code>, підтримують багаторядковий текст без символів <code>\n</code> та надають потужний механізм тегованих шаблонів (<strong>Tagged Templates</strong>).</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🧩</span> Аналогія: Бланк з динамічними полями</div>
+  <p>Замість того, щоб склеювати довгий лист із паперових клаптиків плюсами (<code>"Привіт, " + name + "!"</code>), шаблонний рядок — це готовий друкований бланк, у який ви вставляєте змінні прямо у потрібні місця: <code>`Привіт, ${name}!`</code>.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Template Literal (Backticks)</div>
+      <div className="text-xs text-muted-foreground mt-1">Рядок у зворотних лапках <code>`...`</code> з підтримкою інтерполяції та переносу рядків.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">String Interpolation</div>
+      <div className="text-xs text-muted-foreground mt-1">Вставка значень змінних або результатів обчислення виразів <code>${`{expression}`}</code>.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Tagged Template</div>
+      <div className="text-xs text-muted-foreground mt-1">Функція-тег, яка перехоплює розбір шаблонного рядка для кастомної обробки або санітизації.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">String.raw</div>
+      <div className="text-xs text-muted-foreground mt-1">Отримання «сирого» рядка без обробки керуючих послідовностей на зразок <code>\n</code> чи <code>\t</code>.</div>
+    </div>
+  </div>
+
+  <h2>1. Інтерполяція виразів</h2>
+
+```javascript
+const user = { name: "Марія", score: 95, total: 100 };
+
+// Вставка змінних, математики та тернарних операторів
+const summary = `Студент: ${user.name}
+Результат: ${user.score} з ${user.total} (${(user.score / user.total) * 100}%)
+Статус: ${user.score >= 80 ? '✅ Здано на відмінно' : '⚠️ Потрібно доопрацювати'}`;
+
+console.log(summary);
+```
+
+  <h2>2. Багаторядковий текст та HTML розмітка</h2>
+
+```javascript
+// Зворотні лапки зберігають усі відступи та переноси рядків без \n
+const productCard = `
+  <div class="card">
+    <h3>Кавомашина DeLonghi</h3>
+    <p class="price">14 999 ₴</p>
+    <button onclick="addToCart()">Купити</button>
+  </div>
+`;
+```
+
+  <h2>3. Теговані шаблони (Tagged Templates)</h2>
+  <p>Тегований шаблон — це виклик функції без круглих дужок, де функція першим аргументом отримує масив статичних частин рядка, а наступними аргументами — значення інтерпольованих виразів:</p>
+
+```javascript
+// Функція безпечного екранування HTML від XSS атак
+function safeHtml(strings, ...values) {
+  return strings.reduce((acc, str, i) => {
+    let val = values[i] !== undefined ? values[i] : '';
+    // Екрануємо небезпечні символи у значеннях користувача
+    if (typeof val === 'string') {
+      val = val
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+    }
+    return acc + str + val;
+  }, '');
+}
+
+const userInput = "<script>alert('взлом!')</script>";
+const safeCard = safeHtml`<div>Привіт, ${userInput}!</div>`;
+console.log(safeCard); // "<div>Привіт, &lt;script&gt;alert('взлом!')&lt;/script&gt;!</div>"
+```
+
+  <Callout type="tip" title="Де використовуються Tagged Templates у реальних бібліотеках?">
+    Саме на цьому механізмі побудовані такі інструменти, як <code>styled.div`...`</code> у <strong>styled-components</strong>, <code>graphql`...`</code> у <strong>Relay/Apollo</strong> та безпечні SQL-запити <code>sql`SELECT * FROM users WHERE id = ${`id`}`</code>.
+  </Callout>
+
+  <h2>4. Сирі рядки: String.raw</h2>
+
+```javascript
+// Без String.raw: \n перетвориться на новий рядок
+console.log("C:\\Users\\notes\\new.txt");
+
+// З String.raw: бекслеші зберігаються як є
+const windowsPath = String.raw`C:\Users\notes\new.txt`;
+console.log(windowsPath); // "C:\Users\notes\new.txt"
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Протестуйте роботу тегованого шаблону для локалізації та форматування цін:
+  </p>
+
+  <CodeRunner
+    initialCode={`// Функція-тег форматування валют
+function uah(strings, ...values) {
+  return strings.reduce((acc, str, i) => {
+    const val = values[i];
+    let formattedVal = '';
+    if (typeof val === 'number') {
+      formattedVal = val.toLocaleString('uk-UA') + ' ₴';
+    } else if (val !== undefined) {
+      formattedVal = String(val);
+    }
+    return acc + str + formattedVal;
+  }, '');
+}
+
+const item = 'MacBook Pro 16"';
+const price = 98500;
+const discount = 5000;
+
+console.log(uah\`Ноутбук \${item} коштує \${price}, зі знижкою: \${price - discount}\`);
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Які лапки використовуються для створення шаблонних рядків (Template Literals)?"
+      options={[
+        "Одинарні лапки ''",
+        "Подвійні лапки \"\"",
+        "Зворотні лапки (backticks) ``",
+        "Кутові дужки <>"
+      ]}
+      correctIndex={2}
+      explanation="Шаблонні рядки задаються виключно зворотними лапками ``, що розташовані на клавіші під Esc (~)."
+    />
+    <QuizCard
+      question="Що першим аргументом отримує функція у тегованому шаблоні (Tagged Template)?"
+      options={[
+        "Масив інтерпольованих значень",
+        "Масив статичних рядкових частин шаблону",
+        "Підсумковий зібраний рядок",
+        "Об'єкт конфігурації"
+      ]}
+      correctIndex={1}
+      explanation="Першим аргументом передається масив статичних рядків (розбитих по місцях інтерполяції), а решта параметрів (...values) — це обчислені значення виразів."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Двигун шаблонізації повідомлень"
+  slug="05-template-engine"
+  difficulty="medium"
+  timeEstimate="30 хвилин"
+  description="Створіть модуль template.js з функціями генерації персоналізованих email-розсилок та безпечним генератором HTML-розмітки."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У src/template.js створіть функцію renderNotification(user, notification), яка формує привітальне повідомлення з датою та кнопкою дії.",
+    "Реалізуйте теговану функцію highlight(strings, ...values), яка обгортає всі інтерпольовані числові значення в тег <strong>...</strong>.",
+    "Створіть функцію createReceiptTemplate(order), яка генерує багаторядковий текстовий чек.",
+    "Запустіть npm test і переконайтеся у проходженні тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function renderNotification(user, notification) {
+  return \`Привіт, \${user.name}! У вас \${notification.unreadCount} нових повідомлень від \${notification.sender}.\`;
+}
+
+export function highlight(strings, ...values) {
+  return strings.reduce((acc, str, i) => {
+    const val = values[i];
+    let rendered = '';
+    if (typeof val === 'number') {
+      rendered = \`<strong>\${val}</strong>\`;
+    } else if (val !== undefined) {
+      rendered = String(val);
+    }
+    return acc + str + rendered;
+  }, '');
+}
+
+export function createReceiptTemplate(order) {
+  return \`==============================
+ЧЕК №\${order.id}
+Клієнт: \${order.customer}
+Сума: \${order.total.toFixed(2)} грн
+Статус: \${order.isPaid ? 'СПЛАЧЕНО' : 'ОЧІКУЄ ОПЛАТИ'}
+==============================\`;
+}`}
+/>

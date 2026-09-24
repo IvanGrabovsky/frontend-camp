@@ -1,0 +1,201 @@
+# 07. Міжнародне форматування (Intl API)
+
+<article className="lesson-card">
+  <h2>Інтернаціоналізація з обʼєктом Intl</h2>
+  <p>Створення сучасного веб-додатку вимагає коректного відображення дат, грошових сум, відсотків та відносного часу («3 хвилини тому») для користувачів з різних куточків світу. Замість встановлення важких сторонніх бібліотек на кшталт Moment.js, сучасний JavaScript має вбудований, високоефективний стандартний простір імен <strong>Intl</strong> (ECMAScript Internationalization API).</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🌍</span> Аналогія: Універсальний перекладач та конвертер</div>
+  <p>В Україні ціну записують як <code>1 250,50 ₴</code> (пробіл між тисячами, кома для дробів), а в США — <code>$1,250.50</code> (кома між тисячами, крапка для дробів). Обʼєкт <code>Intl</code> автоматично знає всі культурні та граматичні правила кожної країни світу.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">i18n & l10n (Internationalization)</div>
+      <div className="text-xs text-muted-foreground mt-1">Інтернаціоналізація (адаптація коду для роботи з будь-якими мовами) та локалізація (набір перекладів для конкретного регіону).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">BCP 47 Locale Tag</div>
+      <div className="text-xs text-muted-foreground mt-1">Мовний ідентифікатор локалі, наприклад: <code>uk-UA</code> (українська), <code>en-US</code> (американська англійська), <code>de-DE</code> (німецька).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Pluralization Rules</div>
+      <div className="text-xs text-muted-foreground mt-1">Правила зміни закінчень слів залежно від кількості (1 коментар, 2 коментарі, 5 коментарів).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Relative Time Formatting</div>
+      <div className="text-xs text-muted-foreground mt-1">Форматування часу відносно теперішнього моменту («щойно», «2 години тому», «завтра»).</div>
+    </div>
+  </div>
+
+  <h2>1. Форматування чисел та валют: Intl.NumberFormat</h2>
+
+```javascript
+// 1. Форматування цін у гривнях (UAH)
+const uahFormatter = new Intl.NumberFormat('uk-UA', {
+  style: 'currency',
+  currency: 'UAH',
+});
+console.log(uahFormatter.format(124500.75)); // "124 500,75 ₴"
+
+// 2. Форматування цін у доларах (USD)
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+console.log(usdFormatter.format(124500.75)); // "$124,500.75"
+
+// 3. Компактні великі числа для лічильників переглядів (1.2M, 50K)
+const compactFormatter = new Intl.NumberFormat('uk-UA', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+console.log(compactFormatter.format(1_500_000)); // "1,5 млн"
+```
+
+  <h2>2. Форматування дат і часу: Intl.DateTimeFormat</h2>
+
+```javascript
+const now = new Date('2026-09-24T18:30:00');
+
+// Повний текстовий формат українською
+const ukDate = new Intl.DateTimeFormat('uk-UA', {
+  dateStyle: 'full',
+  timeStyle: 'short',
+}).format(now);
+console.log(ukDate); // "четвер, 24 вересня 2026 р. о 18:30"
+```
+
+  <h2>3. Відносний час: Intl.RelativeTimeFormat</h2>
+
+```javascript
+const rtf = new Intl.RelativeTimeFormat('uk-UA', { numeric: 'auto' });
+
+console.log(rtf.format(-1, 'day'));    // "вчора"
+console.log(rtf.format(-5, 'minute')); // "5 хвилин тому"
+console.log(rtf.format(2, 'month'));   // "через 2 місяці"
+```
+
+  <h2>4. Граматика числівників (плюралізація): Intl.PluralRules</h2>
+
+```javascript
+// В українській мові є 3 форми множини: one (1), few (2-4), many (5-20)
+const pr = new Intl.PluralRules('uk-UA');
+
+const suffixes = {
+  one: 'урок',
+  few: 'уроки',
+  many: 'уроків',
+  other: 'уроків',
+};
+
+function formatLessonsCount(count) {
+  const rule = pr.select(count); // повертає 'one' | 'few' | 'many'
+  return `${count} ${suffixes[rule]}`;
+}
+
+console.log(formatLessonsCount(1));  // "1 урок"
+console.log(formatLessonsCount(3));  // "3 уроки"
+console.log(formatLessonsCount(15)); // "15 уроків"
+console.log(formatLessonsCount(21)); // "21 урок"
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Протестуйте генерацію статусу активності користувача з локалізованим часом:
+  </p>
+
+  <CodeRunner
+    initialCode={`// Функція форматування відносного часу онлайн
+function formatLastSeen(minutesAgo) {
+  const rtf = new Intl.RelativeTimeFormat('uk-UA', { numeric: 'auto' });
+  
+  if (minutesAgo < 1) return 'щойно онлайн';
+  if (minutesAgo < 60) return rtf.format(-minutesAgo, 'minute');
+  
+  const hours = Math.floor(minutesAgo / 60);
+  if (hours < 24) return rtf.format(-hours, 'hour');
+  
+  const days = Math.floor(hours / 24);
+  return rtf.format(-days, 'day');
+}
+
+console.log(formatLastSeen(0));   // щойно онлайн
+console.log(formatLastSeen(12));  // 12 хвилин тому
+console.log(formatLastSeen(180)); // 3 години тому
+console.log(formatLastSeen(2880));// 2 дні тому
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Який тег локалі використовується для України та української мови за стандартом BCP 47?"
+      options={[
+        "'ua-UK'",
+        "'uk-UA'",
+        "'ukr-UA'",
+        "'ua-UA'"
+      ]}
+      correctIndex={1}
+      explanation="Стандартний ідентифікатор локалі: код мови uk (Ukrainian) та код країни UA (Ukraine) — 'uk-UA'."
+    />
+    <QuizCard
+      question="Який клас із простору Intl допомагає правильно узгодити закінчення слів із кількістю (1 файл, 2 файли, 5 файлів)?"
+      options={[
+        "Intl.PluralRules",
+        "Intl.GrammarFormat",
+        "Intl.WordSelector",
+        "Intl.Collator"
+      ]}
+      correctIndex={0}
+      explanation="Intl.PluralRules визначає граматичну категорію числа (one, few, many, other) для конкретної мови."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Модуль локалізації i18n"
+  slug="07-intl-localization"
+  difficulty="medium"
+  timeEstimate="30 хвилин"
+  description="Створіть модуль i18n.js для автоматичного форматування валют, відносного часу коментарів та відмінювання українських слів."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У src/i18n.js створіть функцію formatMoney(amount, currency = 'UAH', locale = 'uk-UA').",
+    "Реалізуйте pluralize(count, forms), де forms — це об'єкт { one, few, many } (наприклад: { one: 'зірка', few: 'зірки', many: 'зірок' }).",
+    "Створіть formatCompactViews(count), яка перетворює 1450000 на '1,5 млн' для uk-UA.",
+    "Запустіть npm test і перевірте проходження тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function formatMoney(amount, currency = 'UAH', locale = 'uk-UA') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amount);
+}
+
+export function pluralize(count, forms) {
+  const pr = new Intl.PluralRules('uk-UA');
+  const rule = pr.select(count);
+  const word = forms[rule] || forms.many || forms.other;
+  return \`\${count} \${word}\`;
+}
+
+export function formatCompactViews(count, locale = 'uk-UA') {
+  return new Intl.NumberFormat(locale, {
+    notation: 'compact',
+    compactDisplay: 'short',
+  }).format(count);
+}`}
+/>

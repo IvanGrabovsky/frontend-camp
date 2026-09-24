@@ -1,0 +1,221 @@
+# 01. Числа: методи, Math та особливості float
+
+<article className="lesson-card">
+  <h2>Числа в JavaScript</h2>
+  <p>У JavaScript для більшості числових значень використовується єдиний тип даних — <strong>Number</strong>. Він реалізований за міжнародним стандартом <strong>IEEE 754</strong> (64-бітне число з плаваючою комою подвійної точності — double precision float). Це означає, що як цілі числа (<code>42</code>), так і дробові (<code>3.14</code>) зберігаються в однаковому форматі.</p>
+  <p>Для роботи з надвеликими цілими числами, що виходять за межі безпечного діапазону (понад $\pm 2^{53} - 1$), існує окремий примітивний тип — <strong>BigInt</strong> (наприклад, <code>9007199254740991n</code>).</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">⚖️</span> Аналогія: Дроби в двійковій системі</div>
+  <p>Чому <code>1/3</code> у десятковій системі — це нескінченний дріб <code>0.3333...</code>? Тому що трійка не є степенем 10. Точно так само у комп'ютері, який працює у двійковій системі (степені двійки: 2, 4, 8, 16...), дріб <code>0.1</code> (1/10) є нескінченним двійковим дробом. Через це виникає знаменита похибка <code>0.1 + 0.2 === 0.30000000000000004</code>.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Floating-point Number</div>
+      <div className="text-xs text-muted-foreground mt-1">Число з плаваючою комою (десятковий дріб) за стандартом IEEE 754.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">NaN (Not a Number)</div>
+      <div className="text-xs text-muted-foreground mt-1">Спеціальне числове значення, що сигналізує про помилку обчислень (наприклад, <code>0 / 0</code> або <code>"abc" * 2</code>).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Radix (Base)</div>
+      <div className="text-xs text-muted-foreground mt-1">Основа системи числення (2 — двійкова, 10 — десяткова, 16 — шістнадцяткова).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Precision / Rounding</div>
+      <div className="text-xs text-muted-foreground mt-1">Точність кількості знаків після коми та операції округлення чисел.</div>
+    </div>
+  </div>
+
+  <h2>Основні способи запису чисел</h2>
+
+```javascript
+// 1. Звичайні десяткові числа та дроби
+const itemsCount = 42;
+const price = 19.99;
+
+// 2. Експоненційний запис (наукова нотація: e або E)
+const oneMillion = 1e6; // 1 * 10^6 = 1_000_000
+const microsecond = 1e-6; // 0.000001
+
+// 3. Розділювач розрядів для читабельності (numeric separator _)
+const billion = 1_000_000_000;
+const colorHex = 0xff_ec_d2; // Hexadecimal (шістнадцятковий)
+const binaryFlags = 0b1010_0001; // Binary (двійковий)
+```
+
+  <h2>Парсинг рядків у числа: parseInt та parseFloat</h2>
+
+```javascript
+// parseInt зчитує ціле число до першого нечислового символу
+console.log(parseInt('100px')); // 100
+console.log(parseInt('12.5rem')); // 12
+console.log(parseInt('0xff', 16)); // 255 (шістнадцятковий)
+console.log(parseInt('1101', 2)); // 13 (двійковий)
+
+// parseFloat зберігає дробову частину
+console.log(parseFloat('19.99$')); // 19.99
+console.log(parseFloat('3.14.15')); // 3.14 (зупиняється на другій крапці)
+
+// Увага: якщо перший символ не є цифрою — повертається NaN
+console.log(parseInt('price: 50')); // NaN
+```
+
+  <Callout type="warning" title="Різниця між Number(str) та parseInt(str)">
+    <code>Number('100px')</code> поверне <code>NaN</code>, оскільки вимагає <em>повністю</em> числовий рядок. Натомість <code>parseInt('100px')</code> зчитає число <code>100</code>, ігноруючи текст у кінці. Завжди вказуйте основу (radix) для <code>parseInt(str, 10)</code> для уникнення старих багів.
+  </Callout>
+
+  <h2>Методи округлення та обʼєкт Math</h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Math.floor(x)</div>
+      <div className="text-xs text-muted-foreground mt-1">Округлення завжди вниз (до меншого цілого): <code>Math.floor(3.9) → 3</code>, <code>Math.floor(-3.1) → -4</code>.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Math.ceil(x)</div>
+      <div className="text-xs text-muted-foreground mt-1">Округлення завжди вгору (до більшого цілого): <code>Math.ceil(3.1) → 4</code>.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Math.round(x)</div>
+      <div className="text-xs text-muted-foreground mt-1">Математичне округлення до найближчого цілого: <code>Math.round(3.5) → 4</code>, <code>Math.round(3.4) → 3</code>.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Math.trunc(x)</div>
+      <div className="text-xs text-muted-foreground mt-1">Відкидає дробову частину без округлення: <code>Math.trunc(3.99) → 3</code>, <code>Math.trunc(-3.99) → -3</code>.</div>
+    </div>
+  </div>
+
+```javascript
+// Корисні методи Math
+console.log(Math.max(10, 45, 2, 99)); // 99
+console.log(Math.min(10, 45, 2, 99)); // 2
+console.log(Math.abs(-25)); // 25 (модуль числа)
+console.log(Math.pow(2, 8)); // 256 (або оператор 2 ** 8)
+console.log(Math.sqrt(144)); // 12
+
+// Генерація випадкового цілого числа у діапазоні [min, max]
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+console.log('Кубик 1-6:', getRandomInt(1, 6));
+```
+
+  <h2>Форматування кількості знаків: num.toFixed(digits)</h2>
+
+```javascript
+const total = 12.3456;
+
+// toFixed повертає РЯДОК, округлений до N знаків після коми
+console.log(total.toFixed(2)); // "12.35" (рядок!)
+console.log(total.toFixed(0)); // "12"
+
+// Щоб знову перетворити результат на число — використовуйте унарний плюс:
+const roundedPrice = +total.toFixed(2); // 12.35 (number)
+```
+
+  <Callout type="tip" title="Як безпечно порівнювати дробові числа?">
+    Використовуйте константу <code>Number.EPSILON</code>:
+    ```javascript
+    const sum = 0.1 + 0.2;
+    const areEqual = Math.abs(sum - 0.3) < Number.EPSILON;
+    console.log(areEqual); // true!
+    ```
+  </Callout>
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Поекспериментуйте з функціями обчислення вартості замовлення з урахуванням знижки та ПДВ:
+  </p>
+
+  <CodeRunner
+    initialCode={`// Розрахунок підсумкової суми чека
+function calculateTotal(price, discountPercent, taxPercent) {
+  const discountAmount = price * (discountPercent / 100);
+  const discountedPrice = price - discountAmount;
+  const taxAmount = discountedPrice * (taxPercent / 100);
+  const finalTotal = discountedPrice + taxAmount;
+  
+  return {
+    raw: finalTotal,
+    formatted: finalTotal.toFixed(2) + ' грн',
+    rounded: Math.round(finalTotal)
+  };
+}
+
+const receipt = calculateTotal(1250.75, 15, 20);
+console.log('Деталі чека:');
+console.table(receipt);
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Що поверне вираз parseInt('42.85px', 10)?"
+      options={[
+        "42.85",
+        "42",
+        "43",
+        "NaN"
+      ]}
+      correctIndex={1}
+      explanation="parseInt читає рядок символ за символом і зупиняється на першому нецілому символі (крапці), повертаючи ціле число 42."
+    />
+    <QuizCard
+      question="Який тип даних повертає метод num.toFixed(2)?"
+      options={[
+        "number",
+        "string",
+        "object",
+        "BigInt"
+      ]}
+      correctIndex={1}
+      explanation="Метод toFixed() завжди повертає рядкове представлення числа (string), щоб гарантувати збереження точної кількості нулів у кінці (наприклад, '10.00')."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Калькулятор фінансових операцій"
+  slug="01-financial-calculator"
+  difficulty="easy"
+  timeEstimate="25 хвилин"
+  description="Створіть модуль financial.js з функціями для безпечних фінансових розрахунків: конвертація валют з округленням, підрахунок чайових та перевірка валідності введеної суми."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У файлі src/financial.js реалізуйте функцію formatCurrency(amount, currencySymbol), яка повертає рядок формату '1,250.50 ₴'.",
+    "Створіть функцію calculateSplitBill(totalAmount, numberOfPeople, tipPercent), яка коректно рахує частку кожного з округленням до 2 знаків вгору (Math.ceil).",
+    "Реалізуйте isValidAmount(val), яка перевіряє, що вхідні дані є додатним скінченним числом (Number.isFinite, > 0).",
+    "Запустіть npm test і переконайтеся у проходженні тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function formatCurrency(amount, currencySymbol = 'грн') {
+  if (typeof amount !== 'number' || !Number.isFinite(amount)) return '0.00 ' + currencySymbol;
+  return amount.toFixed(2) + ' ' + currencySymbol;
+}
+
+export function calculateSplitBill(totalAmount, numberOfPeople, tipPercent = 0) {
+  if (numberOfPeople <= 0) throw new Error('Кількість людей має бути більше нуля');
+  const totalWithTip = totalAmount + (totalAmount * (tipPercent / 100));
+  const perPerson = totalWithTip / numberOfPeople;
+  return +perPerson.toFixed(2);
+}
+
+export function isValidAmount(val) {
+  const num = typeof val === 'string' ? parseFloat(val) : val;
+  return typeof num === 'number' && Number.isFinite(num) && num > 0;
+}`}
+/>

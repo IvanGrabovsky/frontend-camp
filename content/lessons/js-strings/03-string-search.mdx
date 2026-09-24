@@ -1,0 +1,208 @@
+# 03. Пошук підрядків у тексті
+
+<article className="lesson-card">
+  <h2>Пошук у рядках</h2>
+  <p>Пошук підрядка всередині тексту — одне з найчастіших завдань фронтенд-розробника: реалізація «живого пошуку» у каталозі, автодоповнення, перевірка протоколу в URL (<code>https://</code>) чи формату файлу (<code>.png</code>, <code>.pdf</code>).</p>
+  <p>Сучасний JavaScript пропонує зручні методи для будь-якого сценарію: від швидкої перевірки наявності (<code>includes</code>) до перевірки префіксів (<code>startsWith</code>) та суфіксів (<code>endsWith</code>).</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🔎</span> Аналогія: Пошук голки в копиці сіна (Needle in Haystack)</div>
+  <p>У програмуванні довгий рядок, у якому шукають, традиційно називають <em>«копицею сіна» (haystack)</em>, а шуканий підрядок — <em>«голкою» (needle)</em>. Метод <code>includes</code> відповідає на питання «Чи є голка? (так/ні)», а <code>indexOf</code> — «Де саме лежить голка (вказує координати або -1, якщо не знайдено)?».</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Substring (Needle)</div>
+      <div className="text-xs text-muted-foreground mt-1">Підрядок — неперервна частина вихідного рядка (наприклад, <code>"end"</code> у слові <code>"Frontend"</code>).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Case-Insensitive Search</div>
+      <div className="text-xs text-muted-foreground mt-1">Пошук без урахування регістру (коли "JS", "js" та "Js" вважаються ідентичними).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Prefix & Suffix Checking</div>
+      <div className="text-xs text-muted-foreground mt-1">Перевірка початку (<code>startsWith</code>) та закінчення (<code>endsWith</code>) рядка.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Off-by-one Error</div>
+      <div className="text-xs text-muted-foreground mt-1">Помилка на одиницю (типова при підрахунку довжин та індексів з 0).</div>
+    </div>
+  </div>
+
+  <h2>1. Перевірка наявності: str.includes(substring, startPos)</h2>
+
+```javascript
+const sentence = "JavaScript — мова вебу та інтерактивності";
+
+console.log(sentence.includes("мова")); // true
+console.log(sentence.includes("Python")); // false
+
+// Опціональний другий параметр — позиція, з якої починати пошук:
+console.log(sentence.includes("JavaScript", 5)); // false (бо починаємо з 5 індексу)
+```
+
+  <h2>2. Пошук позиції: str.indexOf та str.lastIndexOf</h2>
+
+```javascript
+const text = "Widget with id and name widget";
+
+// indexOf повертає індекс першого входження або -1, якщо не знайдено
+console.log(text.indexOf("with")); // 7
+console.log(text.indexOf("not_found")); // -1
+
+// Пошук з певного індексу
+console.log(text.indexOf("widget", 10)); // 24 (знайшов друге слово)
+
+// lastIndexOf шукає з кінця рядка до початку
+console.log(text.lastIndexOf("widget")); // 24
+```
+
+  <Callout type="warning" title="Класична пастка: if (str.indexOf(...))">
+    Ніколи не пишіть умову так:
+    ```javascript
+    // ❌ ПОМИЛКА: якщо підрядок на самому початку (індекс 0), 0 перетвориться на false!
+    if (str.indexOf("JavaScript")) { ... }
+
+    // ✅ ПРАВИЛЬНО:
+    if (str.includes("JavaScript")) { ... }
+    // або:
+    if (str.indexOf("JavaScript") !== -1) { ... }
+    ```
+  </Callout>
+
+  <h2>3. Початок та кінець рядка: startsWith та endsWith</h2>
+
+```javascript
+const url = "https://example.com/assets/logo.svg";
+
+// startsWith перевіряє початок
+console.log(url.startsWith("https://")); // true
+console.log(url.startsWith("http://"));  // false
+
+// endsWith перевіряє закінчення
+console.log(url.endsWith(".svg")); // true
+console.log(url.endsWith(".png")); // false
+
+// endsWith приймає другий аргумент — максимальну довжину для перевірки:
+console.log(url.endsWith(".com", 19)); // true (перевіряє рядок до 19 символу: "https://example.com")
+```
+
+  <h2>Регістронезалежний пошук (Case-Insensitive Search)</h2>
+
+```javascript
+function containsWord(source, query) {
+  return source.toLowerCase().includes(query.trim().toLowerCase());
+}
+
+console.log(containsWord("React & TypeScript Camp", "typescript")); // true
+console.log(containsWord("Next.js 15 App", "NEXT")); // true
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Реалізуйте логіку фільтрації каталогу курсів за ключовими словами та категоріями:
+  </p>
+
+  <CodeRunner
+    initialCode={`const courses = [
+  { title: "Повний курс JavaScript 2026", tags: ["js", "frontend", "web"] },
+  { title: "TypeScript для професіоналів", tags: ["ts", "types", "frontend"] },
+  { title: "Основи React та Next.js", tags: ["react", "next", "ssr"] },
+  { title: "Node.js та мікросервіси", tags: ["backend", "api", "node"] }
+];
+
+function searchCourses(list, searchTerm) {
+  const normalized = searchTerm.trim().toLowerCase();
+  if (!normalized) return list;
+  
+  return list.filter(item => {
+    const titleMatch = item.title.toLowerCase().includes(normalized);
+    const tagMatch = item.tags.some(tag => tag.toLowerCase().startsWith(normalized));
+    return titleMatch || tagMatch;
+  });
+}
+
+console.log("Результати пошуку для 'front':");
+console.table(searchCourses(courses, "front"));
+
+console.log("Результати пошуку для 'type':");
+console.table(searchCourses(courses, "type"));
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Що поверне вираз 'Hello world'.indexOf('Hello')?"
+      options={[
+        "0",
+        "1",
+        "true",
+        "-1"
+      ]}
+      correctIndex={0}
+      explanation="Підрядок 'Hello' починається з самого початку рядка, тому його індекс дорівнює 0."
+    />
+    <QuizCard
+      question="Який метод найпростіше використати для перевірки, чи файл має розширення '.pdf'?"
+      options={[
+        "str.indexOf('.pdf')",
+        "str.endsWith('.pdf')",
+        "str.startsWith('.pdf')",
+        "str.includes('.pdf', 0)"
+      ]}
+      correctIndex={1}
+      explanation="Метод endsWith('.pdf') перевіряє, чи закінчується рядок вказаним суфіксом, що ідеально підходить для перевірки розширень файлів."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Двигун пошуку та фільтрації статей"
+  slug="03-search-engine"
+  difficulty="easy"
+  timeEstimate="25 хвилин"
+  description="Створіть модуль search.js з функціями для підсвічування знайдених слів, перевірки валідності URL та пошуку за множинними критеріями."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У src/search.js створіть функцію isSecureUrl(url), яка перевіряє чи починається посилання з 'https://' або 'wss://'.",
+    "Реалізуйте countOccurrences(text, word), яка рахує точну кількість входжень слова в текст без урахування регістру.",
+    "Створіть highlightKeyword(text, keyword), яка обгортає знайдене ключове слово в тег <mark>word</mark> (зберігаючи оригінальний регістр).",
+    "Запустіть npm test і перевірте проходження тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function isSecureUrl(url) {
+  if (typeof url !== 'string') return false;
+  return url.startsWith('https://') || url.startsWith('wss://');
+}
+
+export function countOccurrences(text, word) {
+  if (!text || !word) return 0;
+  const lowerText = text.toLowerCase();
+  const lowerWord = word.toLowerCase();
+  let count = 0;
+  let pos = 0;
+
+  while ((pos = lowerText.indexOf(lowerWord, pos)) !== -1) {
+    count++;
+    pos += lowerWord.length;
+  }
+  return count;
+}
+
+export function highlightKeyword(text, keyword) {
+  if (!text || !keyword) return text;
+  const regex = new RegExp(\`(\${keyword.replace(/[-[\\]{}()*+?.,\\\\^$|#\\s]/g, '\\\\$&')})\`, 'gi');
+  return text.replace(regex, '<mark>$1</mark>');
+}`}
+/>

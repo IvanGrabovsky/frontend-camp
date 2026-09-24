@@ -1,0 +1,172 @@
+# 06. Регулярні вирази в рядках: match та test
+
+<article className="lesson-card">
+  <h2>Регулярні вирази (Regular Expressions / RegExp)</h2>
+  <p>Регулярний вираз (<strong>RegExp</strong>) — це потужний патерн (шаблон) для пошуку, валідації та заміни тексту. За допомогою регулярних виразів можна в один рядок перевірити валідність поштового індексу, номеру телефону чи email, знайти всі посилання на сторінці або витягти дані за складною структурою.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🎯</span> Аналогія: Рентгенівський сканер тексту</div>
+  <p>Якщо стандартний пошук <code>indexOf('js')</code> шукає точний збіг двох букв, то регулярний вираз — це інтелектуальний сканер з правилами: «знайди будь-яке число з 3 цифр, після якого йде дефіс і слово з великої літери» (<code>/\d{3}-[A-Z][a-z]+/</code>).</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">RegExp Pattern & Flags</div>
+      <div className="text-xs text-muted-foreground mt-1">Патерн <code>/pattern/flags</code>. Прапорці: <code>g</code> (global), <code>i</code> (case-insensitive), <code>m</code> (multiline), <code>u</code> (unicode).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Character Classes (\d, \w, \s)</div>
+      <div className="text-xs text-muted-foreground mt-1">Класи символів: <code>\d</code> (цифра 0-9), <code>\w</code> (словесний символ), <code>\s</code> (пробіл/таб), <code>.</code> (будь-який символ).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Quantifiers (+, &#42;, ?, &#123;n,m&#125;)</div>
+      <div className="text-xs text-muted-foreground mt-1">Квантифікатори кількості: <code>+</code> (1 або більше), <code>*</code> (0 або більше), <code>?</code> (0 або 1), <code>&#123;2,4&#125;</code> (від 2 до 4).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Capturing Groups ((?&lt;name&gt;...))</div>
+      <div className="text-xs text-muted-foreground mt-1">Групи захоплення в круглих дужках для вилучення окремих фрагментів знайденого тексту.</div>
+    </div>
+  </div>
+
+  <h2>1. Створення регулярного виразу та метод regex.test()</h2>
+
+```javascript
+// 1. Літеральний синтаксис (рекомендований, коли патерн статичний)
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+// 2. Конструктор RegExp (використовується, коли патерн динамічний зі змінної)
+const dynamicKeyword = "react";
+const dynamicRegex = new RegExp(`\\b${dynamicKeyword}\\b`, "i");
+
+// Метод regex.test(str) повертає boolean (true / false):
+console.log(emailRegex.test("user@example.com")); // true
+console.log(emailRegex.test("invalid-email@"));   // false
+```
+
+  <h2>2. Пошук збігів: str.match() та str.matchAll()</h2>
+
+```javascript
+const post = "Сьогодні ми вивчаємо JavaScript ES2023 та TypeScript 5.4!";
+
+// Знайти всі роки/числа з 4 цифр (\d{4})
+const years = post.match(/\d{4}/g);
+console.log(years); // ["2023"]
+
+// matchAll для отримання детальної інформації та груп захоплення:
+const tagPattern = /#(?<tag>[a-z0-9_-]+)/gi;
+const tweet = "Навчання у #frontend_camp разом з #javascript та #web2026!";
+
+for (const match of tweet.matchAll(tagPattern)) {
+  console.log(`Знайдено тег: ${match.groups.tag}, позиція: ${match.index}`);
+}
+```
+
+  <h2>3. Заміна за регулярним виразом: str.replace()</h2>
+
+```javascript
+// Форматування дати з "YYYY-MM-DD" у "DD.MM.YYYY" за допомогою груп ($1, $2, $3)
+const isoDate = "2026-09-24";
+const formattedDate = isoDate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1");
+console.log(formattedDate); // "24.09.2026"
+```
+
+  <Callout type="warning" title="Обережно з прапорцем /g у regex.test()">
+    Якщо ви використовуєте метод <code>regex.test()</code> з глобальним прапорцем <code>/g</code>, обʼєкт регулярного виразу зберігає стан <code>lastIndex</code> між викликами! Це може спричиняти неочікуване чергування <code>true/false</code> на однакових рядках. Для простої валідації <code>test()</code> не додавайте прапорець <code>g</code>.
+  </Callout>
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Перевірте роботу регулярних виразів для валідації паролів та вилучення цін з тексту:
+  </p>
+
+  <CodeRunner
+    initialCode={`// Функція вилучення всіх грошових сум із опису чека
+function extractPrices(text) {
+  const priceRegex = /(\\d+(?:[.,]\\d{2})?)\\s*(грн|₴|USD|EUR|\\$)/gi;
+  const matches = [...text.matchAll(priceRegex)];
+  
+  return matches.map(m => ({
+    full: m[0],
+    amount: parseFloat(m[1].replace(',', '.')),
+    currency: m[2]
+  }));
+}
+
+const invoice = "Замовлення #104: клавіатура 2500 грн, мишка 49.99 $, доставка 120.50 ₴.";
+console.log("Знайдені ціни:");
+console.table(extractPrices(invoice));
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Що означає символ '+' у регулярному виразі /\\d+/?"
+      options={[
+        "Рівно одна цифра",
+        "Один або більше повторень цифри",
+        "Нуль або більше повторень цифри",
+        "Математичне додавання"
+      ]}
+      correctIndex={1}
+      explanation="Квантифікатор '+' означає одне або більше входжень попереднього символу (наприклад, '4', '42', '100500')."
+    />
+    <QuizCard
+      question="Який метод регулярного виразу повертає true/false для швидкої валідації рядка?"
+      options={[
+        "regex.search(str)",
+        "regex.test(str)",
+        "regex.check(str)",
+        "regex.match(str)"
+      ]}
+      correctIndex={1}
+      explanation="Метод regex.test(str) перевіряє відповідність патерну і повертає булеве значення (true, якщо знайдено збіг, і false у протилежному випадку)."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Валідатор форм на основі RegExp"
+  slug="06-form-validator"
+  difficulty="medium"
+  timeEstimate="30 хвилин"
+  description="Створіть модуль validator.js з регулярними виразами для перевірки надійності паролів, валідації номерів телефонів України (+380...) та парсингу хэштегів."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У src/validator.js створіть функцію isUkrainianPhone(phone), яка валідує номери формату +380XXXXXXXXX.",
+    "Реалізуйте isStrongPassword(password), яка вимагає мінімум 8 символів, хоча б одну цифру, одну велику літеру та один спецсимвол (!@#$%^&*).",
+    "Створіть extractHashtags(text), яка повертає масив знайдених тегів без символу # у нижньому регістрі.",
+    "Запустіть npm test і перевірте проходження тестів."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function isUkrainianPhone(phone) {
+  if (typeof phone !== 'string') return false;
+  const clean = phone.replace(/[\\s\\-()]/g, '');
+  return /^(\\+?380|0)\\d{9}$/.test(clean);
+}
+
+export function isStrongPassword(password) {
+  if (typeof password !== 'string') return false;
+  const minLength = password.length >= 8;
+  const hasUpper = /[A-ZА-ЯІЇЄ]/.test(password);
+  const hasNumber = /\\d/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]/.test(password);
+  return minLength && hasUpper && hasNumber && hasSpecial;
+}
+
+export function extractHashtags(text) {
+  if (!text) return [];
+  const matches = [...text.matchAll(/#([a-zA-Z0-9а-яіїєґ_]+)/gi)];
+  return matches.map(m => m[1].toLowerCase());
+}`}
+/>

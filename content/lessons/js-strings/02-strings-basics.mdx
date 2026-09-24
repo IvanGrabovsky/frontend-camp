@@ -1,0 +1,205 @@
+# 02. Рядки: доступ до символів, довжина та регістр
+
+<article className="lesson-card">
+  <h2>Рядки в JavaScript (Strings)</h2>
+  <p>Рядок (<strong>String</strong>) — це незмінна (<em>immutable</em>) послідовність символів, закодована у форматі <strong>UTF-16</strong>. Це один із найчастіше використовуваних примітивних типів даних у веб-розробці: текст на кнопках, введення у формах, заголовки сторінок та URL-адреси.</p>
+  <p>Оскільки рядки в JS є незмінними, жоден метод не може змінити оригінальний рядок «на місці». Усі методи рядків повертають <strong>новий рядок</strong> з результатом обробки.</p>
+</article>
+
+<section className="analogy-block">
+  <div className="analogy-block__title"><span className="analogy-block__icon">🔒</span> Аналогія: Гравіювання на склі</div>
+  <p>Рядок у JavaScript подібний до напису, вигравіюваного на кришталевій табличці. Ви не можете стерти або замінити одну букву (операція <code>str[0] = 'X'</code> беззвучно проігнорується або кине помилку у strict mode). Якщо вам потрібна змінена версія — майстер бере нову табличку і створює новий рядок.</p>
+</section>
+
+<section>
+  <h2>🇬🇧 Англійський технічний глосарій (Vocabulary)</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">String Immutability</div>
+      <div className="text-xs text-muted-foreground mt-1">Незмінність рядків. Вміст створеного рядка неможливо модифікувати безпосередньо.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Zero-based Indexing</div>
+      <div className="text-xs text-muted-foreground mt-1">Індексація з нуля. Перший символ завжди має індекс <code>0</code>, а останній — <code>str.length - 1</code>.</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Padding (padStart / padEnd)</div>
+      <div className="text-xs text-muted-foreground mt-1">Доповнення рядка до заданої довжини повторюваними символами (наприклад, нулями попереду).</div>
+    </div>
+    <div className="p-3.5 rounded-xl border border-border/70 bg-card/60">
+      <div className="font-mono font-bold text-primary text-sm">Trimming / Sanitization</div>
+      <div className="text-xs text-muted-foreground mt-1">Очищення рядка від пробільних символів, табуляцій та переносів рядків на початку або в кінці.</div>
+    </div>
+  </div>
+
+  <h2>Довжина рядка та доступ до символів</h2>
+
+```javascript
+const course = "Frontend Camp";
+
+// Властивість length повертає кількість UTF-16 кодових одиниць
+console.log(course.length); // 13
+
+// 1. Доступ через квадратні дужки (квадратні дужки не підтримують від'ємні індекси)
+console.log(course[0]); // "F"
+console.log(course[course.length - 1]); // "p" (останній символ)
+
+// 2. Сучасний метод .at() (підтримує від'ємні індекси від кінця!)
+console.log(course.at(0));  // "F"
+console.log(course.at(-1)); // "p" (останній символ)
+console.log(course.at(-2)); // "m" (передостанній символ)
+```
+
+  <Callout type="info" title="Чому метод .at() зручніший за дужки []?">
+    Раніше, щоб дістати останній символ, доводилося писати довгу конструкцію <code>str[str.length - 1]</code>. Метод <code>str.at(-1)</code> значно лаконічніший і працює однаково зручно як з рядками, так і з масивами.
+  </Callout>
+
+  <h2>Зміна регістру: toUpperCase та toLowerCase</h2>
+
+```javascript
+const email = "  User.Name@Example.COM  ";
+
+// Приведення до верхнього та нижнього регістру
+console.log(email.toUpperCase()); // "  USER.NAME@EXAMPLE.COM  "
+console.log(email.toLowerCase()); // "  user.name@example.com  "
+
+// Локалізоване порівняння (важливо для турецької, німецької та ін.)
+const city = "KYIV";
+console.log(city.toLocaleLowerCase('uk-UA')); // "kyiv"
+```
+
+  <h2>Очищення пробілів: trim, trimStart, trimEnd</h2>
+
+```javascript
+const rawInput = "   Привіт, Світе! \n\t  ";
+
+// trim() видаляє всі невидимі символи з обох кінців
+const cleanInput = rawInput.trim();
+console.log(`"${cleanInput}"`); // "Привіт, Світе!"
+
+// Очищення тільки з одного боку:
+console.log(rawInput.trimStart()); // прибирає пробіли лише на початку
+console.log(rawInput.trimEnd());   // прибирає пробіли лише в кінці
+```
+
+  <h2>Доповнення довжини: padStart та padEnd</h2>
+
+```javascript
+// 1. Форматування номерів із лідируючими нулями (наприклад: 001, 002, 042)
+const id = "42";
+console.log(id.padStart(5, "0")); // "00042"
+
+// 2. Маскування номеру банківської картки
+const cardNumber = "4111222233339876";
+const last4Digits = cardNumber.slice(-4);
+const maskedCard = last4Digits.padStart(cardNumber.length, "*");
+console.log(maskedCard); // "************9876"
+
+// 3. Табличне вирівнювання з padEnd
+console.log("Товар".padEnd(15, ".") + "120 грн"); // "Товар..........120 грн"
+console.log("Доставка".padEnd(15, ".") + "50 грн");  // "Доставка.......50 грн"
+```
+
+  <h2>Повторення рядків: str.repeat(n)</h2>
+
+```javascript
+console.log("★".repeat(5)); // "★★★★★"
+console.log("Loading" + ".".repeat(3)); // "Loading..."
+```
+</section>
+
+<section className="interactive-demo mb-12">
+  <h2>🧪 Спробуйте самі в інтерактивній пісочниці</h2>
+  <p className="text-muted-foreground text-sm mb-4">
+    Протестуйте функцію нормалізації даних форми (очищення пробілів, нормалізація імені та генерація бейджика):
+  </p>
+
+  <CodeRunner
+    initialCode={`// Функція форматування профілю користувача
+function formatUserProfile(fullName, role, serialNumber) {
+  const normalizedName = fullName.trim();
+  const normalizedRole = role.trim().toUpperCase();
+  const formattedId = String(serialNumber).padStart(6, '0');
+  
+  const initials = normalizedName
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word[0].toUpperCase())
+    .join('.');
+    
+  return {
+    badge: \`[\${formattedId}] \${normalizedName} (\${initials})\`,
+    roleBadge: normalizedRole,
+    firstLetter: normalizedName.at(0),
+    lastLetter: normalizedName.at(-1)
+  };
+}
+
+console.log(formatUserProfile("   олександр петренко   ", "frontend lead", 7));
+`}
+  />
+</section>
+
+<section className="quizzes mb-12">
+  <h2>🎯 Перевірка засвоєння матеріалу</h2>
+  <div className="grid gap-6">
+    <QuizCard
+      question="Що виведе вираз: const s = 'hello'; s[0] = 'H'; console.log(s); ?"
+      options={[
+        "'Hello'",
+        "'hello'",
+        "TypeError",
+        "undefined"
+      ]}
+      correctIndex={1}
+      explanation="Рядки в JS є незмінними (immutable). Спроба перезаписати символ через індекс [0] не викликає помилки (у non-strict mode), але повністю ігнорується, тому s залишається 'hello'."
+    />
+    <QuizCard
+      question="Як отримати останній символ рядка str за допомогою сучасного синтаксису?"
+      options={[
+        "str.last()",
+        "str.at(-1)",
+        "str[-1]",
+        "str.slice(0, 1)"
+      ]}
+      correctIndex={1}
+      explanation="Метод .at(-1) повертає символ за від'ємним індексом від кінця рядка. Квадратні дужки [-1] у JS повертають undefined."
+    />
+  </div>
+</section>
+
+<GitHubTaskCard
+  title="Практичне завдання: Нормалізатор користувацького введення"
+  slug="02-input-sanitizer"
+  difficulty="easy"
+  timeEstimate="20 хвилин"
+  description="Створіть модуль sanitizer.js для обробки та валідації текстових полів реєстраційних форм: очищення пробілів, капіталізація імені та маскування чутливих даних."
+  prerequisites={[
+    "Створений репозиторій або форк starter шаблону",
+    "Встановлений Node.js 18+ та Vitest"
+  ]}
+  steps={[
+    "У файлі src/sanitizer.js створіть функцію capitalize(str), яка перетворює першу літеру на велику, а всі інші — на маленькі (наприклад, 'іВАН' → 'Іван').",
+    "Реалізуйте maskCardNumber(cardNumber, visibleDigitsCount = 4), яка маскує номер картки зірочками крім останніх N цифр.",
+    "Створіть cleanPhoneNumber(phone), яка видаляє всі зайві пробіли, дефіси та дужки.",
+    "Запустіть npm test і перевірте результат."
+  ]}
+  githubRepoUrl="https://github.com/IvanGrabovsky/frontend-camp"
+  solutionCode={`export function capitalize(str) {
+  if (!str) return '';
+  const trimmed = str.trim();
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+}
+
+export function maskCardNumber(cardNumber, visibleDigits = 4) {
+  const clean = String(cardNumber).replace(/\\s+/g, '');
+  if (clean.length <= visibleDigits) return clean;
+  const visiblePart = clean.slice(-visibleDigits);
+  return visiblePart.padStart(clean.length, '*');
+}
+
+export function cleanPhoneNumber(phone) {
+  if (typeof phone !== 'string') return '';
+  return phone.replace(/[\\s\\-()]/g, '');
+}`}
+/>
