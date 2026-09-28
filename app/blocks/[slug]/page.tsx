@@ -23,6 +23,8 @@ export function generateStaticParams() {
       }
     }
   }
+  // Backwards compatibility alias
+  slugs.push({ slug: 'javascript-basics' });
   return slugs;
 }
 

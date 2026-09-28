@@ -724,6 +724,9 @@ export const ROADMAP_BLOCKS: RoadmapBlock[] = [
 export const VISIBLE_ROADMAP_BLOCKS: RoadmapBlock[] = ROADMAP_BLOCKS.filter((b) => !b.hidden);
 
 export function getBlock(slug: string): RoadmapBlock | undefined {
+  if (slug === 'javascript-basics') {
+    return getBlock('javascript');
+  }
   for (const block of ROADMAP_BLOCKS) {
     if (block.slug === slug) return block;
     if (block.children) {

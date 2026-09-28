@@ -174,7 +174,7 @@ export default function PlaygroundPage() {
     <HubLayout
       breadcrumb={[
         { label: 'Курс', href: '/' },
-        { label: 'JavaScript', href: '/blocks/javascript-basics/' },
+        { label: 'JavaScript', href: '/blocks/javascript/' },
         { label: 'Пісочниця' },
       ]}
     >
