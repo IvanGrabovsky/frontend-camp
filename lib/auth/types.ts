@@ -21,15 +21,22 @@ export interface AuthResponse {
   userAlreadyExists?: boolean;
 }
 
+export type AuthModalTab = 'login' | 'register' | 'forgot-password';
+
 export interface AuthContextType extends AuthState {
   login: (email: string, password?: string) => Promise<AuthResponse>;
   register: (name: string, email: string, password?: string) => Promise<AuthResponse>;
+  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  updatePassword: (password: string) => Promise<{ success: boolean; error?: string }>;
   resendConfirmationEmail: (email: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   toggleLessonCompleted: (courseSlug: string, lessonSlug: string, crystalsReward?: number) => void;
   isLessonCompleted: (courseSlug: string, lessonSlug: string) => boolean;
   addCrystals: (amount: number) => void;
-  openAuthModal: () => void;
+  openAuthModal: (tab?: AuthModalTab | React.MouseEvent | unknown) => void;
   closeAuthModal: () => void;
   isAuthModalOpen: boolean;
+  authModalTab: AuthModalTab;
+  setAuthModalTab: (tab: AuthModalTab) => void;
 }
+

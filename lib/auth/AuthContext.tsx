@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { User, AuthContextType, AuthResponse } from './types';
+import type { User, AuthContextType, AuthResponse, AuthModalTab } from './types';
 import { supabase, isSupabaseConfigured } from '@/lib/db/supabase';
 
 const AUTH_STORAGE_KEY = 'frontend_camp_user_session';
@@ -13,6 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<AuthModalTab>('login');
 
   // Fetch full user profile from Supabase Database
   const fetchSupabaseProfile = useCallback(async (userId: string, email: string): Promise<User | null> => {
@@ -122,6 +123,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen to Supabase auth state changes if configured
     if (isSupabaseConfigured && supabase) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/reset-password')) {
+            window.location.href = '/reset-password';
+          }
+        }
+
         if (session?.user) {
           const dbUser = await fetchSupabaseProfile(session.user.id, session.user.email || '');
           if (dbUser) setUser(dbUser);
@@ -368,6 +375,72 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const resetPassword = useCallback(async (email: string): Promise<{ success: boolean; error?: string }> => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+      return { success: false, error: 'Введіть коректну email адресу' };
+    }
+
+    try {
+      if (isSupabaseConfigured && supabase) {
+        const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined;
+        const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+          redirectTo,
+        });
+        if (error) {
+          return { success: false, error: error.message };
+        }
+        return { success: true };
+      }
+
+      // Offline / LocalStorage mode
+      const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
+      const allUsers: Record<string, User & { passwordHash?: string }> = allUsersJson ? JSON.parse(allUsersJson) : {};
+
+      if (!allUsers[normalizedEmail]) {
+        return {
+          success: false,
+          error: 'Користувача з такою поштою не знайдено',
+        };
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err?.message || 'Помилка при запиті скидання паролю' };
+    }
+  }, []);
+
+  const updatePassword = useCallback(async (newPassword: string): Promise<{ success: boolean; error?: string }> => {
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: 'Пароль має містити щонайменше 6 символів' };
+    }
+
+    try {
+      if (isSupabaseConfigured && supabase) {
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+        if (error) {
+          return { success: false, error: error.message };
+        }
+        return { success: true };
+      }
+
+      // Offline / LocalStorage mode
+      if (user?.email) {
+        const allUsersJson = localStorage.getItem(USERS_STORAGE_KEY);
+        const allUsers: Record<string, User & { passwordHash?: string }> = allUsersJson ? JSON.parse(allUsersJson) : {};
+        if (allUsers[user.email]) {
+          allUsers[user.email].passwordHash = newPassword;
+          localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(allUsers));
+        }
+      }
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err?.message || 'Помилка при зміні паролю' };
+    }
+  }, [user]);
+
   const logout = useCallback(async () => {
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
@@ -463,7 +536,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user, saveSession]
   );
 
-  const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
+  const openAuthModal = useCallback((initialTab?: AuthModalTab | React.MouseEvent | unknown) => {
+    if (typeof initialTab === 'string' && (initialTab === 'login' || initialTab === 'register' || initialTab === 'forgot-password')) {
+      setAuthModalTab(initialTab);
+    } else {
+      setAuthModalTab('login');
+    }
+    setIsAuthModalOpen(true);
+  }, []);
   const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
 
   const value: AuthContextType = {
@@ -472,6 +552,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     login,
     register,
+    resetPassword,
+    updatePassword,
     resendConfirmationEmail,
     logout,
     toggleLessonCompleted,
@@ -480,6 +562,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     openAuthModal,
     closeAuthModal,
     isAuthModalOpen,
+    authModalTab,
+    setAuthModalTab,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -2,11 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import type { AuthModalTab } from '@/lib/auth/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, CheckCircle2, UserPlus, LogIn, Mail, Lock, User as UserIcon, AlertCircle, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import {
+  Sparkles,
+  CheckCircle2,
+  UserPlus,
+  LogIn,
+  Mail,
+  Lock,
+  User as UserIcon,
+  AlertCircle,
+  RefreshCw,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  KeyRound,
+} from 'lucide-react';
 
 interface FormErrors {
   name?: string;
@@ -17,8 +32,18 @@ interface FormErrors {
 }
 
 export function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, login, register, resendConfirmationEmail } = useAuth();
-  const [tab, setTab] = useState<'login' | 'register'>('register');
+  const {
+    isAuthModalOpen,
+    closeAuthModal,
+    login,
+    register,
+    resetPassword,
+    resendConfirmationEmail,
+    authModalTab,
+    setAuthModalTab,
+  } = useAuth();
+
+  const [tab, setTab] = useState<AuthModalTab>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +53,19 @@ export function AuthModal() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [requiresConfirmation, setRequiresConfirmation] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendSuccess, setResendSuccess] = useState(false);
+
+  // Sync tab with context when modal opens or tab changes externally
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      setTab(authModalTab || 'login');
+      setErrors({});
+      setRequiresConfirmation(false);
+      setResetSuccess(false);
+    }
+  }, [isAuthModalOpen, authModalTab]);
 
   // Timer for resend cooldown
   useEffect(() => {
@@ -52,7 +88,7 @@ export function AuthModal() {
       }
     }
 
-    // 2. Email validation
+    // 2. Email validation (All tabs)
     const trimmedEmail = email.trim();
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!trimmedEmail) {
@@ -61,11 +97,13 @@ export function AuthModal() {
       newErrors.email = 'Введіть коректний email (наприклад: name@example.com)';
     }
 
-    // 3. Password validation
-    if (!password) {
-      newErrors.password = 'Введіть пароль';
-    } else if (tab === 'register' && password.length < 6) {
-      newErrors.password = 'Пароль має містити мінімум 6 символів';
+    // 3. Password validation (Login & Register)
+    if (tab === 'login' || tab === 'register') {
+      if (!password) {
+        newErrors.password = 'Введіть пароль';
+      } else if (tab === 'register' && password.length < 6) {
+        newErrors.password = 'Пароль має містити мінімум 6 символів';
+      }
     }
 
     // 4. Confirm Password validation (Registration only)
@@ -90,12 +128,19 @@ export function AuthModal() {
     setLoading(true);
 
     try {
-      if (tab === 'register') {
+      if (tab === 'forgot-password') {
+        const res = await resetPassword(email);
+        if (res.success) {
+          setResetSuccess(true);
+        } else {
+          setErrors({ general: res.error || 'Не вдалося надіслати лист для відновлення паролю.' });
+        }
+      } else if (tab === 'register') {
         const res = await register(name, email, password);
         if (!res.success) {
           if (res.userAlreadyExists) {
             // Automatically redirect user to Login tab
-            setTab('login');
+            handleTabChange('login');
             setPassword('');
             setConfirmPassword('');
             setErrors({
@@ -135,10 +180,12 @@ export function AuthModal() {
     }
   };
 
-  const handleTabChange = (newTab: 'login' | 'register') => {
+  const handleTabChange = (newTab: AuthModalTab) => {
     setTab(newTab);
+    setAuthModalTab(newTab);
     setErrors({});
     setRequiresConfirmation(false);
+    setResetSuccess(false);
     setConfirmPassword('');
     setShowPassword(false);
     setShowConfirmPassword(false);
@@ -147,7 +194,7 @@ export function AuthModal() {
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={closeAuthModal}>
       <DialogContent className="max-w-md border-border/80 bg-card p-6 sm:p-8">
-        {/* Email Confirmation Screen */}
+        {/* Email Confirmation Screen (After Register) */}
         {requiresConfirmation ? (
           <div className="text-center py-4 space-y-5 animate-in fade-in-0 zoom-in-95 duration-200">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-primary/15 text-primary border border-primary/30 shadow-lg shadow-primary/10">
@@ -199,47 +246,102 @@ export function AuthModal() {
               </Button>
             </div>
           </div>
+        ) : resetSuccess ? (
+          /* Password Reset Email Sent Screen */
+          <div className="text-center py-4 space-y-5 animate-in fade-in-0 zoom-in-95 duration-200">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-primary/15 text-primary border border-primary/30 shadow-lg shadow-primary/10">
+              <KeyRound className="h-8 w-8 text-primary animate-pulse" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                Лист для відновлення надіслано!
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed px-2">
+                Ми надіслали інструкції для скидання паролю на адресу:
+              </p>
+              <div className="inline-block px-3 py-1.5 rounded-lg bg-muted text-foreground font-mono text-sm font-semibold border border-border">
+                {email}
+              </div>
+            </div>
+
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Перейдіть за посиланням у листі, щоб створити новий пароль. Якщо лист не надійшов протягом хвилини, обовʼязково перевірте папку &quot;Спам&quot;.
+            </p>
+
+            <div className="pt-2">
+              <Button
+                type="button"
+                onClick={() => {
+                  setResetSuccess(false);
+                  handleTabChange('login');
+                }}
+                className="w-full font-semibold shadow-md shadow-primary/20 h-10"
+              >
+                Повернутися до входу
+              </Button>
+            </div>
+          </div>
         ) : (
           <>
             <DialogHeader>
               <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Sparkles className="h-6 w-6" />
+                {tab === 'forgot-password' ? <KeyRound className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
               </div>
               <DialogTitle className="text-center text-2xl font-bold">
-                {tab === 'register' ? 'Приєднуйся до Frontend Camp' : 'З поверненням!'}
+                {tab === 'forgot-password'
+                  ? 'Відновлення паролю'
+                  : tab === 'register'
+                  ? 'Приєднуйся до Frontend Camp'
+                  : 'З поверненням!'}
               </DialogTitle>
               <DialogDescription className="text-center text-sm text-muted-foreground">
-                {tab === 'register'
+                {tab === 'forgot-password'
+                  ? 'Введіть email, і ми надішлемо посилання для відновлення паролю'
+                  : tab === 'register'
                   ? 'Отримай повний доступ до всіх уроків та зберігай власний прогрес'
                   : 'Увійди, щоб продовжити навчання з місця зупинки'}
               </DialogDescription>
             </DialogHeader>
 
-            {/* Tab switch */}
-            <div className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1 mb-6 text-sm font-medium">
-              <button
-                type="button"
-                onClick={() => handleTabChange('register')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2 transition-all ${
-                  tab === 'register'
-                    ? 'bg-card text-foreground shadow-sm font-semibold'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <UserPlus className="h-4 w-4" /> Реєстрація
-              </button>
-              <button
-                type="button"
-                onClick={() => handleTabChange('login')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2 transition-all ${
-                  tab === 'login'
-                    ? 'bg-card text-foreground shadow-sm font-semibold'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <LogIn className="h-4 w-4" /> Вхід
-              </button>
-            </div>
+            {/* Tab switch OR Back button */}
+            {tab === 'forgot-password' ? (
+              <div className="mb-4">
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('login')}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-colors"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Повернутися до входу</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1 mb-6 text-sm font-medium">
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('login')}
+                  className={`flex items-center justify-center gap-2 rounded-lg py-2 transition-all ${
+                    tab === 'login'
+                      ? 'bg-card text-foreground shadow-sm font-semibold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <LogIn className="h-4 w-4" /> Вхід
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('register')}
+                  className={`flex items-center justify-center gap-2 rounded-lg py-2 transition-all ${
+                    tab === 'register'
+                      ? 'bg-card text-foreground shadow-sm font-semibold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <UserPlus className="h-4 w-4" /> Реєстрація
+                </button>
+              </div>
+            )}
 
             {/* General Error Banner */}
             {errors.general && (
@@ -299,46 +401,56 @@ export function AuthModal() {
                 )}
               </div>
 
-              {/* Password field */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-semibold">Пароль</Label>
-                  {tab === 'register' && (
-                    <span className="text-[0.7rem] text-muted-foreground">мін. 6 символів</span>
+              {/* Password field (Login & Register) */}
+              {(tab === 'login' || tab === 'register') && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-xs font-semibold">Пароль</Label>
+                    {tab === 'login' ? (
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('forgot-password')}
+                        className="text-[0.75rem] text-primary hover:underline font-medium focus:outline-none"
+                      >
+                        Забули пароль?
+                      </button>
+                    ) : (
+                      <span className="text-[0.7rem] text-muted-foreground">мін. 6 символів</span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                        if (errors.confirmPassword && confirmPassword && e.target.value === confirmPassword) {
+                          setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                        }
+                      }}
+                      className={`pr-10 ${errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                      autoComplete={tab === 'register' ? 'new-password' : 'current-password'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2.5 top-2.5 text-muted-foreground/60 hover:text-foreground transition-colors p-0.5 rounded focus:outline-none"
+                      aria-label={showPassword ? 'Сховати пароль' : 'Показати пароль'}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-[0.75rem] text-destructive flex items-center gap-1 mt-1">
+                      <span>•</span> {errors.password}
+                    </p>
                   )}
                 </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-                      if (errors.confirmPassword && confirmPassword && e.target.value === confirmPassword) {
-                        setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
-                      }
-                    }}
-                    className={`pr-10 ${errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                    autoComplete={tab === 'register' ? 'new-password' : 'current-password'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-2.5 text-muted-foreground/60 hover:text-foreground transition-colors p-0.5 rounded focus:outline-none"
-                    aria-label={showPassword ? 'Сховати пароль' : 'Показати пароль'}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-[0.75rem] text-destructive flex items-center gap-1 mt-1">
-                    <span>•</span> {errors.password}
-                  </p>
-                )}
-              </div>
+              )}
 
               {/* Confirm Password field (Register only) */}
               {tab === 'register' && (
@@ -378,6 +490,8 @@ export function AuthModal() {
               <Button type="submit" className="w-full h-11 text-base font-semibold shadow-md shadow-primary/20 mt-2" disabled={loading}>
                 {loading
                   ? 'Обробка...'
+                  : tab === 'forgot-password'
+                  ? 'Надіслати посилання'
                   : tab === 'register'
                   ? 'Зареєструватися (+100 💎)'
                   : 'Увійти'}
@@ -401,4 +515,3 @@ export function AuthModal() {
     </Dialog>
   );
 }
-
