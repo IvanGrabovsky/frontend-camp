@@ -27,6 +27,8 @@ import {
   Terminal,
   Code2,
   Lock,
+  AlertTriangle,
+  ArrowRight,
 } from 'lucide-react';
 
 interface TestResult {
@@ -36,6 +38,12 @@ interface TestResult {
   actual: any;
   expected: any;
   error?: string;
+  line?: number | null;
+}
+
+interface ErrorDetails {
+  line: number | null;
+  message: string;
 }
 
 export default function QuestsPage() {
@@ -47,7 +55,7 @@ export default function QuestsPage() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [hasRun, setHasRun] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [executionError, setExecutionError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<ErrorDetails | null>(null);
   const [activeLeftTab, setActiveLeftTab] = useState<'tasks' | 'simulator'>('tasks');
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [claimedReward, setClaimedReward] = useState(false);
@@ -65,6 +73,29 @@ export default function QuestsPage() {
   const [simHpResult, setSimHpResult] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const gutterRef = useRef<HTMLDivElement>(null);
+
+  // Synchronized scrolling between textarea and line numbers gutter
+  const handleTextareaScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = e.currentTarget.scrollTop;
+    }
+  };
+
+  // Jump to specific line in editor
+  const jumpToLine = (lineNum: number) => {
+    if (!textareaRef.current) return;
+    const lines = code.split('\n');
+    let charIndex = 0;
+    for (let i = 0; i < lineNum - 1 && i < lines.length; i++) {
+      charIndex += lines[i].length + 1;
+    }
+    textareaRef.current.focus();
+    const lineEnd = charIndex + (lines[lineNum - 1]?.length || 0);
+    textareaRef.current.setSelectionRange(charIndex, lineEnd);
+    const lineHeight = 24;
+    textareaRef.current.scrollTop = Math.max(0, (lineNum - 4) * lineHeight);
+  };
 
   // Load saved progress or default code on quest change
   useEffect(() => {
@@ -78,7 +109,7 @@ export default function QuestsPage() {
     setCode(currentQuest.starterCode);
     setTestResults([]);
     setHasRun(false);
-    setExecutionError(null);
+    setErrorDetails(null);
     setShowVictoryModal(false);
   }, [currentQuest.slug, user]);
 
@@ -108,13 +139,72 @@ export default function QuestsPage() {
       setCode(currentQuest.starterCode);
       setTestResults([]);
       setHasRun(false);
-      setExecutionError(null);
+      setErrorDetails(null);
     }
+  };
+
+  // Advanced Error Parser (finds exact line number of syntax & runtime errors)
+  const parseErrorWithLine = (err: any, rawCode: string): ErrorDetails => {
+    const rawMessage = err?.message || String(err);
+    const lines = rawCode.split('\n');
+
+    // 1. Try extracting line from stack trace
+    if (err?.stack) {
+      const stackLines = err.stack.split('\n');
+      for (const s of stackLines) {
+        const match = s.match(/(?:student-code\.js|quest-code\.js|<anonymous>|eval)[\s\S]*?:(\d+):(\d+)/i);
+        if (match && match[1]) {
+          const lineNum = parseInt(match[1], 10);
+          if (lineNum >= 1 && lineNum <= lines.length + 5) {
+            return {
+              line: Math.min(lineNum, lines.length),
+              message: rawMessage,
+            };
+          }
+        }
+      }
+    }
+
+    // 2. If it's a SyntaxError, incrementally locate offending line
+    const isSyntax =
+      err instanceof SyntaxError ||
+      rawMessage.toLowerCase().includes('syntax') ||
+      rawMessage.toLowerCase().includes('unexpected');
+
+    if (isSyntax) {
+      for (let i = 1; i <= lines.length; i++) {
+        const slice = lines
+          .slice(0, i)
+          .join('\n')
+          .replace(/export\s+default\s+/g, '')
+          .replace(/export\s+function\s+/g, 'function ')
+          .replace(/export\s+const\s+/g, 'const ')
+          .replace(/export\s+let\s+/g, 'let ')
+          .replace(/export\s+var\s+/g, 'var ');
+
+        try {
+          new Function(slice);
+        } catch (subErr: any) {
+          const subMsg = subErr.message || '';
+          if (
+            !subMsg.includes('Unexpected end of input') &&
+            !subMsg.includes('missing }') &&
+            !subMsg.includes('missing )') &&
+            !subMsg.includes("Unexpected token ')'")
+          ) {
+            return { line: i, message: subMsg || rawMessage };
+          }
+        }
+      }
+      return { line: lines.length, message: rawMessage };
+    }
+
+    return { line: null, message: rawMessage };
   };
 
   // Run tests inside browser
   const runTests = async () => {
-    setExecutionError(null);
+    setErrorDetails(null);
     setHasRun(true);
 
     try {
@@ -125,22 +215,30 @@ export default function QuestsPage() {
         .replace(/export\s+let\s+/g, 'let ')
         .replace(/export\s+var\s+/g, 'var ');
 
-      const runner = new Function(`
-        ${cleaned}
-        const result = {};
-        if (typeof canOpenChest !== 'undefined') result.canOpenChest = canOpenChest;
-        if (typeof calculateDamage !== 'undefined') result.calculateDamage = calculateDamage;
-        if (typeof getHeroStatus !== 'undefined') result.getHeroStatus = getHeroStatus;
-        if (typeof canEnter !== 'undefined') result.canEnter = canEnter;
-        if (typeof calculateTicketPrice !== 'undefined') result.calculateTicketPrice = calculateTicketPrice;
-        if (typeof getAccessZone !== 'undefined') result.getAccessZone = getAccessZone;
-        if (typeof checkRadiationSafety !== 'undefined') result.checkRadiationSafety = checkRadiationSafety;
-        if (typeof canStartExpedition !== 'undefined') result.canStartExpedition = canStartExpedition;
-        if (typeof calculateTripFuel !== 'undefined') result.calculateTripFuel = calculateTripFuel;
-        return result;
-      `);
+      const wrappedCode = `${cleaned}
+const result = {};
+if (typeof canOpenChest !== 'undefined') result.canOpenChest = canOpenChest;
+if (typeof calculateDamage !== 'undefined') result.calculateDamage = calculateDamage;
+if (typeof getHeroStatus !== 'undefined') result.getHeroStatus = getHeroStatus;
+if (typeof canEnter !== 'undefined') result.canEnter = canEnter;
+if (typeof calculateTicketPrice !== 'undefined') result.calculateTicketPrice = calculateTicketPrice;
+if (typeof getAccessZone !== 'undefined') result.getAccessZone = getAccessZone;
+if (typeof checkRadiationSafety !== 'undefined') result.checkRadiationSafety = checkRadiationSafety;
+if (typeof canStartExpedition !== 'undefined') result.canStartExpedition = canStartExpedition;
+if (typeof calculateTripFuel !== 'undefined') result.calculateTripFuel = calculateTripFuel;
+return result;
+//# sourceURL=student-code.js`;
 
-      const fns = runner();
+      let fns: any;
+      try {
+        const runner = new Function(wrappedCode);
+        fns = runner();
+      } catch (compileErr: any) {
+        const parsed = parseErrorWithLine(compileErr, code);
+        setErrorDetails(parsed);
+        setTestResults([]);
+        return;
+      }
 
       // Execute each test case
       const results: TestResult[] = currentQuest.testCases.map((tc) => {
@@ -154,13 +252,15 @@ export default function QuestsPage() {
             expected: outcome.expected,
           };
         } catch (err: any) {
+          const parsed = parseErrorWithLine(err, code);
           return {
             id: tc.id,
             title: tc.title,
             passed: false,
             actual: 'Error',
             expected: 'Expected output',
-            error: err.message,
+            error: parsed.message,
+            line: parsed.line,
           };
         }
       });
@@ -190,7 +290,8 @@ export default function QuestsPage() {
         );
       }
     } catch (err: any) {
-      setExecutionError(`Помилка синтаксису у коді: ${err.message}`);
+      const parsed = parseErrorWithLine(err, code);
+      setErrorDetails(parsed);
       setTestResults([]);
     }
   };
@@ -238,6 +339,7 @@ export default function QuestsPage() {
   const totalTests = currentQuest.testCases.length;
   const passedTests = testResults.filter((r) => r.passed).length;
   const progressPercent = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+  const codeLines = code.split('\n');
 
   return (
     <HubLayout
@@ -252,7 +354,7 @@ export default function QuestsPage() {
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
               <span>⚔️</span>
-              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-300 dark:from-amber-400 dark:via-orange-400 dark:to-amber-200 bg-clip-text text-transparent">
                 Інтерактивна Арена Квестів
               </span>
             </h1>
@@ -299,10 +401,10 @@ export default function QuestsPage() {
                   <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-amber-500/20 to-transparent pointer-events-none rounded-bl-full" />
                 )}
                 <div className="flex items-center justify-between mb-1.5">
-                  <Badge variant="outline" className="text-[11px] font-semibold border-amber-500/30 text-amber-400">
+                  <Badge variant="outline" className="text-[11px] font-semibold border-amber-500/40 text-amber-500 dark:text-amber-400">
                     {q.badge}
                   </Badge>
-                  <span className="text-xs font-medium text-amber-300/80 flex items-center gap-1">
+                  <span className="text-xs font-semibold text-amber-500 dark:text-amber-300/90 flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> +{q.crystalsReward} XP
                   </span>
                 </div>
@@ -314,16 +416,16 @@ export default function QuestsPage() {
         </div>
 
         {/* Progress Banner */}
-        <Card className="bg-card/50 border-border/70 backdrop-blur">
+        <Card className="bg-card/60 border-border/70 backdrop-blur shadow-sm">
           <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 font-bold">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-500 dark:text-amber-400 flex items-center justify-center shrink-0 font-bold text-lg">
                 {hasRun ? (passedTests === totalTests ? '🎉' : '🧪') : '⚡'}
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold flex items-center gap-2">
                   <span>Прогрес виконання:</span>
-                  <span className="text-amber-400 font-bold">
+                  <span className="text-amber-500 dark:text-amber-400 font-bold">
                     {passedTests} з {totalTests} тестів пройдено
                   </span>
                 </div>
@@ -355,7 +457,7 @@ export default function QuestsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Tasks / Lore / Simulator (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <Card className="bg-card/50 border-border/70">
+            <Card className="bg-card/60 border-border/70 shadow-sm">
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -390,17 +492,17 @@ export default function QuestsPage() {
 
                     {/* Tasks List */}
                     <div className="space-y-3">
-                      {currentQuest.tasks.map((task, idx) => (
+                      {currentQuest.tasks.map((task) => (
                         <div
                           key={task.id}
-                          className="p-3 rounded-lg border border-border/60 bg-background/50 hover:border-border transition-colors"
+                          className="p-3 rounded-lg border border-border/60 bg-background/60 hover:border-border transition-colors shadow-sm"
                         >
                           <div className="flex items-center justify-between mb-1">
                             <span className="font-semibold text-xs text-foreground">
                               {task.name}
                             </span>
                           </div>
-                          <code className="text-[11px] text-amber-400 font-mono block mb-1.5 bg-muted/30 px-2 py-0.5 rounded">
+                          <code className="text-[11px] text-amber-600 dark:text-amber-400 font-mono block mb-1.5 bg-muted/50 px-2 py-0.5 rounded border border-border/40">
                             {task.functionName}
                           </code>
                           <p className="text-xs text-muted-foreground mb-2">
@@ -415,7 +517,7 @@ export default function QuestsPage() {
                             ))}
                           </ul>
 
-                          <div className="p-2 rounded bg-black/30 border border-border/40 font-mono text-[10px] text-emerald-400 whitespace-pre">
+                          <div className="p-2 rounded bg-muted/70 dark:bg-black/40 border border-border/60 font-mono text-[10px] text-emerald-600 dark:text-emerald-400 whitespace-pre">
                             {task.example}
                           </div>
                         </div>
@@ -430,7 +532,7 @@ export default function QuestsPage() {
                     </p>
 
                     {/* Chest Sim */}
-                    <div className="p-3 rounded-lg border border-border/60 bg-background/40 space-y-2">
+                    <div className="p-3 rounded-lg border border-border/60 bg-background/50 space-y-2">
                       <div className="font-semibold text-foreground flex justify-between">
                         <span>🗝️ Скриня (canOpenChest)</span>
                       </div>
@@ -475,14 +577,14 @@ export default function QuestsPage() {
                         Спробувати відкрити
                       </Button>
                       {simChestResult && (
-                        <div className="p-1.5 rounded bg-black/40 font-mono text-[11px] text-center border border-border/50">
+                        <div className="p-1.5 rounded bg-muted/60 dark:bg-black/40 font-mono text-[11px] text-center border border-border/50">
                           {simChestResult}
                         </div>
                       )}
                     </div>
 
                     {/* Damage Sim */}
-                    <div className="p-3 rounded-lg border border-border/60 bg-background/40 space-y-2">
+                    <div className="p-3 rounded-lg border border-border/60 bg-background/50 space-y-2">
                       <div className="font-semibold text-foreground">⚔️ Шкода (calculateDamage)</div>
                       <div className="flex items-center justify-between gap-2">
                         <span>Сила атаки:</span>
@@ -500,7 +602,7 @@ export default function QuestsPage() {
                             onClick={() => setSimWeapon(w)}
                             className={`py-1 text-[10px] font-semibold rounded border ${
                               simWeapon === w
-                                ? 'bg-amber-500/20 border-amber-500 text-amber-300'
+                                ? 'bg-amber-500/20 border-amber-500 text-amber-600 dark:text-amber-300'
                                 : 'bg-muted/40 border-border/50 text-muted-foreground'
                             }`}
                           >
@@ -526,17 +628,17 @@ export default function QuestsPage() {
                         Вдарити ворога
                       </Button>
                       {simDmgResult && (
-                        <div className="p-1.5 rounded bg-black/40 font-mono text-[11px] text-center border border-border/50 text-amber-400">
+                        <div className="p-1.5 rounded bg-muted/60 dark:bg-black/40 font-mono text-[11px] text-center border border-border/50 text-amber-600 dark:text-amber-400">
                           {simDmgResult}
                         </div>
                       )}
                     </div>
 
                     {/* HP Sim */}
-                    <div className="p-3 rounded-lg border border-border/60 bg-background/40 space-y-2">
+                    <div className="p-3 rounded-lg border border-border/60 bg-background/50 space-y-2">
                       <div className="font-semibold text-foreground flex justify-between">
                         <span>❤️ Здоров'я (getHeroStatus)</span>
-                        <span className="font-mono text-amber-400">{simHp} HP</span>
+                        <span className="font-mono text-amber-500 dark:text-amber-400">{simHp} HP</span>
                       </div>
                       <input
                         type="range"
@@ -555,7 +657,7 @@ export default function QuestsPage() {
                         Перевірити статус
                       </Button>
                       {simHpResult && (
-                        <div className="p-1.5 rounded bg-black/40 font-mono text-[11px] text-center border border-border/50 text-emerald-400">
+                        <div className="p-1.5 rounded bg-muted/60 dark:bg-black/40 font-mono text-[11px] text-center border border-border/50 text-emerald-600 dark:text-emerald-400 font-semibold">
                           {simHpResult}
                         </div>
                       )}
@@ -568,13 +670,16 @@ export default function QuestsPage() {
 
           {/* Right Column: Code Editor & Auto-Test Results (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
-            <Card className="bg-card/50 border-border/70 overflow-hidden">
+            <Card className="bg-card border-border/70 overflow-hidden shadow-md">
               {/* Editor Header */}
-              <div className="flex items-center justify-between px-4 py-2.5 bg-muted/40 border-b border-border/60">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50 border-b border-border/60">
                 <div className="flex items-center gap-2">
-                  <Code2 className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-mono font-medium text-foreground">
+                  <Code2 className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                  <span className="text-xs font-mono font-semibold text-foreground">
                     src/quest.js
+                  </span>
+                  <span className="text-[11px] text-muted-foreground font-mono">
+                    ({codeLines.length} рядків)
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -585,7 +690,7 @@ export default function QuestsPage() {
                     className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
                     title="Скопіювати код"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </Button>
                   <Button
                     variant="ghost"
@@ -607,31 +712,88 @@ export default function QuestsPage() {
                 </div>
               </div>
 
-              {/* Code Textarea */}
-              <div className="relative">
+              {/* Editor Container with Synchronized Line Numbers */}
+              <div className="relative flex min-h-[380px] bg-[#0d121f] text-slate-100 font-mono text-xs sm:text-sm">
+                {/* Line Numbers Gutter */}
+                <div
+                  ref={gutterRef}
+                  className="w-12 select-none py-4 text-right pr-3 font-mono text-xs sm:text-sm text-slate-500 bg-[#070b14] border-r border-slate-800/80 overflow-hidden shrink-0"
+                  style={{ lineHeight: '24px' }}
+                >
+                  {codeLines.map((_, i) => {
+                    const lineNum = i + 1;
+                    const isError = errorDetails?.line === lineNum;
+                    return (
+                      <div
+                        key={i}
+                        onClick={() => jumpToLine(lineNum)}
+                        className={`cursor-pointer transition-colors ${
+                          isError
+                            ? 'text-red-400 font-bold bg-red-500/25 px-1 rounded -mr-1'
+                            : 'hover:text-slate-300'
+                        }`}
+                        title={isError ? `Помилка в рядку #${lineNum}` : `Рядок #${lineNum}`}
+                      >
+                        {lineNum}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Code Textarea */}
                 <textarea
                   ref={textareaRef}
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  onChange={(e) => {
+                    setCode(e.target.value);
+                    if (errorDetails) setErrorDetails(null);
+                  }}
+                  onScroll={handleTextareaScroll}
                   onKeyDown={handleKeyDown}
                   spellCheck={false}
-                  rows={16}
-                  className="w-full bg-[#0b0f19] text-[#e2e8f0] font-mono text-xs sm:text-sm p-4 outline-none resize-y border-none leading-relaxed selection:bg-amber-500/30"
-                  style={{ tabSize: 2 }}
+                  className="flex-1 w-full bg-transparent text-slate-100 font-mono text-xs sm:text-sm p-4 outline-none resize-none border-none selection:bg-amber-500/30 overflow-y-auto"
+                  style={{ lineHeight: '24px', tabSize: 2 }}
                 />
               </div>
             </Card>
 
-            {/* Syntax Error Alert */}
-            {executionError && (
-              <div className="p-3.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-start gap-2.5">
-                <XCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <div className="font-mono">{executionError}</div>
+            {/* Error Line Banner (High Contrast & Clear) */}
+            {errorDetails && (
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border-2 border-red-500/50 text-red-900 dark:text-red-200 text-xs sm:text-sm shadow-md animate-in fade-in duration-200">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold flex items-center gap-2">
+                        <span>Помилка виконання</span>
+                        {errorDetails.line && (
+                          <Badge className="bg-red-600 text-white font-mono text-xs px-2 py-0.5">
+                            Рядок #{errorDetails.line}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="font-mono text-xs mt-1 text-red-800 dark:text-red-300 bg-red-100/70 dark:bg-black/40 p-2 rounded-lg border border-red-300/60 dark:border-red-800/60">
+                        {errorDetails.message}
+                      </div>
+                    </div>
+                  </div>
+
+                  {errorDetails.line && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => jumpToLine(errorDetails.line!)}
+                      className="shrink-0 text-xs h-7 border-red-400/60 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 gap-1 font-semibold"
+                    >
+                      Перейти <ArrowRight className="w-3 h-3" />
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
 
-            {/* Auto-test results */}
-            <Card className="bg-card/50 border-border/70">
+            {/* Auto-test results (High Contrast & Theme-Aware) */}
+            <Card className="bg-card border-border/70 shadow-sm">
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -641,10 +803,10 @@ export default function QuestsPage() {
                   {hasRun && (
                     <Badge
                       variant="outline"
-                      className={`text-xs ${
+                      className={`text-xs font-semibold ${
                         passedTests === totalTests
-                          ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
-                          : 'border-amber-500/40 text-amber-400 bg-amber-500/10'
+                          ? 'border-emerald-500/50 text-emerald-700 dark:text-emerald-300 bg-emerald-500/15'
+                          : 'border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/15'
                       }`}
                     >
                       {passedTests} / {totalTests} пройдено
@@ -659,34 +821,74 @@ export default function QuestsPage() {
                     Натисніть зелену кнопку <strong>"Запустити перевірку"</strong> вище, щоб прогнати тести.
                   </div>
                 ) : (
-                  <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                  <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
                     {testResults.map((tr) => (
                       <div
                         key={tr.id}
-                        className={`p-2.5 rounded-lg border text-xs transition-colors ${
+                        className={`p-3 rounded-xl border text-xs transition-colors shadow-sm ${
                           tr.passed
-                            ? 'bg-emerald-500/5 border-emerald-500/20'
-                            : 'bg-red-500/5 border-red-500/25'
+                            ? 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/40'
+                            : 'bg-red-50/80 dark:bg-red-950/25 border-red-300 dark:border-red-800/50'
                         }`}
                       >
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-start gap-2.5">
                           {tr.passed ? (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                           ) : (
-                            <XCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                            <XCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className={`font-medium ${tr.passed ? 'text-emerald-300' : 'text-red-300'}`}>
+                            <div
+                              className={`font-semibold text-xs sm:text-sm ${
+                                tr.passed
+                                  ? 'text-emerald-900 dark:text-emerald-200'
+                                  : 'text-red-900 dark:text-red-200'
+                              }`}
+                            >
                               {tr.title}
                             </div>
+
+                            {/* Passed status badge */}
+                            {tr.passed && (
+                              <div className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400 font-mono font-medium">
+                                ✓ Результат співпав: {JSON.stringify(tr.actual)}
+                              </div>
+                            )}
+
+                            {/* High-Contrast Diff for Failed Test */}
                             {!tr.passed && (
-                              <div className="mt-1.5 p-2 rounded bg-black/40 font-mono text-[11px] text-muted-foreground space-y-0.5">
-                                <div className="text-emerald-400">
-                                  Очікувалось: {JSON.stringify(tr.expected)}
+                              <div className="mt-2 p-2.5 rounded-lg bg-white dark:bg-black/60 border border-slate-200 dark:border-white/10 font-mono text-[11px] space-y-1.5 shadow-sm">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-800/60">
+                                    Очікувалось
+                                  </span>
+                                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                                    {JSON.stringify(tr.expected)}
+                                  </span>
                                 </div>
-                                <div className="text-red-400">
-                                  {tr.error ? `Помилка: ${tr.error}` : `Отримано: ${JSON.stringify(tr.actual)}`}
+
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300 border border-red-300/60 dark:border-red-800/60">
+                                    Отримано
+                                  </span>
+                                  <span className="font-semibold text-red-700 dark:text-red-300">
+                                    {tr.error ? `Помилка: ${tr.error}` : JSON.stringify(tr.actual)}
+                                  </span>
                                 </div>
+
+                                {tr.line && (
+                                  <div className="text-amber-800 dark:text-amber-300 text-[11px] pt-1 border-t border-border/50 flex items-center justify-between">
+                                    <span>
+                                      📍 Помилка сталася у рядку <strong>#{tr.line}</strong>
+                                    </span>
+                                    <button
+                                      onClick={() => jumpToLine(tr.line!)}
+                                      className="underline hover:text-foreground text-[10px] font-sans"
+                                    >
+                                      Перейти до рядка
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
@@ -703,11 +905,11 @@ export default function QuestsPage() {
 
       {/* Victory Celebration Modal */}
       {showVictoryModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full bg-[#111726] border-emerald-500/40 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <Card className="max-w-lg w-full bg-card border-emerald-500/50 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-emerald-400 to-amber-200" />
             <CardHeader className="text-center pb-2 pt-6">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-3xl shadow-lg shadow-emerald-500/10">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 text-3xl shadow-lg shadow-emerald-500/10">
                 🎉
               </div>
               <CardTitle className="text-2xl font-extrabold text-foreground">
@@ -720,11 +922,11 @@ export default function QuestsPage() {
 
             <CardContent className="space-y-4 pt-2">
               <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
-                <span className="font-semibold text-amber-300 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
                   Винагорода за квест
                 </span>
-                <span className="font-mono font-bold text-amber-400">
+                <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
                   +{currentQuest.crystalsReward} Кристалів
                 </span>
               </div>
@@ -736,7 +938,7 @@ export default function QuestsPage() {
                   <li>Якщо ви працюєте через GitHub, збережіть код у файл <code>src/quest.js</code>.</li>
                   <li>Запушіть зміни на GitHub, щоб отримати зелену галочку ✅:</li>
                 </ol>
-                <div className="p-2.5 rounded bg-black/60 border border-border/60 font-mono text-[11px] text-amber-300 select-all">
+                <div className="p-2.5 rounded bg-muted dark:bg-black/60 border border-border/60 font-mono text-[11px] text-amber-600 dark:text-amber-300 select-all">
                   git add . && git commit -m "feat: complete quest" && git push origin main
                 </div>
               </div>
