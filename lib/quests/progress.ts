@@ -8,6 +8,8 @@ export interface StudentQuestStatus {
   isCompleted: boolean;
   code: string;
   updatedAt: string;
+  codeAnalysisScore?: number;
+  antiCheatPassed?: boolean;
 }
 
 export interface StudentReport {
@@ -33,7 +35,9 @@ export async function saveQuestProgress(
   code: string,
   passedTests: number,
   totalTests: number,
-  isCompleted: boolean
+  isCompleted: boolean,
+  codeAnalysisScore?: number,
+  antiCheatPassed?: boolean
 ): Promise<void> {
   const timestamp = new Date().toISOString();
 
@@ -44,6 +48,8 @@ export async function saveQuestProgress(
     isCompleted,
     code,
     updatedAt: timestamp,
+    codeAnalysisScore,
+    antiCheatPassed,
   };
 
   // 1. Save to localStorage for this specific user

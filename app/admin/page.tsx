@@ -510,19 +510,38 @@ export default function AdminPage() {
             {/* Code Body */}
             <div className="p-4 overflow-y-auto flex-1 font-mono text-xs">
               {inspectedStudent.quests[inspectedQuestSlug]?.code ? (
-                <div className="space-y-2">
-                  <div className="text-[11px] text-muted-foreground flex justify-between">
+                <div className="space-y-3">
+                  <div className="text-[11px] text-muted-foreground flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-black/40 border border-border/50">
                     <span>
                       Останнє оновлення:{' '}
                       {new Date(
                         inspectedStudent.quests[inspectedQuestSlug].updatedAt
                       ).toLocaleString('uk-UA')}
                     </span>
-                    <span className="text-emerald-400 font-semibold">
-                      Пройдено тестів:{' '}
-                      {inspectedStudent.quests[inspectedQuestSlug].passedTests} /{' '}
-                      {inspectedStudent.quests[inspectedQuestSlug].totalTests}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-emerald-400 font-semibold">
+                        Тести: {inspectedStudent.quests[inspectedQuestSlug].passedTests} /{' '}
+                        {inspectedStudent.quests[inspectedQuestSlug].totalTests}
+                      </span>
+                      {typeof inspectedStudent.quests[inspectedQuestSlug].codeAnalysisScore === 'number' && (
+                        <Badge className="bg-sky-500/15 text-sky-300 border-sky-500/30 text-[10px] font-mono">
+                          Лінтер: {inspectedStudent.quests[inspectedQuestSlug].codeAnalysisScore}%
+                        </Badge>
+                      )}
+                      {typeof inspectedStudent.quests[inspectedQuestSlug].antiCheatPassed === 'boolean' && (
+                        <Badge
+                          className={`text-[10px] font-mono ${
+                            inspectedStudent.quests[inspectedQuestSlug].antiCheatPassed
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : 'bg-red-500/15 text-red-300 border-red-500/30'
+                          }`}
+                        >
+                          {inspectedStudent.quests[inspectedQuestSlug].antiCheatPassed
+                            ? '🛡️ Anti-Cheat: OK'
+                            : '⚠️ Підозра на хардкод'}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   <pre className="p-4 rounded-xl bg-black/70 border border-border/60 text-slate-200 overflow-x-auto whitespace-pre font-mono leading-relaxed">
                     {inspectedStudent.quests[inspectedQuestSlug].code}

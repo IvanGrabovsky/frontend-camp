@@ -11,6 +11,11 @@ import { QUESTS, Quest, QuestTestCase } from '@/data/quests';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { saveQuestProgress, getSavedQuestProgress } from '@/lib/quests/progress';
 import {
+  analyzeStudentCode,
+  runAntiCheatRandomTests,
+  CodeAnalysisReport,
+} from '@/lib/quests/analyzer';
+import {
   Play,
   RotateCcw,
   Copy,
@@ -57,6 +62,9 @@ export default function QuestsPage() {
   const [copied, setCopied] = useState(false);
   const [errorDetails, setErrorDetails] = useState<ErrorDetails | null>(null);
   const [activeLeftTab, setActiveLeftTab] = useState<'tasks' | 'simulator'>('tasks');
+  const [activeRightTab, setActiveRightTab] = useState<'tests' | 'analysis'>('tests');
+  const [codeAnalysis, setCodeAnalysis] = useState<CodeAnalysisReport | null>(null);
+  const [antiCheatResult, setAntiCheatResult] = useState<{ passed: boolean; message: string } | null>(null);
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [claimedReward, setClaimedReward] = useState(false);
 
@@ -267,8 +275,16 @@ return result;
 
       setTestResults(results);
 
+      // Run static code quality analysis
+      const analysis = analyzeStudentCode(code, currentQuest.slug);
+      setCodeAnalysis(analysis);
+
+      // Run randomized anti-cheat tests
+      const antiCheat = runAntiCheatRandomTests(fns, currentQuest.slug);
+      setAntiCheatResult(antiCheat);
+
       const passedCount = results.filter((r) => r.passed).length;
-      const isCompleted = passedCount === currentQuest.testCases.length;
+      const isCompleted = passedCount === currentQuest.testCases.length && analysis.passedAll && antiCheat.passed;
 
       if (isCompleted) {
         setShowVictoryModal(true);
@@ -286,7 +302,9 @@ return result;
           code,
           passedCount,
           currentQuest.testCases.length,
-          isCompleted
+          isCompleted,
+          analysis.score,
+          antiCheat.passed
         );
       }
     } catch (err: any) {
@@ -382,6 +400,38 @@ return result;
             </Button>
           </div>
         </div>
+
+        {/* Guest Warning Banner (for logged-out students) */}
+        {!user && (
+          <div className="p-3.5 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/35 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm shadow-sm animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+              <div>
+                <span className="font-bold text-foreground">Ви працюєте як гість (не увійшли в акаунт).</span>
+                <span className="text-muted-foreground ml-1">
+                  Ви можете писати код та тестувати його, але щоб викладач побачив результат у своєму журналі оцінок — увійдіть в акаунт.
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+              <Button
+                size="sm"
+                onClick={() => openAuthModal('login')}
+                className="text-xs h-8 bg-amber-600 hover:bg-amber-500 text-white font-semibold flex-1 sm:flex-initial"
+              >
+                Увійти
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => openAuthModal('register')}
+                className="text-xs h-8 border-amber-500/40 text-amber-600 dark:text-amber-300 hover:bg-amber-500/10 flex-1 sm:flex-initial font-semibold"
+              >
+                Зареєструватися
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Quests switcher buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -792,35 +842,85 @@ return result;
               </div>
             )}
 
-            {/* Auto-test results (High Contrast & Theme-Aware) */}
-            <Card className="bg-card border-border/70 shadow-sm">
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                    <Terminal className="w-4 h-4 text-muted-foreground" />
-                    Результати автотестів Vitest
-                  </CardTitle>
-                  {hasRun && (
-                    <Badge
-                      variant="outline"
-                      className={`text-xs font-semibold ${
-                        passedTests === totalTests
-                          ? 'border-emerald-500/50 text-emerald-700 dark:text-emerald-300 bg-emerald-500/15'
-                          : 'border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/15'
+            {/* Tabbed Results Card: Auto-tests & Static Code Quality Analysis */}
+            <Card className="bg-card border-border/70 shadow-sm overflow-hidden">
+              <CardHeader className="p-3 pb-2 border-b border-border/50">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 p-1 bg-muted/60 dark:bg-black/30 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setActiveRightTab('tests')}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                        activeRightTab === 'tests'
+                          ? 'bg-background text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      {passedTests} / {totalTests} пройдено
-                    </Badge>
+                      <Terminal className="w-3.5 h-3.5 text-sky-500" />
+                      <span>Автотести</span>
+                      {hasRun && (
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] px-1.5 py-0 font-mono font-bold ${
+                            passedTests === totalTests
+                              ? 'border-emerald-500/50 text-emerald-700 dark:text-emerald-300 bg-emerald-500/15'
+                              : 'border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/15'
+                          }`}
+                        >
+                          {passedTests}/{totalTests}
+                        </Badge>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveRightTab('analysis')}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                        activeRightTab === 'analysis'
+                          ? 'bg-background text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Аналіз коду (Лінтер)</span>
+                      {hasRun && codeAnalysis && (
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] px-1.5 py-0 font-mono font-bold ${
+                            codeAnalysis.passedAll && (!antiCheatResult || antiCheatResult.passed)
+                              ? 'border-emerald-500/50 text-emerald-700 dark:text-emerald-300 bg-emerald-500/15'
+                              : 'border-amber-500/50 text-amber-700 dark:text-amber-300 bg-amber-500/15'
+                          }`}
+                        >
+                          {codeAnalysis.score}%
+                        </Badge>
+                      )}
+                    </button>
+                  </div>
+
+                  {hasRun && (
+                    <div className="text-[11px] font-mono">
+                      {passedTests === totalTests && codeAnalysis?.passedAll && (!antiCheatResult || antiCheatResult.passed) ? (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Всі критерії виконано!
+                        </span>
+                      ) : (
+                        <span className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
+                          <AlertTriangle className="w-3.5 h-3.5" /> Зверніть увагу на зауваження
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               </CardHeader>
 
-              <CardContent className="p-4 pt-2">
+              <CardContent className="p-4 pt-3">
                 {!hasRun ? (
                   <div className="text-center py-8 text-xs text-muted-foreground">
-                    Натисніть зелену кнопку <strong>"Запустити перевірку"</strong> вище, щоб прогнати тести.
+                    Натисніть зелену кнопку <strong>"Запустити перевірку"</strong> вище, щоб прогнати тести та отримати ревʼю коду.
                   </div>
-                ) : (
+                ) : activeRightTab === 'tests' ? (
+                  /* TAB 1: UNIT TESTS */
                   <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
                     {testResults.map((tr) => (
                       <div
@@ -896,6 +996,116 @@ return result;
                       </div>
                     ))}
                   </div>
+                ) : (
+                  /* TAB 2: STATIC CODE ANALYSIS & ANTI-CHEAT */
+                  <div className="space-y-4 max-h-[420px] overflow-y-auto pr-1">
+                    {/* Overall Summary Card */}
+                    <div className="p-3.5 rounded-xl bg-muted/40 dark:bg-black/30 border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+                          <span>Загальна якість та валідність коду:</span>
+                          <Badge
+                            className={`font-mono text-xs font-bold ${
+                              (codeAnalysis?.score || 0) >= 90
+                                ? 'bg-emerald-600 text-white'
+                                : (codeAnalysis?.score || 0) >= 60
+                                ? 'bg-amber-600 text-white'
+                                : 'bg-red-600 text-white'
+                            }`}
+                          >
+                            {codeAnalysis?.score || 0} / 100 балів
+                          </Badge>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          Перевірка структури синтаксису, використання розгалужень та відсутність хардкоду.
+                        </p>
+                      </div>
+
+                      {antiCheatResult && (
+                        <div
+                          className={`text-xs px-3 py-1.5 rounded-lg border font-semibold flex items-center gap-1.5 shrink-0 ${
+                            antiCheatResult.passed
+                              ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                              : 'bg-red-500/15 border-red-500/30 text-red-700 dark:text-red-300'
+                          }`}
+                        >
+                          {antiCheatResult.passed ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Динамічний тест: ОК</span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertTriangle className="w-3.5 h-3.5" />
+                              <span>Підозра на хардкод!</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Anti-cheat detail warning if failed */}
+                    {antiCheatResult && !antiCheatResult.passed && (
+                      <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs text-amber-900 dark:text-amber-200">
+                        <div className="font-bold flex items-center gap-1.5">
+                          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                          Результат рандомізованої перевірки:
+                        </div>
+                        <p className="mt-1 text-[11px]">{antiCheatResult.message}</p>
+                      </div>
+                    )}
+
+                    {/* Rules Checklist */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-semibold text-foreground px-1">
+                        Критерії оцінювання коду (AST & Syntax Rules):
+                      </div>
+
+                      {codeAnalysis?.rules.map((rule) => (
+                        <div
+                          key={rule.id}
+                          className={`p-3 rounded-xl border text-xs transition-colors ${
+                            rule.passed
+                              ? 'bg-card/70 border-border/70 text-card-foreground'
+                              : 'bg-amber-50/70 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/40 text-foreground'
+                          }`}
+                        >
+                          <div className="flex items-start gap-2.5">
+                            {rule.passed ? (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                            ) : (
+                              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="font-semibold text-xs">{rule.label}</span>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[10px] px-1.5 py-0 ${
+                                    rule.passed
+                                      ? 'border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10'
+                                      : 'border-amber-500/40 text-amber-700 dark:text-amber-300 bg-amber-500/10'
+                                  }`}
+                                >
+                                  {rule.passed ? 'Виконано' : 'Увага'}
+                                </Badge>
+                              </div>
+
+                              <p className="text-[11px] text-muted-foreground mt-1">
+                                {rule.message}
+                              </p>
+
+                              {!rule.passed && rule.recommendation && (
+                                <div className="mt-2 p-2 rounded-lg bg-amber-100/60 dark:bg-black/40 border border-amber-300/50 dark:border-amber-800/40 text-[11px] text-amber-900 dark:text-amber-200">
+                                  💡 <strong>Підказка:</strong> {rule.recommendation}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -916,7 +1126,7 @@ return result;
                 Квест успішно виконано!
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Всі {totalTests} автотестів пройшли на 100%. Ви написали бездоганний код!
+                Всі {totalTests} автотестів пройшли на 100%, перевірку на хардкод пройдено!
               </p>
             </CardHeader>
 
@@ -931,17 +1141,40 @@ return result;
                 </span>
               </div>
 
-              <div className="text-xs text-muted-foreground space-y-2">
-                <p className="font-semibold text-foreground">Як здати роботу вчителю:</p>
-                <ol className="list-decimal list-inside space-y-1 text-[11px] leading-relaxed">
-                  <li>Ваш результат уже автоматично збережено у вашому профілі!</li>
-                  <li>Якщо ви працюєте через GitHub, збережіть код у файл <code>src/quest.js</code>.</li>
-                  <li>Запушіть зміни на GitHub, щоб отримати зелену галочку ✅:</li>
-                </ol>
-                <div className="p-2.5 rounded bg-muted dark:bg-black/60 border border-border/60 font-mono text-[11px] text-amber-600 dark:text-amber-300 select-all">
-                  git add . && git commit -m "feat: complete quest" && git push origin main
+              {/* Guest Warning in Victory Modal */}
+              {!user ? (
+                <div className="p-3.5 rounded-xl bg-amber-500/15 border-2 border-amber-500/50 text-xs text-amber-950 dark:text-amber-200 space-y-2">
+                  <div className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                    Увага: Ви не увійшли в акаунт!
+                  </div>
+                  <p className="text-[11px] leading-relaxed">
+                    Ви пройшли квест як гість. Щоб ваші кристали нарахувалися, а вчитель побачив зданий квест у себе в <strong>Панелі викладача</strong>, будь ласка, увійдіть або зареєструйтеся:
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setShowVictoryModal(false);
+                      openAuthModal('register');
+                    }}
+                    className="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm"
+                  >
+                    Зареєструватися або увійти для зарахування
+                  </Button>
                 </div>
-              </div>
+              ) : (
+                <div className="text-xs text-muted-foreground space-y-2">
+                  <p className="font-semibold text-foreground">Як здати роботу вчителю:</p>
+                  <ol className="list-decimal list-inside space-y-1 text-[11px] leading-relaxed">
+                    <li>Ваш результат і код уже автоматично передано в панель викладача!</li>
+                    <li>Якщо ви працюєте через GitHub Classroom, збережіть код у файл <code>src/quest.js</code>.</li>
+                    <li>Запушіть зміни на GitHub, щоб отримати зелену галочку в репозиторії:</li>
+                  </ol>
+                  <div className="p-2.5 rounded bg-muted dark:bg-black/60 border border-border/60 font-mono text-[11px] text-amber-600 dark:text-amber-300 select-all">
+                    git add . && git commit -m "feat: complete quest" && git push origin main
+                  </div>
+                </div>
+              )}
 
               <div className="flex gap-2 pt-2">
                 <Button
