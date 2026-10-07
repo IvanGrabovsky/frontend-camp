@@ -34,6 +34,13 @@ export function SiteHeader({ breadcrumb }: SiteHeaderProps) {
           </nav>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href="/quests"
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/25 hover:bg-amber-500/20 transition-all shadow-sm"
+          >
+            <span>⚔️</span>
+            <span>Квести</span>
+          </Link>
           <UserNav />
           <div className="h-4 w-px bg-border/80 mx-0.5 hidden sm:block" />
           <ThemeToggle />

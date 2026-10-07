@@ -26,13 +26,20 @@ export default function HomePage() {
           <div className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
             <HeroQuote />
           </div>
-          {firstBlock?.startHref && (
-            <Button asChild size="lg" className="h-12 px-8 text-base font-semibold shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all">
-              <Link href={`/blocks/${firstBlock.slug}/`}>
-                Почати навчання з нуля →
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {firstBlock?.startHref && (
+              <Button asChild size="lg" className="h-12 px-8 text-base font-semibold shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all">
+                <Link href={`/blocks/${firstBlock.slug}/`}>
+                  Почати навчання з нуля →
+                </Link>
+              </Button>
+            )}
+            <Button asChild size="lg" variant="outline" className="h-12 px-6 text-base font-semibold border-amber-500/40 hover:bg-amber-500/10 text-amber-400 hover:-translate-y-1 transition-all gap-2">
+              <Link href="/quests/">
+                ⚔️ Інтерактивні Квести (11 клас)
               </Link>
             </Button>
-          )}
+          </div>
         </div>
       </section>
 
@@ -52,7 +59,7 @@ export default function HomePage() {
 
       <section aria-labelledby="how-title" className="mb-24 px-4 md:px-0">
         <h2 id="how-title" className="text-3xl md:text-4xl font-bold mb-12 text-center">Як влаштований курс</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           <Card className="border-none shadow-md bg-card/50 hover:shadow-lg transition-all hover:-translate-y-1">
             <CardHeader>
               <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4">01</div>
@@ -98,6 +105,20 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">Живий запуск коду та експерименти в браузері.</p>
+            </CardContent>
+          </Card>
+          <Card className="border-none shadow-md bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:shadow-lg transition-all hover:-translate-y-1">
+            <CardHeader>
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl mb-4">05</div>
+              <CardTitle className="text-xl flex justify-between items-center">
+                Квести
+                <Button variant="ghost" size="sm" asChild className="hover:bg-amber-500/20 text-amber-400">
+                  <Link href="/quests/">Відкрити ↗</Link>
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground leading-relaxed">Бойові виклики та автотести з JavaScript для 11 класів.</p>
             </CardContent>
           </Card>
         </div>

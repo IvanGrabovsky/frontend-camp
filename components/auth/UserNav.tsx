@@ -86,6 +86,15 @@ export function UserNav() {
           </div>
 
           <Link
+            href="/quests"
+            onClick={() => setDropdownOpen(false)}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-foreground hover:bg-muted/70 transition-colors"
+          >
+            <span className="text-sm">⚔️</span>
+            <span>Практичні квести</span>
+          </Link>
+
+          <Link
             href="/profile"
             onClick={() => setDropdownOpen(false)}
             className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-foreground hover:bg-muted/70 transition-colors"
@@ -93,6 +102,17 @@ export function UserNav() {
             <BookCheck className="w-4 h-4 text-primary" />
             <span>Особистий кабінет</span>
           </Link>
+
+          {user && (user.email === 'ivan.grabovsky.ua@gmail.com' || (typeof window !== 'undefined' && sessionStorage.getItem('admin_passkey_unlocked') === 'true')) && (
+            <Link
+              href="/admin"
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-amber-400 hover:bg-amber-500/10 transition-colors border border-amber-500/20 my-1"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <span>Панель викладача</span>
+            </Link>
+          )}
 
           <button
             onClick={() => {
