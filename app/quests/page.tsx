@@ -32,6 +32,7 @@ import {
   Terminal,
   Code2,
   Lock,
+  LogIn,
   AlertTriangle,
   ArrowRight,
 } from 'lucide-react';
@@ -52,7 +53,7 @@ interface ErrorDetails {
 }
 
 export default function QuestsPage() {
-  const { user, addCrystals, openAuthModal } = useAuth();
+  const { user, isAuthenticated, isLoading, addCrystals, openAuthModal } = useAuth();
   const [selectedQuestSlug, setSelectedQuestSlug] = useState<string>(QUESTS[0].slug);
   const currentQuest = QUESTS.find((q) => q.slug === selectedQuestSlug) || QUESTS[0];
 
@@ -359,6 +360,155 @@ return result;
   const progressPercent = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
   const codeLines = code.split('\n');
 
+  if (isLoading) {
+    return (
+      <HubLayout
+        breadcrumb={[
+          { label: 'Курс', href: '/' },
+          { label: 'Практичні Квести' },
+        ]}
+      >
+        <div className="py-16 animate-pulse space-y-6 max-w-5xl mx-auto">
+          <div className="h-28 rounded-2xl bg-muted/50" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="h-24 rounded-xl bg-muted/40" />
+            <div className="h-24 rounded-xl bg-muted/40" />
+            <div className="h-24 rounded-xl bg-muted/40" />
+          </div>
+          <div className="h-96 rounded-2xl bg-muted/30" />
+        </div>
+      </HubLayout>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <HubLayout
+        breadcrumb={[
+          { label: 'Курс', href: '/' },
+          { label: 'Практичні Квести' },
+        ]}
+      >
+        <div className="max-w-4xl mx-auto py-8 sm:py-14 space-y-10">
+          {/* Main Locked Card */}
+          <Card className="bg-card border-border/80 shadow-2xl backdrop-blur relative overflow-hidden text-center p-8 sm:p-12">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-primary to-emerald-500" />
+
+            <div className="w-20 h-20 rounded-3xl bg-amber-500/15 text-amber-500 dark:text-amber-400 flex items-center justify-center mx-auto mb-5 border border-amber-500/30 shadow-lg shadow-amber-500/10">
+              <Lock className="w-10 h-10" />
+            </div>
+
+            <Badge className="mb-4 bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 px-3 py-1 text-xs font-semibold">
+              🔒 Доступ закрито для неавторизованих користувачів
+            </Badge>
+
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
+              Квести доступні лише для учнів курсу
+            </h1>
+
+            <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-8">
+              Цей розділ містить практичні завдання з JavaScript для 11 класу, онлайн-редактор коду, систему автотестів та інтерактивні симулятори. Щоб писати код, проходити перевірки та фіксувати результати у табелі викладача — увійдіть або зареєструйтесь.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+              <Button
+                onClick={() => openAuthModal('login')}
+                size="lg"
+                className="w-full sm:w-auto h-12 px-8 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 gap-2"
+              >
+                <LogIn className="w-4 h-4" /> Увійти в акаунт
+              </Button>
+              <Button
+                onClick={() => openAuthModal('register')}
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto h-12 px-8 font-semibold border-border hover:bg-muted gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-amber-500" /> Зареєструватися (11 клас)
+              </Button>
+            </div>
+          </Card>
+
+          {/* Locked Quests Preview */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <span>Список практичних завдань</span>
+                <Badge variant="outline" className="text-xs">
+                  {QUESTS.length} квести
+                </Badge>
+              </h2>
+              <span className="text-xs text-muted-foreground font-mono">Авторизуйтесь для запуску коду</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {QUESTS.map((q) => (
+                <Card
+                  key={q.slug}
+                  className="bg-card/60 border-border/70 p-5 relative overflow-hidden hover:border-border transition-all opacity-95 group shadow-sm"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="text-[10px] font-mono border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10 gap-1 font-semibold">
+                      <Lock className="w-3 h-3" /> Заблоковано
+                    </Badge>
+                    <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                      +{q.crystalsReward} 💎
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-base mb-1 text-foreground group-hover:text-primary transition-colors">
+                    {q.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
+                    {q.subtitle}
+                  </p>
+
+                  <div className="pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span className="capitalize">{q.difficulty}</span>
+                    <button
+                      onClick={() => openAuthModal('login')}
+                      className="text-primary hover:underline font-semibold flex items-center gap-1"
+                    >
+                      Відкрити <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Features Grid */}
+          <div className="p-6 rounded-2xl bg-muted/40 border border-border/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div className="space-y-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                ⚡ Редактор онлайн
+              </div>
+              <p className="text-muted-foreground">Зручне написання коду з номерами рядків та підказками помилок.</p>
+            </div>
+            <div className="space-y-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                🧪 Автотести Vitest
+              </div>
+              <p className="text-muted-foreground">Миттєва перевірка правильності розвʼязку прямо в браузері.</p>
+            </div>
+            <div className="space-y-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                🛡️ Розумний лінтер
+              </div>
+              <p className="text-muted-foreground">Аналіз синтаксису, змінних та захист від підбору значень.</p>
+            </div>
+            <div className="space-y-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                📊 Журнал викладача
+              </div>
+              <p className="text-muted-foreground">Ваші результати одразу надходять вчителю для оцінювання.</p>
+            </div>
+          </div>
+        </div>
+      </HubLayout>
+    );
+  }
+
   return (
     <HubLayout
       breadcrumb={[
@@ -400,38 +550,6 @@ return result;
             </Button>
           </div>
         </div>
-
-        {/* Guest Warning Banner (for logged-out students) */}
-        {!user && (
-          <div className="p-3.5 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/35 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm shadow-sm animate-in fade-in duration-200">
-            <div className="flex items-center gap-2.5">
-              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
-              <div>
-                <span className="font-bold text-foreground">Ви працюєте як гість (не увійшли в акаунт).</span>
-                <span className="text-muted-foreground ml-1">
-                  Ви можете писати код та тестувати його, але щоб викладач побачив результат у своєму журналі оцінок — увійдіть в акаунт.
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-              <Button
-                size="sm"
-                onClick={() => openAuthModal('login')}
-                className="text-xs h-8 bg-amber-600 hover:bg-amber-500 text-white font-semibold flex-1 sm:flex-initial"
-              >
-                Увійти
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => openAuthModal('register')}
-                className="text-xs h-8 border-amber-500/40 text-amber-600 dark:text-amber-300 hover:bg-amber-500/10 flex-1 sm:flex-initial font-semibold"
-              >
-                Зареєструватися
-              </Button>
-            </div>
-          </div>
-        )}
 
         {/* Quests switcher buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1141,40 +1259,17 @@ return result;
                 </span>
               </div>
 
-              {/* Guest Warning in Victory Modal */}
-              {!user ? (
-                <div className="p-3.5 rounded-xl bg-amber-500/15 border-2 border-amber-500/50 text-xs text-amber-950 dark:text-amber-200 space-y-2">
-                  <div className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
-                    <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                    Увага: Ви не увійшли в акаунт!
-                  </div>
-                  <p className="text-[11px] leading-relaxed">
-                    Ви пройшли квест як гість. Щоб ваші кристали нарахувалися, а вчитель побачив зданий квест у себе в <strong>Панелі викладача</strong>, будь ласка, увійдіть або зареєструйтеся:
-                  </p>
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      setShowVictoryModal(false);
-                      openAuthModal('register');
-                    }}
-                    className="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-sm"
-                  >
-                    Зареєструватися або увійти для зарахування
-                  </Button>
+              <div className="text-xs text-muted-foreground space-y-2">
+                <p className="font-semibold text-foreground">Як здати роботу вчителю:</p>
+                <ol className="list-decimal list-inside space-y-1 text-[11px] leading-relaxed">
+                  <li>Ваш результат і код уже автоматично збережено та передано в панель викладача!</li>
+                  <li>Якщо ви працюєте через GitHub Classroom, збережіть код у файл <code>src/quest.js</code>.</li>
+                  <li>Запушіть зміни на GitHub, щоб отримати зелену галочку в репозиторії:</li>
+                </ol>
+                <div className="p-2.5 rounded bg-muted dark:bg-black/60 border border-border/60 font-mono text-[11px] text-amber-600 dark:text-amber-300 select-all">
+                  git add . && git commit -m "feat: complete quest" && git push origin main
                 </div>
-              ) : (
-                <div className="text-xs text-muted-foreground space-y-2">
-                  <p className="font-semibold text-foreground">Як здати роботу вчителю:</p>
-                  <ol className="list-decimal list-inside space-y-1 text-[11px] leading-relaxed">
-                    <li>Ваш результат і код уже автоматично передано в панель викладача!</li>
-                    <li>Якщо ви працюєте через GitHub Classroom, збережіть код у файл <code>src/quest.js</code>.</li>
-                    <li>Запушіть зміни на GitHub, щоб отримати зелену галочку в репозиторії:</li>
-                  </ol>
-                  <div className="p-2.5 rounded bg-muted dark:bg-black/60 border border-border/60 font-mono text-[11px] text-amber-600 dark:text-amber-300 select-all">
-                    git add . && git commit -m "feat: complete quest" && git push origin main
-                  </div>
-                </div>
-              )}
+              </div>
 
               <div className="flex gap-2 pt-2">
                 <Button
