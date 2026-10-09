@@ -84,3 +84,6 @@ Desktop.ini
 
 # Skills, Rules & Agent files
 .agents/
+
+# Teacher secret solutions (do not commit to public repository)
+data/solutions/

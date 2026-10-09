@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS Logic Workout: Інтерактивний тренажер та лабораторія</title>
+  <style>:root{--bg:#090d16;--card-bg:#111827;--card-alt:#172033;--border:#243048;--border-focus:#38bdf8;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#38bdf8;--primary-hover:#0284c7;--accent:#f59e0b;--success:#10b981;--error:#ef4444;--editor-bg:#070b14;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}*{box-sizing:border-box;margin:0;padding:0}body{background-color:var(--bg);color:var(--text);padding:16px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;line-height:1.5}.container{max-width:1240px;margin:0 auto}header{border-bottom:1px solid var(--border);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;display:flex}.header-title-box h1{background:linear-gradient(90deg,#38bdf8,#818cf8,#f59e0b);-webkit-text-fill-color:transparent;-webkit-background-clip:text;font-size:24px;font-weight:800}.header-title-box p{color:var(--text-muted);font-size:13px}.header-badges{flex-wrap:wrap;gap:8px;display:flex}.badge{color:var(--primary);background:#38bdf81f;border:1px solid #38bdf840;border-radius:9999px;align-items:center;gap:6px;padding:4px 10px;font-size:11px;font-weight:600;display:inline-flex}.badge-accent{color:var(--accent);background:#f59e0b1f;border-color:#f59e0b40}.top-nav{border-bottom:1px solid var(--border);gap:8px;margin-bottom:20px;padding-bottom:8px;display:flex}.tab-btn{color:var(--text-muted);cursor:pointer;background:0 0;border:1px solid #0000;border-radius:8px;align-items:center;gap:8px;padding:8px 16px;font-size:13px;font-weight:600;transition:all .15s;display:flex}.tab-btn:hover{color:var(--text);background:#ffffff0a}.tab-btn.active{background:var(--card-alt);color:var(--primary);border-color:var(--border)}.view-section{display:none}.view-section.active{display:block}.trainer-layout{grid-template-columns:280px 1fr;align-items:start;gap:16px;display:grid}@media (width<=900px){.trainer-layout{grid-template-columns:1fr}}.sidebar-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;max-height:calc(100vh - 40px);padding:14px;position:sticky;top:16px;overflow-y:auto}.module-select-tabs{flex-direction:column;gap:6px;margin-bottom:14px;display:flex}.mod-tab-btn{color:var(--text);text-align:left;cursor:pointer;background:#ffffff08;border:1px solid #0000;border-radius:8px;justify-content:space-between;align-items:center;padding:8px 10px;font-size:12px;transition:all .15s;display:flex}.mod-tab-btn:hover{background:#ffffff0f}.mod-tab-btn.active{color:var(--primary);background:#38bdf826;border-color:#38bdf866;font-weight:700}.mod-counter{font-size:10px;font-family:var(--font-mono);color:var(--text-muted);background:#0000004d;border-radius:9999px;padding:2px 6px}.tasks-list-box h3{text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:8px;font-size:11px}.tasks-pill-grid{grid-template-columns:1fr;gap:4px;display:grid}.task-select-btn{text-align:left;width:100%;color:var(--text);cursor:pointer;font-size:12px;font-family:var(--font-mono);background:0 0;border:1px solid #0000;border-radius:6px;justify-content:space-between;align-items:center;padding:6px 10px;transition:all .15s;display:flex}.task-select-btn:hover{background:#ffffff0a}.task-select-btn.active{background:var(--card-alt);border-color:var(--primary);color:var(--primary);font-weight:700}.task-status-dot{font-size:12px}.workspace-pane{flex-direction:column;gap:16px;display:flex}.card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:18px}.task-header{flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px;display:flex}.task-title{color:#fff;font-size:18px;font-weight:700}.level-tag{color:var(--accent);background:#f59e0b26;border:1px solid #f59e0b4d;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600}.level-tag.easy{color:var(--success);background:#10b98126;border-color:#10b9814d}.level-tag.hard{color:var(--error);background:#ef444426;border-color:#ef44444d}.task-desc-section{background:var(--card-alt);color:var(--text);border:1px solid #ffffff0d;border-radius:8px;flex-direction:column;gap:8px;padding:12px;font-size:13px;display:flex}.task-desc-section p{line-height:1.5}.task-desc-section ul{padding-left:20px}.task-desc-section li{margin-bottom:4px}.task-desc-section code{font-family:var(--font-mono);color:#7dd3fc;background:#0000004d;border-radius:4px;padding:1px 4px}.theory-hint-box{color:#fde68a;background:#f59e0b14;border:1px dashed #f59e0b59;border-radius:8px;align-items:flex-start;gap:8px;padding:10px 14px;font-size:12px;display:flex}.editor-wrapper{margin-top:4px;position:relative}.editor-toolbar{border:1px solid var(--border);color:var(--text-muted);font-size:11px;font-family:var(--font-mono);background:#0d121f;border-bottom:none;border-radius:10px 10px 0 0;justify-content:space-between;align-items:center;padding:6px 12px;display:flex}.editor-title{align-items:center;gap:6px;display:flex}.editor-save-indicator{color:var(--success);display:none}.code-editor-textarea{background:var(--editor-bg);color:#e2e8f0;border:1px solid var(--border);width:100%;height:230px;font-family:var(--font-mono);resize:vertical;tab-size:2;border-radius:0 0 10px 10px;outline:none;padding:12px;font-size:13px;line-height:1.6;box-shadow:inset 0 2px 6px #00000080}.code-editor-textarea:focus{border-color:var(--border-focus)}.editor-actions{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;display:flex}.btn-group{flex-wrap:wrap;gap:8px;display:flex}.btn{background:var(--primary);color:#090d16;cursor:pointer;border:none;border-radius:8px;align-items:center;gap:6px;padding:8px 16px;font-size:12px;font-weight:700;transition:all .15s;display:inline-flex}.btn:hover{background:var(--primary-hover);transform:translateY(-1px)}.btn-secondary{color:var(--text);border:1px solid var(--border);background:#ffffff14}.btn-secondary:hover{background:#ffffff24}.test-results-container{margin-top:8px}.results-header{justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600;display:flex}.results-summary-badge{font-size:11px;font-family:var(--font-mono);border-radius:6px;padding:2px 8px}.badge-pass{color:var(--success);background:#10b98133}.badge-fail{color:var(--error);background:#ef444433}.badge-idle{color:var(--text-muted);background:#ffffff14}.case-item{background:var(--card-alt);border:1px solid var(--border);font-family:var(--font-mono);border-radius:8px;flex-direction:column;gap:4px;margin-bottom:6px;padding:10px 12px;font-size:12px;display:flex}.case-item.case-pass{border-left:4px solid var(--success)}.case-item.case-fail{border-left:4px solid var(--error);background:#ef44440f}.case-row-top{justify-content:space-between;align-items:center;display:flex}.case-label{color:#fff;font-weight:600}.case-diff{color:var(--text-muted);flex-wrap:wrap;gap:12px;font-size:11px;display:flex}.diff-expected{color:#34d399}.diff-actual{color:#f87171}.console-box{border:1px solid var(--border);font-family:var(--font-mono);color:#93c5fd;white-space:pre-wrap;background:#060911;border-radius:8px;max-height:120px;margin-top:8px;padding:10px;font-size:11px;overflow-y:auto}.console-title{text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:4px;font-size:10px}.io-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px;display:grid}.io-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;flex-direction:column;justify-content:space-between;padding:16px;display:flex}.io-card h3{color:var(--primary);margin-bottom:6px;font-size:14px}.io-card p{color:var(--text-muted);margin-bottom:12px;font-size:12px;line-height:1.4}.io-output-box{border:1px solid var(--border);font-family:var(--font-mono);color:#cbd5e1;white-space:pre-wrap;background:#00000059;border-radius:6px;min-height:48px;margin-bottom:10px;padding:8px;font-size:11px}.progress-box{background:var(--card-alt);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;padding:14px 18px}.progress-bar-bg{background:#ffffff14;border-radius:9999px;width:100%;height:10px;margin-bottom:8px;overflow:hidden}.progress-bar-fill{background:linear-gradient(90deg,#38bdf8,#10b981);width:0%;height:100%;transition:width .3s}.progress-stats{font-size:12px;font-family:var(--font-mono);color:var(--text-muted);justify-content:space-between;display:flex}.terminal-box{border:1px solid var(--border);font-family:var(--font-mono);color:#a5f3fc;white-space:pre-wrap;background:#060911;border-radius:10px;max-height:380px;margin-top:14px;padding:14px;font-size:12px;overflow-y:auto}</style>
+  <script type="module" crossorigin src="./assets/index-aDmc7z3B.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title-box">
+        <h1>JS Logic, Types & Operators Workout</h1>
+        <p>Інтерактивний тренажер для студентів: редагуйте код прямо в браузері, тестуйте розв'язки на уроці без зайвих підказок IDE</p>
+      </div>
+      <div class="header-badges">
+        <span class="badge">🎓 Студентський практикум</span>
+        <span class="badge">⚡ In-Browser Sandbox</span>
+        <span class="badge badge-accent">🔥 60 Завдань</span>
+      </div>
+    </header>
+
+    <!-- Top Navigation Tabs -->
+    <nav class="top-nav">
+      <button class="tab-btn active" id="tabTrainer" onclick="switchMainTab('trainer')">
+        💻 Інтерактивний тренажер коду
+      </button>
+      <button class="tab-btn" id="tabIoLab" onclick="switchMainTab('iolab')">
+        🎮 Лабораторія alert/prompt/confirm
+      </button>
+      <button class="tab-btn" id="tabFullSuite" onclick="switchMainTab('fullsuite')">
+        📊 Масова перевірка (Всі 60 завдань)
+      </button>
+      <button class="tab-btn" id="tabReadme" onclick="switchMainTab('readme')">
+        📖 Довідник та інструкція (README)
+      </button>
+    </nav>
+
+    <!-- VIEW 1: Live Interactive Code Trainer -->
+    <section class="view-section active" id="viewTrainer">
+      <div class="trainer-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar-card">
+          <div class="module-select-tabs" id="moduleNavTabs">
+            <!-- Rendered by JS: Module 1..6 tabs -->
+          </div>
+
+          <div class="tasks-list-box">
+            <h3 id="sidebarTasksTitle">Завдання модуля</h3>
+            <div class="tasks-pill-grid" id="tasksNavList">
+              <!-- Rendered by JS: 10 task buttons -->
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Task Workspace -->
+        <main class="workspace-pane">
+          <div class="card">
+            <div class="task-header">
+              <div>
+                <span class="level-tag easy" id="taskLevelBadge">Легкий рівень</span>
+                <h2 class="task-title" id="taskTitle">Завантаження завдання...</h2>
+              </div>
+              <div id="taskModuleLabel" style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                Модуль 1
+              </div>
+            </div>
+
+            <!-- Task Description & Requirements -->
+            <div class="task-desc-section" id="taskDescriptionBox">
+              <!-- Dynamic task desc, requirements and examples -->
+            </div>
+
+            <!-- Syntax / Theory Hint -->
+            <div class="theory-hint-box" id="taskTheoryHintBox" style="margin-top: 10px;">
+              <span>💡</span>
+              <div id="taskTheoryHintText">
+                Шпаргалка завантажується...
+              </div>
+            </div>
+
+            <!-- Live Code Editor -->
+            <div class="editor-wrapper" style="margin-top: 14px;">
+              <div class="editor-toolbar">
+                <div class="editor-title">
+                  <span>📝 Редактор коду розв'язку:</span>
+                  <strong id="editorFileName" style="color: var(--primary);">01-io-and-types.js</strong>
+                </div>
+                <div>
+                  <span id="saveIndicator" class="editor-save-indicator">✓ Збережено локально</span>
+                  <span style="opacity: 0.6;">(Ctrl+Enter для перевірки)</span>
+                </div>
+              </div>
+
+              <textarea id="codeEditor" class="code-editor-textarea" spellcheck="false" placeholder="// Пишіть код тут..."></textarea>
+
+              <div class="editor-actions">
+                <div class="btn-group">
+                  <button class="btn" id="runCurrentTestBtn" onclick="runActiveTaskTest()">
+                    ▶️ Перевірити моє рішення
+                  </button>
+                  <button class="btn btn-secondary" onclick="resetActiveTaskCode()">
+                    🔄 Скинути до шаблону
+                  </button>
+                  <button class="btn btn-secondary" onclick="copyActiveCodeToClipboard()">
+                    📋 Скопіювати для файлу src/
+                  </button>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);" id="editorShortStatus">
+                  Збережено в браузері
+                </div>
+              </div>
+            </div>
+
+            <!-- Test Results View -->
+            <div class="test-results-container">
+              <div class="results-header">
+                <span>Результати тестів:</span>
+                <span class="results-summary-badge badge-idle" id="resultsSummaryBadge">Очікує перевірки</span>
+              </div>
+              <div id="testCasesResultsList">
+                <div style="font-size: 12px; color: var(--text-muted); padding: 8px;">
+                  Натисніть "▶️ Перевірити моє рішення" або комбінацію клавіш Ctrl + Enter для перевірки розв'язку.
+                </div>
+              </div>
+            </div>
+
+            <!-- Virtual Console Box -->
+            <div style="margin-top: 12px;">
+              <div class="console-title">Вивід console.log у вашій функції:</div>
+              <div class="console-box" id="virtualConsoleBox">Консоль чиста. Додайте console.log(...) у свій код, щоб побачити проміжні змінні під час тесту.</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Interactive I/O Laboratory -->
+    <section class="view-section" id="viewIoLab">
+      <div class="card">
+        <h2>🎮 Лабораторія діалогових вікон браузера (alert / prompt / confirm)</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+          Спробуйте взаємодію з користувачем наживо. Зверніть увагу, як браузер передає типи даних та що відбувається при натисканні Cancel або Esc.
+        </p>
+
+        <!-- Mode Toggle -->
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; font-size: 12px;">
+          <span style="font-weight: 700; color: var(--primary);">Режим діалогових вікон:</span>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="radio" name="ioModeRadio" value="custom" checked onchange="setIoMode('custom')">
+            <span>✨ Вбудоване модальне вікно (Надійно в IDE / Zoom / Webview)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="radio" name="ioModeRadio" value="native" onchange="setIoMode('native')">
+            <span>🌐 Системне вікно браузера (window.prompt)</span>
+          </label>
+        </div>
+
+        <div class="io-grid">
+          <!-- Card 1: prompt() -->
+          <div class="io-card">
+            <div>
+              <h3>1. prompt() — Введення тексту</h3>
+              <p>Запитує у користувача текст. Завжди повертає <code>string</code> або <code>null</code> при натисканні Cancel.</p>
+              <div class="io-output-box" id="promptOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentPrompt()">Спробувати prompt()</button>
+          </div>
+
+          <!-- Card 2: confirm() -->
+          <div class="io-card">
+            <div>
+              <h3>2. confirm() — Питання так/ні</h3>
+              <p>Відображає вікно з вибором "ОК" (<code>true</code>) та "Скасувати" (<code>false</code>). Повертає чистий <code>boolean</code>.</p>
+              <div class="io-output-box" id="confirmOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentConfirm()">Спробувати confirm()</button>
+          </div>
+
+          <!-- Card 3: alert() -->
+          <div class="io-card">
+            <div>
+              <h3>3. alert() — Повідомлення</h3>
+              <p>Блокує виконання сторінки до закриття вікна. Завжди повертає значення <code>undefined</code>.</p>
+              <div class="io-output-box" id="alertOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentAlert()">Спробувати alert()</button>
+          </div>
+
+          <!-- Card 4: Interactive Quest -->
+          <div class="io-card">
+            <div>
+              <h3>4. Міні-квест "Перепустка в IT"</h3>
+              <p>Послідовний діалог: запит імені, року народження, згоди з правилами та розрахунок віку за формулою.</p>
+              <div class="io-output-box" id="questOut">Пройдіть квест для виводу...</div>
+            </div>
+            <button class="btn" onclick="experimentQuest()">Запустити міні-квест</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Dialog Simulation for I/O Lab -->
+    <div id="ioModalBackdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+      <div id="ioModalBox" style="background:#111827; border:1px solid #38bdf8; border-radius:12px; padding:22px; max-width:440px; width:90%; box-shadow:0 12px 36px rgba(0,0,0,0.6);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <span id="ioModalIcon" style="font-size:18px;">💬</span>
+          <h4 id="ioModalTitle" style="color:#fff; font-size:15px; font-weight:700;">Повідомлення</h4>
+        </div>
+        <p id="ioModalMessage" style="font-size:13px; color:#cbd5e1; margin-bottom:14px; line-height:1.5; white-space:pre-wrap;"></p>
+        <input id="ioModalInput" type="text" style="display:none; width:100%; background:#070b14; border:1px solid #243048; color:#fff; padding:9px 12px; border-radius:6px; font-family:var(--font-mono); font-size:13px; margin-bottom:16px; outline:none;" />
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button id="ioModalCancelBtn" class="btn btn-secondary" style="display:none;">Скасувати</button>
+          <button id="ioModalOkBtn" class="btn">ОК</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: Full Suite Mass Runner -->
+    <section class="view-section" id="viewFullSuite">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h2>📊 Масова перевірка всіх 60 завдань проекту</h2>
+          <button class="btn" onclick="runMassSuiteRunner()">
+            ▶️ Запустити повну перевірку (Всі 6 модулів)
+          </button>
+        </div>
+
+        <div class="progress-box" style="margin-top: 14px;">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="massProgressBar"></div>
+          </div>
+          <div class="progress-stats">
+            <span id="massProgressSummary">Прогрес: 0 / 60 завдань вирішено (0%)</span>
+            <span id="massProgressRate">Очікує запуску</span>
+          </div>
+        </div>
+
+        <div class="terminal-box" id="massTerminalLog">
+Натисніть кнопку "▶️ Запустити повну перевірку", щоб протестувати всі 60 завдань на основі збереженого коду в браузері або початкових файлів у src/.
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: Documentation & Guide -->
+    <section class="view-section" id="viewReadme">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+          <h2>📖 Повний теоретичний довідник та інструкція з запуску</h2>
+          <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration: none;">
+            ↗️ Відкрити сирий README.md
+          </a>
+        </div>
+        <div id="readmeContentBox" style="background: #070b14; border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; color: #cbd5e1; max-height: 75vh; overflow-y: auto; white-space: pre-wrap;">
+Завантаження інструкції...
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCRIPT -->
+</body>
+</html>

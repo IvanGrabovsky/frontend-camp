@@ -23,7 +23,7 @@ export interface Quest {
   difficulty: 'easy' | 'medium' | 'hard';
   story: string;
   starterCode: string;
-  solutionCode: string;
+  solutionCode?: string;
   tasks: QuestTask[];
   testCases: QuestTestCase[];
 }
@@ -58,30 +58,6 @@ export function calculateDamage(attackPower, weaponClass, isCrit) {
 // Завдання 3: Стан здоров'я героя
 export function getHeroStatus(currentHp, maxHp) {
   // TODO: Поверніть 'Defeated' | 'Critical' | 'Wounded' | 'Healthy'
-  return 'Healthy';
-}
-`,
-    solutionCode: `export function canOpenChest(hasKey, lockpickLevel, isTrapDisarmed) {
-  if (!isTrapDisarmed) return false;
-  return Boolean(hasKey || lockpickLevel >= 60);
-}
-
-export function calculateDamage(attackPower, weaponClass, isCrit) {
-  let multiplier = 0.5;
-  if (weaponClass === 'sword') multiplier = 1.0;
-  else if (weaponClass === 'bow') multiplier = 1.2;
-  else if (weaponClass === 'staff') multiplier = 1.5;
-
-  let damage = attackPower * multiplier;
-  if (isCrit) damage *= 2;
-  return Math.round(damage);
-}
-
-export function getHeroStatus(currentHp, maxHp) {
-  if (maxHp <= 0 || currentHp <= 0) return 'Defeated';
-  const percent = (currentHp / maxHp) * 100;
-  if (percent < 25) return 'Critical';
-  if (percent <= 75) return 'Wounded';
   return 'Healthy';
 }
 `,
@@ -264,27 +240,6 @@ export function getAccessZone(balance) {
   return '';
 }
 `,
-    solutionCode: `export function canEnter(age, hasTicket, isVip, isBanned) {
-  if (isBanned) return false;
-  if (age < 18) return false;
-  return Boolean(hasTicket || isVip);
-}
-
-export function calculateTicketPrice(basePrice, isStudent, isVip, promoCode) {
-  if (isVip) return 0;
-  if (promoCode === 'NEON2077') return basePrice * 0.5;
-  if (isStudent) return basePrice * 0.7;
-  return basePrice;
-}
-
-export function getAccessZone(balance) {
-  if (typeof balance !== 'number' || balance < 0) return 'Denied';
-  if (balance < 100) return 'Street';
-  if (balance < 500) return 'Standard';
-  if (balance < 2000) return 'VIP Lounge';
-  return 'Cyber Penthouse';
-}
-`,
     tasks: [
       {
         id: 'enter',
@@ -447,25 +402,6 @@ export function canStartExpedition(batteryLevel, weather, oxygenTanks) {
 export function calculateTripFuel(distanceKm, fuelPerKm, terrainType) {
   // TODO: Поверніть число, округлене до 1 знака
   return 0;
-}
-`,
-    solutionCode: `export function checkRadiationSafety(radiationLevel, isShieldActive) {
-  if (radiationLevel < 50) return 'SAFE';
-  if (isShieldActive) return 'WARNING';
-  return 'DANGER';
-}
-
-export function canStartExpedition(batteryLevel, weather, oxygenTanks) {
-  return batteryLevel >= 60 && (weather === 'clear' || weather === 'cloudy') && oxygenTanks >= 2;
-}
-
-export function calculateTripFuel(distanceKm, fuelPerKm, terrainType) {
-  if (distanceKm <= 0 || fuelPerKm <= 0) return 0;
-  let multiplier = 1.0;
-  if (terrainType === 'rocky') multiplier = 1.3;
-  else if (terrainType === 'sand_dunes') multiplier = 1.8;
-  const fuel = distanceKm * fuelPerKm * multiplier;
-  return Math.round(fuel * 10) / 10;
 }
 `,
     tasks: [
